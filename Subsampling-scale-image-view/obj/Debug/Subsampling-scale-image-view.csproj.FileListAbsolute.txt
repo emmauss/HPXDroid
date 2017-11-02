@@ -1,0 +1,6 @@
+C:\HappyPandaXDroid\Subsampling-scale-image-view\bin\Debug\Subsampling-scale-image-view.dll
+C:\HappyPandaXDroid\Subsampling-scale-image-view\bin\Debug\Subsampling-scale-image-view.pdb
+C:\HappyPandaXDroid\Subsampling-scale-image-view\obj\Debug\Subsampling-scale-image-view.csprojResolveAssemblyReference.cache
+C:\HappyPandaXDroid\Subsampling-scale-image-view\obj\Debug\Subsampling-scale-image-view.csproj.CoreCompileInputs.cache
+C:\HappyPandaXDroid\Subsampling-scale-image-view\obj\Debug\Subsampling-scale-image-view.dll
+C:\HappyPandaXDroid\Subsampling-scale-image-view\obj\Debug\Subsampling-scale-image-view.pdb

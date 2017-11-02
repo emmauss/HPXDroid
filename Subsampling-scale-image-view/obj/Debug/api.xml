@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<api>
+<package name="com.davemorrissey.labs.subscaleview">
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="true" name="BuildConfig" static="false" visibility="public">
+<constructor deprecated="not deprecated" final="false" name="BuildConfig" static="false" type="com.davemorrissey.labs.subscaleview.BuildConfig" visibility="public">
+</constructor>
+<field deprecated="not deprecated" final="true" name="APPLICATION_ID" static="true" transient="false" type="java.lang.String" type-generic-aware="java.lang.String" value="&quot;com.davemorrissey.labs.subscaleview&quot;" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="BUILD_TYPE" static="true" transient="false" type="java.lang.String" type-generic-aware="java.lang.String" value="&quot;release&quot;" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="DEBUG" static="true" transient="false" type="boolean" type-generic-aware="boolean" value="false" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="FLAVOR" static="true" transient="false" type="java.lang.String" type-generic-aware="java.lang.String" value="&quot;&quot;" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="VERSION_CODE" static="true" transient="false" type="int" type-generic-aware="int" value="1" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="VERSION_NAME" static="true" transient="false" type="java.lang.String" type-generic-aware="java.lang.String" value="&quot;1.0&quot;" visibility="public" volatile="false">
+</field>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="true" name="ImageSource" static="false" visibility="public">
+<method abstract="false" deprecated="not deprecated" final="false" name="asset" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="true" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.String">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="bitmap" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="true" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.Bitmap">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="cachedBitmap" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="true" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.Bitmap">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="dimensions" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+<parameter name="p1" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getBitmap" native="false" return="android.graphics.Bitmap" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getResource" native="false" return="java.lang.Integer" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getSHeight" native="false" return="int" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getSRegion" native="false" return="android.graphics.Rect" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getSWidth" native="false" return="int" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getTile" native="false" return="boolean" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getUri" native="false" return="android.net.Uri" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="isCached" native="false" return="boolean" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="region" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.Rect">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="resource" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="true" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="tiling" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="boolean">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="tilingDisabled" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="tilingEnabled" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="uri" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="true" synchronized="false" visibility="public">
+<parameter name="p0" type="android.net.Uri">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="uri" native="false" return="com.davemorrissey.labs.subscaleview.ImageSource" static="true" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.String">
+</parameter>
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="ImageViewState" static="false" visibility="public">
+<implements name="java.io.Serializable" name-generic-aware="java.io.Serializable">
+</implements>
+<constructor deprecated="not deprecated" final="false" name="ImageViewState" static="false" type="com.davemorrissey.labs.subscaleview.ImageViewState" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="android.graphics.PointF">
+</parameter>
+<parameter name="p2" type="int">
+</parameter>
+</constructor>
+<method abstract="false" deprecated="not deprecated" final="false" name="getCenter" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="getOrientation" native="false" return="int" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="getScale" native="false" return="float" static="false" synchronized="false" visibility="public">
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="android.view.View" extends-generic-aware="android.view.View" final="false" name="SubsamplingScaleImageView" static="false" visibility="public">
+<constructor deprecated="not deprecated" final="false" name="SubsamplingScaleImageView" static="false" type="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView" visibility="public">
+<parameter name="p0" type="android.content.Context">
+</parameter>
+<parameter name="p1" type="android.util.AttributeSet">
+</parameter>
+</constructor>
+<constructor deprecated="not deprecated" final="false" name="SubsamplingScaleImageView" static="false" type="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView" visibility="public">
+<parameter name="p0" type="android.content.Context">
+</parameter>
+</constructor>
+<method abstract="false" deprecated="not deprecated" final="false" name="animateCenter" native="false" return="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.PointF">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="animateScale" native="false" return="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="animateScaleAndCenter" native="false" return="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="android.graphics.PointF">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getAppliedOrientation" native="false" return="int" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getCenter" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="getMaxScale" native="false" return="float" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getMinScale" native="false" return="float" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getOrientation" native="false" return="int" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getSHeight" native="false" return="int" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getSWidth" native="false" return="int" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getScale" native="false" return="float" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="getState" native="false" return="com.davemorrissey.labs.subscaleview.ImageViewState" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="hasImage" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="isImageLoaded" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="isPanEnabled" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="isQuickScaleEnabled" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="isReady" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="isZoomEnabled" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onImageLoaded" native="false" return="void" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onReady" native="false" return="void" static="false" synchronized="false" visibility="protected">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="recycle" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="resetScaleAndCenter" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setBitmapDecoderClass" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.Class&lt;? extends com.davemorrissey.labs.subscaleview.decoder.ImageDecoder&gt;">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setBitmapDecoderFactory" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.decoder.DecoderFactory&lt;? extends com.davemorrissey.labs.subscaleview.decoder.ImageDecoder&gt;">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setDebug" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="boolean">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setDoubleTapZoomDpi" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setDoubleTapZoomDuration" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setDoubleTapZoomScale" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setDoubleTapZoomStyle" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setImage" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.ImageSource">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setImage" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.ImageSource">
+</parameter>
+<parameter name="p1" type="com.davemorrissey.labs.subscaleview.ImageSource">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setImage" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.ImageSource">
+</parameter>
+<parameter name="p1" type="com.davemorrissey.labs.subscaleview.ImageSource">
+</parameter>
+<parameter name="p2" type="com.davemorrissey.labs.subscaleview.ImageViewState">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setImage" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.ImageSource">
+</parameter>
+<parameter name="p1" type="com.davemorrissey.labs.subscaleview.ImageViewState">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setMaxScale" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="setMaxTileSize" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="setMaxTileSize" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+<parameter name="p1" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setMaximumDpi" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setMinScale" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setMinimumDpi" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setMinimumScaleType" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="setMinimumTileDpi" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="setOnImageEventListener" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnImageEventListener">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="setOnStateChangedListener" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setOrientation" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setPanEnabled" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="boolean">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setPanLimit" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="setParallelLoadingEnabled" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="boolean">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setQuickScaleEnabled" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="boolean">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setRegionDecoderClass" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.Class&lt;? extends com.davemorrissey.labs.subscaleview.decoder.ImageRegionDecoder&gt;">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setRegionDecoderFactory" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.decoder.DecoderFactory&lt;? extends com.davemorrissey.labs.subscaleview.decoder.ImageRegionDecoder&gt;">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setScaleAndCenter" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="android.graphics.PointF">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setTileBackgroundColor" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="setZoomEnabled" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="boolean">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="sourceToViewCoord" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.PointF">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="sourceToViewCoord" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.PointF">
+</parameter>
+<parameter name="p1" type="android.graphics.PointF">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="sourceToViewCoord" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="float">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="sourceToViewCoord" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="float">
+</parameter>
+<parameter name="p2" type="android.graphics.PointF">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="viewToSourceCoord" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.PointF">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="viewToSourceCoord" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.PointF">
+</parameter>
+<parameter name="p1" type="android.graphics.PointF">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="viewToSourceCoord" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="float">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="true" name="viewToSourceCoord" native="false" return="android.graphics.PointF" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="float">
+</parameter>
+<parameter name="p2" type="android.graphics.PointF">
+</parameter>
+</method>
+<field deprecated="not deprecated" final="true" name="EASE_IN_OUT_QUAD" static="true" transient="false" type="int" type-generic-aware="int" value="2" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="EASE_OUT_QUAD" static="true" transient="false" type="int" type-generic-aware="int" value="1" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIENTATION_0" static="true" transient="false" type="int" type-generic-aware="int" value="0" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIENTATION_180" static="true" transient="false" type="int" type-generic-aware="int" value="180" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIENTATION_270" static="true" transient="false" type="int" type-generic-aware="int" value="270" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIENTATION_90" static="true" transient="false" type="int" type-generic-aware="int" value="90" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIENTATION_USE_EXIF" static="true" transient="false" type="int" type-generic-aware="int" value="-1" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIGIN_ANIM" static="true" transient="false" type="int" type-generic-aware="int" value="1" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIGIN_DOUBLE_TAP_ZOOM" static="true" transient="false" type="int" type-generic-aware="int" value="4" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIGIN_FLING" static="true" transient="false" type="int" type-generic-aware="int" value="3" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ORIGIN_TOUCH" static="true" transient="false" type="int" type-generic-aware="int" value="2" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="PAN_LIMIT_CENTER" static="true" transient="false" type="int" type-generic-aware="int" value="3" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="PAN_LIMIT_INSIDE" static="true" transient="false" type="int" type-generic-aware="int" value="1" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="PAN_LIMIT_OUTSIDE" static="true" transient="false" type="int" type-generic-aware="int" value="2" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="SCALE_TYPE_CENTER_CROP" static="true" transient="false" type="int" type-generic-aware="int" value="2" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="SCALE_TYPE_CENTER_INSIDE" static="true" transient="false" type="int" type-generic-aware="int" value="1" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="SCALE_TYPE_CUSTOM" static="true" transient="false" type="int" type-generic-aware="int" value="3" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="false" name="TILE_SIZE_AUTO" static="true" transient="false" type="int" type-generic-aware="int" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ZOOM_FOCUS_CENTER" static="true" transient="false" type="int" type-generic-aware="int" value="2" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ZOOM_FOCUS_CENTER_IMMEDIATE" static="true" transient="false" type="int" type-generic-aware="int" value="3" visibility="public" volatile="false">
+</field>
+<field deprecated="not deprecated" final="true" name="ZOOM_FOCUS_FIXED" static="true" transient="false" type="int" type-generic-aware="int" value="1" visibility="public" volatile="false">
+</field>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SubsamplingScaleImageView.1" static="false" visibility="">
+<implements name="android.os.Handler.Callback" name-generic-aware="android.os.Handler.Callback">
+</implements>
+<method abstract="false" deprecated="not deprecated" final="false" name="handleMessage" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.os.Message">
+</parameter>
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="android.view.GestureDetector.SimpleOnGestureListener" extends-generic-aware="android.view.GestureDetector.SimpleOnGestureListener" final="false" name="SubsamplingScaleImageView.2" static="false" visibility=""/>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SubsamplingScaleImageView.Anim" static="true" visibility=""/>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="true" name="SubsamplingScaleImageView.AnimationBuilder" static="false" visibility="public">
+<method abstract="false" deprecated="not deprecated" final="false" name="start" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="withDuration" native="false" return="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="long">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="withEasing" native="false" return="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="withInterruptible" native="false" return="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="boolean">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="withOnAnimationEventListener" native="false" return="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnAnimationEventListener">
+</parameter>
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="android.os.AsyncTask" extends-generic-aware="android.os.AsyncTask&lt;java.lang.Void, java.lang.Void, java.lang.Integer&gt;" final="false" name="SubsamplingScaleImageView.BitmapLoadTask" static="true" visibility="">
+<method abstract="false" deprecated="not deprecated" final="false" name="doInBackground" native="false" return="java.lang.Object" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="java.lang.Object[]">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="doInBackground" native="false" return="java.lang.Integer" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="java.lang.Void...">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onPostExecute" native="false" return="void" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="java.lang.Integer">
+</parameter>
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SubsamplingScaleImageView.DefaultOnAnimationEventListener" static="true" visibility="public">
+<implements name="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnAnimationEventListener" name-generic-aware="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnAnimationEventListener">
+</implements>
+<constructor deprecated="not deprecated" final="false" name="SubsamplingScaleImageView.DefaultOnAnimationEventListener" static="false" type="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.DefaultOnAnimationEventListener" visibility="public">
+</constructor>
+<method abstract="false" deprecated="not deprecated" final="false" name="onComplete" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onInterruptedByNewAnim" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onInterruptedByUser" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SubsamplingScaleImageView.DefaultOnImageEventListener" static="true" visibility="public">
+<implements name="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnImageEventListener" name-generic-aware="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnImageEventListener">
+</implements>
+<constructor deprecated="not deprecated" final="false" name="SubsamplingScaleImageView.DefaultOnImageEventListener" static="false" type="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.DefaultOnImageEventListener" visibility="public">
+</constructor>
+<method abstract="false" deprecated="not deprecated" final="false" name="onImageLoadError" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.Exception">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onImageLoaded" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onPreviewLoadError" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.Exception">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onPreviewReleased" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onReady" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onTileLoadError" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.Exception">
+</parameter>
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SubsamplingScaleImageView.DefaultOnStateChangedListener" static="true" visibility="public">
+<implements name="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener" name-generic-aware="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener">
+</implements>
+<constructor deprecated="not deprecated" final="false" name="SubsamplingScaleImageView.DefaultOnStateChangedListener" static="false" type="com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.DefaultOnStateChangedListener" visibility="public">
+</constructor>
+<method abstract="false" deprecated="not deprecated" final="false" name="onCenterChanged" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.PointF">
+</parameter>
+<parameter name="p1" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onScaleChanged" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="int">
+</parameter>
+</method>
+</class>
+<interface abstract="true" deprecated="not deprecated" final="false" name="SubsamplingScaleImageView.OnAnimationEventListener" static="true" visibility="public">
+<method abstract="true" deprecated="not deprecated" final="false" name="onComplete" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="onInterruptedByNewAnim" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="onInterruptedByUser" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+</interface>
+<interface abstract="true" deprecated="not deprecated" final="false" name="SubsamplingScaleImageView.OnImageEventListener" static="true" visibility="public">
+<method abstract="true" deprecated="not deprecated" final="false" name="onImageLoadError" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.Exception">
+</parameter>
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="onImageLoaded" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="onPreviewLoadError" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.Exception">
+</parameter>
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="onPreviewReleased" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="onReady" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="onTileLoadError" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="java.lang.Exception">
+</parameter>
+</method>
+</interface>
+<interface abstract="true" deprecated="not deprecated" final="false" name="SubsamplingScaleImageView.OnStateChangedListener" static="true" visibility="public">
+<method abstract="true" deprecated="not deprecated" final="false" name="onCenterChanged" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.PointF">
+</parameter>
+<parameter name="p1" type="int">
+</parameter>
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="onScaleChanged" native="false" return="void" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="float">
+</parameter>
+<parameter name="p1" type="int">
+</parameter>
+</method>
+</interface>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SubsamplingScaleImageView.ScaleAndTranslate" static="true" visibility=""/>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SubsamplingScaleImageView.Tile" static="true" visibility=""/>
+<class abstract="false" deprecated="not deprecated" extends="android.os.AsyncTask" extends-generic-aware="android.os.AsyncTask&lt;java.lang.Void, java.lang.Void, android.graphics.Bitmap&gt;" final="false" name="SubsamplingScaleImageView.TileLoadTask" static="true" visibility="">
+<method abstract="false" deprecated="not deprecated" final="false" name="doInBackground" native="false" return="java.lang.Object" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="java.lang.Object[]">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="doInBackground" native="false" return="android.graphics.Bitmap" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="java.lang.Void...">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onPostExecute" native="false" return="void" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="android.graphics.Bitmap">
+</parameter>
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="android.os.AsyncTask" extends-generic-aware="android.os.AsyncTask&lt;java.lang.Void, java.lang.Void, int[]&gt;" final="false" name="SubsamplingScaleImageView.TilesInitTask" static="true" visibility="">
+<method abstract="false" deprecated="not deprecated" final="false" name="doInBackground" native="false" return="java.lang.Object" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="java.lang.Object[]">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="doInBackground" native="false" return="int[]" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="java.lang.Void...">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="onPostExecute" native="false" return="void" static="false" synchronized="false" visibility="protected">
+<parameter name="p0" type="int[]">
+</parameter>
+</method>
+</class>
+</package>
+<package name="com.davemorrissey.labs.subscaleview.decoder">
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="CompatDecoderFactory" static="false" visibility="public">
+<typeParameters>
+<typeParameter name="T"/>
+</typeParameters>
+<implements name="com.davemorrissey.labs.subscaleview.decoder.DecoderFactory" name-generic-aware="com.davemorrissey.labs.subscaleview.decoder.DecoderFactory&lt;T&gt;">
+</implements>
+<constructor deprecated="not deprecated" final="false" name="CompatDecoderFactory" static="false" type="com.davemorrissey.labs.subscaleview.decoder.CompatDecoderFactory" visibility="public">
+<parameter name="p0" type="java.lang.Class&lt;? extends T&gt;">
+</parameter>
+</constructor>
+<constructor deprecated="not deprecated" final="false" name="CompatDecoderFactory" static="false" type="com.davemorrissey.labs.subscaleview.decoder.CompatDecoderFactory" visibility="public">
+<parameter name="p0" type="java.lang.Class&lt;? extends T&gt;">
+</parameter>
+<parameter name="p1" type="android.graphics.Bitmap.Config">
+</parameter>
+</constructor>
+<method abstract="false" deprecated="not deprecated" final="false" name="make" native="false" return="T" static="false" synchronized="false" visibility="public">
+<exception name="IllegalAccessException" type="java.lang.IllegalAccessException">
+</exception>
+<exception name="InstantiationException" type="java.lang.InstantiationException">
+</exception>
+<exception name="InvocationTargetException" type="java.lang.reflect.InvocationTargetException">
+</exception>
+<exception name="NoSuchMethodException" type="java.lang.NoSuchMethodException">
+</exception>
+</method>
+</class>
+<interface abstract="true" deprecated="not deprecated" final="false" name="DecoderFactory" static="false" visibility="public">
+<typeParameters>
+<typeParameter name="T"/>
+</typeParameters>
+<method abstract="true" deprecated="not deprecated" final="false" name="make" native="false" return="T" static="false" synchronized="false" visibility="public">
+<exception name="IllegalAccessException" type="java.lang.IllegalAccessException">
+</exception>
+<exception name="InstantiationException" type="java.lang.InstantiationException">
+</exception>
+<exception name="InvocationTargetException" type="java.lang.reflect.InvocationTargetException">
+</exception>
+<exception name="NoSuchMethodException" type="java.lang.NoSuchMethodException">
+</exception>
+</method>
+</interface>
+<interface abstract="true" deprecated="not deprecated" final="false" name="ImageDecoder" static="false" visibility="public">
+<method abstract="true" deprecated="not deprecated" final="false" name="decode" native="false" return="android.graphics.Bitmap" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.content.Context">
+</parameter>
+<parameter name="p1" type="android.net.Uri">
+</parameter>
+<exception name="Exception" type="java.lang.Exception">
+</exception>
+</method>
+</interface>
+<interface abstract="true" deprecated="not deprecated" final="false" name="ImageRegionDecoder" static="false" visibility="public">
+<method abstract="true" deprecated="not deprecated" final="false" name="decodeRegion" native="false" return="android.graphics.Bitmap" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.Rect">
+</parameter>
+<parameter name="p1" type="int">
+</parameter>
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="init" native="false" return="android.graphics.Point" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.content.Context">
+</parameter>
+<parameter name="p1" type="android.net.Uri">
+</parameter>
+<exception name="Exception" type="java.lang.Exception">
+</exception>
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="isReady" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="true" deprecated="not deprecated" final="false" name="recycle" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+</interface>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SkiaImageDecoder" static="false" visibility="public">
+<implements name="com.davemorrissey.labs.subscaleview.decoder.ImageDecoder" name-generic-aware="com.davemorrissey.labs.subscaleview.decoder.ImageDecoder">
+</implements>
+<constructor deprecated="not deprecated" final="false" name="SkiaImageDecoder" static="false" type="com.davemorrissey.labs.subscaleview.decoder.SkiaImageDecoder" visibility="public">
+</constructor>
+<constructor deprecated="not deprecated" final="false" name="SkiaImageDecoder" static="false" type="com.davemorrissey.labs.subscaleview.decoder.SkiaImageDecoder" visibility="public">
+<parameter name="p0" type="android.graphics.Bitmap.Config">
+</parameter>
+</constructor>
+<method abstract="false" deprecated="not deprecated" final="false" name="decode" native="false" return="android.graphics.Bitmap" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.content.Context">
+</parameter>
+<parameter name="p1" type="android.net.Uri">
+</parameter>
+<exception name="Exception" type="java.lang.Exception">
+</exception>
+</method>
+</class>
+<class abstract="false" deprecated="not deprecated" extends="java.lang.Object" extends-generic-aware="java.lang.Object" final="false" name="SkiaImageRegionDecoder" static="false" visibility="public">
+<implements name="com.davemorrissey.labs.subscaleview.decoder.ImageRegionDecoder" name-generic-aware="com.davemorrissey.labs.subscaleview.decoder.ImageRegionDecoder">
+</implements>
+<constructor deprecated="not deprecated" final="false" name="SkiaImageRegionDecoder" static="false" type="com.davemorrissey.labs.subscaleview.decoder.SkiaImageRegionDecoder" visibility="public">
+</constructor>
+<constructor deprecated="not deprecated" final="false" name="SkiaImageRegionDecoder" static="false" type="com.davemorrissey.labs.subscaleview.decoder.SkiaImageRegionDecoder" visibility="public">
+<parameter name="p0" type="android.graphics.Bitmap.Config">
+</parameter>
+</constructor>
+<method abstract="false" deprecated="not deprecated" final="false" name="decodeRegion" native="false" return="android.graphics.Bitmap" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.graphics.Rect">
+</parameter>
+<parameter name="p1" type="int">
+</parameter>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="init" native="false" return="android.graphics.Point" static="false" synchronized="false" visibility="public">
+<parameter name="p0" type="android.content.Context">
+</parameter>
+<parameter name="p1" type="android.net.Uri">
+</parameter>
+<exception name="Exception" type="java.lang.Exception">
+</exception>
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="isReady" native="false" return="boolean" static="false" synchronized="false" visibility="public">
+</method>
+<method abstract="false" deprecated="not deprecated" final="false" name="recycle" native="false" return="void" static="false" synchronized="false" visibility="public">
+</method>
+</class>
+</package>
+</api>

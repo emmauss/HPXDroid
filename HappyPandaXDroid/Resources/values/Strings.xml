@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Hello">Hello World, Click Me!</string>
+    <string name="ApplicationName">HPXDroid</string>
+  <string name="open_drawer">Open Drawer</string>
+  <string name="close_drawer">close Drawer</string>
+  <string name="no_tags">No Tags Available</string>
+  <string name="read">READ</string>
+  <string name="server_ip">HappyPandaX Server IP Address</string>
+  <string name="server_port">HappyPandaX Server Port</string>
+  <string name="webclient_port">HappyPandaX WebClient Port</string>
+  <string name="enable_debug">Enable Logging</string>
+  <string name="back_thread_title">Background Thread Limit</string>
+  <string name="loop_delay_title">Delay(in ms) between looping requests</string>
+  <string name="server_config_title">Server Configuration</string>
+  <string name="server_settings">Server Settings...</string>
+  <string name="client_config_summary">Settings used in connecting to server</string>
+  <string name="client_config_title">Client Configuration</string>
+  <string name="server_config_summary">Settings used in within the client</string>
+<string name="doujinshi" translatable="false">DOUJINSHI</string>
+    <string name="manga" translatable="false">MANGA</string>
+    <string name="artist_cg" translatable="false">ARTIST CG</string>
+    <string name="game_cg" translatable="false">GAME CG</string>
+    <string name="western" translatable="false">WESTERN</string>
+    <string name="non_h" translatable="false">NON-H</string>
+    <string name="image_set" translatable="false">IMAGE SET</string>
+    <string name="cosplay" translatable="false">COSPLAY</string>
+    <string name="asian_porn" translatable="false">ASIAN PORN</string>
+    <string name="misc" translatable="false">MISC</string>
+
+
+</resources>

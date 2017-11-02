@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:settings="http://schemas.android.com/apk/res-auto" >
+  <PreferenceCategory
+        android:key="server_config"
+        android:title="@string/server_config_title" >
+    <EditTextPreference
+        android:key="server_ip"
+        android:title="@string/server_ip"
+        android:id="@+id/ippref"
+      />
+    <EditTextPreference
+        android:key="server_port"
+        android:title="@string/server_port"
+        android:id="@+id/portpref"
+        android:inputType="number"
+        android:digits="0123456789"
+      />
+    <EditTextPreference
+        android:key="webclient_port"
+        android:title="@string/webclient_port"
+        android:id="@+id/webclientportpref"
+        android:inputType="number"
+        android:digits="0123456789"
+      />
+  </PreferenceCategory>
+  <PreferenceCategory
+    android:key="core"
+        android:title="Core">
+      <EditTextPreference
+        android:key="core.concurrent_image_tasks"
+        android:title="Concurrent Image Tasks"
+        android:defaultValue="10"
+        android:inputType="number"
+        android:digits="0123456789"
+      />
+      <SwitchPreference
+        android:key="core.debug"
+        android:title="Debug Mode"
+      />
+    <EditTextPreference
+      android:key="server.sqlite_database_timeout"
+      android:title="Database Timeout"
+      android:defaultValue="60"
+      android:inputType="number"
+      android:digits="0123456789"
+      />
+    </PreferenceCategory>
+  <PreferenceCategory
+    android:key="search"
+        android:title="Search" >
+    <SwitchPreference
+      android:key="search.descendants"
+      android:title="Descendants"
+      />
+    <SwitchPreference
+      android:key="search.match_whole_words"
+      android:title="Match Whole Words"
+      />
+    <SwitchPreference
+      android:key="search.match_all_terms"
+      android:title="Match All Terms"
+      />
+    <SwitchPreference
+      android:key="search.case_sensitive"
+      android:title="Case Sensitive"
+      />
+    <SwitchPreference
+      android:key="search.regex"
+      android:title="Regex"
+      />
+  </PreferenceCategory>
+  <PreferenceCategory
+    android:key="server"
+        android:title="Server" >
+    <EditTextPreference
+     android:key="server.server_name"
+     android:title="Server Name"
+      />
+    <EditTextPreference
+      android:key="server.allowed_clients"
+      android:title="Allowed Clients"
+      android:defaultValue="0"
+      android:inputType="number"
+      android:digits="0123456789"
+      />
+    <SwitchPreference
+      android:key="server.disable_default_user"
+      android:title="Disable Default User"
+      />
+    <EditTextPreference
+     android:key="server.secret_key"
+     android:title="Secret Key"
+      />
+    <SwitchPreference
+      android:key="server.allow_guests"
+      android:title="Allow Guests"
+      />
+    <SwitchPreference
+      android:key="server.require_auth"
+      android:title="Require Authentication"
+      />
+    <EditTextPreference
+      android:key="server.session_span"
+      android:title="Session Span"
+      android:defaultValue="60"
+      android:inputType="number"
+      android:digits="0123456789"
+      />
+  </PreferenceCategory>
+</PreferenceScreen>

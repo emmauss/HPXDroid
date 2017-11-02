@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+  <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:orientation="vertical">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+      <ImageView
+          android:id="@+id/thumb"
+          android:layout_width="@dimen/gallery_detail_thumb_width"
+          android:layout_height="@dimen/gallery_detail_thumb_height"
+          android:layout_marginTop="@dimen/keyline_margin"
+          android:layout_marginLeft="@dimen/keyline_margin"
+          android:layout_marginBottom="@dimen/keyline_margin"/>
+
+      <TextView
+          android:id="@+id/title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_toRightOf="@id/thumb"
+          android:layout_alignTop="@id/thumb"
+          android:layout_marginLeft="@dimen/keyline_margin"
+          android:layout_marginRight="@dimen/keyline_margin"
+          android:textColor="@android:color/white"
+          android:textSize="@dimen/text_little_large"
+          android:maxLines="5"
+          android:ellipsize="end"/>
+
+      <TextView
+          android:id="@+id/category"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/title"
+          android:layout_below="@id/title"
+          android:layout_marginTop="12dp"
+          android:layout_marginRight="@dimen/keyline_margin"
+          android:background="@android:color/white"
+          android:paddingLeft="8dp"
+          android:paddingRight="8dp"
+          android:paddingTop="2dp"
+          android:paddingBottom="2dp"
+          android:ellipsize="end"
+          android:singleLine="true"
+          android:textAllCaps="true"
+          android:textStyle="bold"/>
+
+      <TextView
+          android:id="@+id/status"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/category"
+          android:layout_below="@id/category"
+          android:layout_marginTop="12dp"
+          android:layout_marginLeft="@dimen/keyline_margin"
+          android:layout_marginRight="@dimen/keyline_margin"
+          android:textColor="@android:color/white"
+          android:textSize="@dimen/text_little_large"
+          android:maxLines="5"
+          android:ellipsize="end"/>
+    </RelativeLayout>
+    <android.support.v7.widget.CardView
+      xmlns:gallerycard="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/action_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+      gallerycard:contentPadding="2dp"
+        gallerycard:cardElevation="4dp"
+      android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        gallerycard:cardCornerRadius="5dp"
+        gallerycard:cardPreventCornerOverlap="false"
+        gallerycard:cardUseCompatPadding="true"
+            android:background="@drawable/card_white_no_padding_2dp">
+      <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/keyline_margin"
+            android:layout_marginRight="@dimen/keyline_margin"
+            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/read"
+            style="@style/ButtonInCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="?attr/colorAccent"
+            android:text="@string/read"/>
+      </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>
+</FrameLayout>

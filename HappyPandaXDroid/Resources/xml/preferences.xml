@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:settings="http://schemas.android.com/apk/res-auto" >
+  <PreferenceCategory
+        android:key="client_config"
+        android:title="@string/server_config_title" >
+    <Preference
+      android:key="server_section"
+        android:title="@string/server_settings"
+      android:id="@+id/server_settings"
+  
+  />
+  
+  </PreferenceCategory>
+  <PreferenceCategory
+        android:key="client_config"
+        android:title="@string/client_config_title" >
+    <EditTextPreference
+        android:key="loop_delay"
+        android:title="@string/loop_delay_title"
+        android:defaultValue="1000"
+        android:inputType="number"
+        android:digits="0123456789"
+      />
+    <CheckBoxPreference
+      android:key="enable_debugging"
+        android:title="@string/enable_debug"
+      android:defaultValue="false"
+        android:id="@+id/debugpref"/>
+    <HappyPandaXDroid.Custom_Views.OptionDialogPreference
+    android:key="cachedialog"
+    android:dialogMessage="Do you want to clear local cache?"
+    android:dialogTitle="Clear Local Cache?"
+    android:positiveButtonText="OK"
+    android:negativeButtonText="Cancel"
+/>
+  </PreferenceCategory>
+</PreferenceScreen>

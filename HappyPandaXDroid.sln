@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2002
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyPandaXDroid", "HappyPandaXDroid\HappyPandaXDroid.csproj", "{6D656543-6204-47C9-B43C-B15413E34FE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecyclerViewPager", "external\RecyclerViewPager-Xamarin\RecyclerViewPager.csproj", "{E0E86419-629C-4D1C-B108-8BD9C313C42D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefreshLayout", "external\RefreshLayout-Xamarin\RefreshLayout.csproj", "{432DC086-415C-41DB-88F3-A4995F0038E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyRecyclerView", "external\EasyRecyclerView\EasyRecyclerView.csproj", "{5132E080-85EA-40FB-B339-6B7AD746513C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HPXTest", "HPXTest\HPXTest.csproj", "{158D3FA2-A5CD-4A25-9636-CC61B09A8C4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binding_SubsamplingScaleImageView", "HappyPandaXDroid\AndroidBindings\Binding_SubsamplingScaleImageView\Binding_SubsamplingScaleImageView.csproj", "{063CBDBF-87C0-4E58-9DC2-966E7D908043}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D656543-6204-47C9-B43C-B15413E34FE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D656543-6204-47C9-B43C-B15413E34FE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D656543-6204-47C9-B43C-B15413E34FE2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6D656543-6204-47C9-B43C-B15413E34FE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D656543-6204-47C9-B43C-B15413E34FE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D656543-6204-47C9-B43C-B15413E34FE2}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E0E86419-629C-4D1C-B108-8BD9C313C42D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0E86419-629C-4D1C-B108-8BD9C313C42D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0E86419-629C-4D1C-B108-8BD9C313C42D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0E86419-629C-4D1C-B108-8BD9C313C42D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{432DC086-415C-41DB-88F3-A4995F0038E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{432DC086-415C-41DB-88F3-A4995F0038E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{432DC086-415C-41DB-88F3-A4995F0038E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{432DC086-415C-41DB-88F3-A4995F0038E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5132E080-85EA-40FB-B339-6B7AD746513C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5132E080-85EA-40FB-B339-6B7AD746513C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5132E080-85EA-40FB-B339-6B7AD746513C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5132E080-85EA-40FB-B339-6B7AD746513C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{158D3FA2-A5CD-4A25-9636-CC61B09A8C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{158D3FA2-A5CD-4A25-9636-CC61B09A8C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{158D3FA2-A5CD-4A25-9636-CC61B09A8C4A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{158D3FA2-A5CD-4A25-9636-CC61B09A8C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{158D3FA2-A5CD-4A25-9636-CC61B09A8C4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{158D3FA2-A5CD-4A25-9636-CC61B09A8C4A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{063CBDBF-87C0-4E58-9DC2-966E7D908043}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{063CBDBF-87C0-4E58-9DC2-966E7D908043}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{063CBDBF-87C0-4E58-9DC2-966E7D908043}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{063CBDBF-87C0-4E58-9DC2-966E7D908043}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36076F79-1C47-4E7E-8AC2-DF073ACEA9C6}
+	EndGlobalSection
+EndGlobal
