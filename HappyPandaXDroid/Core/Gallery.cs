@@ -76,6 +76,8 @@ namespace HappyPandaXDroid.Core
             public string[] collections;
             public string[] circles;
 
+            public int page;
+
             public TagList tags;
         }
 
@@ -196,6 +198,8 @@ namespace HappyPandaXDroid.Core
             {
 
             }
+            foreach (var g in list)
+                g.page = 0;
             CurrentList = list;
 
             /*
@@ -384,6 +388,8 @@ namespace HappyPandaXDroid.Core
                 {
 
                 }
+                foreach (var g in list)
+                    g.page = 0;
                 CurrentList = list;
 
                 /*
@@ -449,6 +455,8 @@ namespace HappyPandaXDroid.Core
             {
 
             }
+            foreach (var g in list)
+                g.page = page;
             CurrentList = list;
             return CurrentList.Count;
         }
@@ -485,6 +493,8 @@ namespace HappyPandaXDroid.Core
             {
 
             }
+            foreach (var g in list)
+                g.page = page;
             CurrentList.AddRange(list);
             return list.Count;
         }
@@ -521,10 +531,12 @@ namespace HappyPandaXDroid.Core
             {
 
             }
+            foreach (var g in list)
+                g.page = page;
             list.AddRange(CurrentList);
             CurrentList.Clear();
             CurrentList.AddRange(list);
-            return list.Count;
+            return CurrentList.Count;
         }
 
         public static async Task<int> GetCount(string query)

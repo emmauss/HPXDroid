@@ -42,7 +42,6 @@ namespace HappyPandaXDroid.Custom_Views
         RecyclerView.LayoutManager mLayoutManager;
         FrameLayout mErrorFrame;
         ImageView mErrorImage;
-        BookMarkList Bookmarks = new BookMarkList();
         TextView mErrorText;
         GalleryCardAdapter adapter;
         CountDown countDown;
@@ -103,7 +102,7 @@ namespace HappyPandaXDroid.Custom_Views
         int columns = 0;
         private void Initialize()
         {
-            countDown = new CountDown(2000, 10,IsLoading);
+            countDown = new CountDown(500, 10,this);
             listener = new PageCheckListener(this);
             logger.Info("Initializing HPContent");
             ContentView = Inflate(Context, Resource.Layout.HPContent, this);
@@ -137,8 +136,20 @@ namespace HappyPandaXDroid.Custom_Views
             mRefreshLayout.SetOnRefreshListener(new OnRefreshListener(this));
 
             mRecyclerView.SetLayoutManager(mLayoutManager);
+            mRefreshLayout.SetHeaderColorSchemeResources(new int[] {
+                Resource.Color.loading_indicator_red,
+                Resource.Color.loading_indicator_purple,
+                Resource.Color.loading_indicator_blue,
+                Resource.Color.loading_indicator_cyan,
+                Resource.Color.loading_indicator_green,
+                Resource.Color.loading_indicator_yellow });
+            mRefreshLayout.SetFooterColorSchemeResources(new int[] {
+                    Resource.Color.loading_indicator_red,
+                    Resource.Color.loading_indicator_blue,
+                    Resource.Color.loading_indicator_green,
+                    Resource.Color.loading_indicator_orange });
 
-            
+
             SetMainLoading(true);
             mpageSelector = new Custom_Views.PageSelector();
             dialogeventlistener = new DialogEventListener(this);
@@ -311,8 +322,6 @@ namespace HappyPandaXDroid.Custom_Views
 
                              });
                              GetTotalCount();
-                             Bookmarks.ResetList();
-                             listener.AddBookmark(0);
 
                          }
                      }
@@ -349,10 +358,22 @@ namespace HappyPandaXDroid.Custom_Views
             if(!IsRefreshing)
             Task.Run(async () =>
             {
-                logger.Info("Swipe Header Refreshing");
-                IsRefreshing = true;
-                await Task.Delay(10);
-                Refresh();
+                if (CurrentPage != 0)
+                {
+                    await Task.Run(() =>
+                    {
+                        SetBottomLoading(true);
+                        PreviousPage();
+                        SetBottomLoading(false);
+                    });
+                }
+                else
+                {
+                    logger.Info("Swipe Header Refreshing");
+                    IsRefreshing = true;
+                    await Task.Delay(10);
+                    Refresh();
+                }
                 IsRefreshing = false;
                 var h = new Handler(Looper.MainLooper);
                 h.Post(() =>
@@ -382,15 +403,26 @@ namespace HappyPandaXDroid.Custom_Views
 
             public void OnHeaderRefresh()
             {
+                var h = new Handler(Looper.MainLooper);
                 if (!content.IsRefreshing)
                     Task.Run(async () =>
                     {
-                        logger.Info("Swipe Header Refreshing");
                         content.IsRefreshing = true;
-                        await Task.Delay(10);
-                        content.Refresh();
+                        if (content.CurrentPage != 0)
+                        {
+                            await Task.Run(async() =>
+                            {
+                                content.PreviousPage();
+                            });
+                        }
+                        else
+                        {
+                            logger.Info("Swipe Header Refreshing");
+                            
+                            await Task.Delay(10);
+                            content.Refresh();
+                        }
                         
-                        var h = new Handler(Looper.MainLooper);
                         h.Post(() =>
                         {
                             content.mRefreshLayout.HeaderRefreshing = false;
@@ -421,7 +453,6 @@ namespace HappyPandaXDroid.Custom_Views
             Task.Run(async () =>
             {
                 logger.Info("Refreshing HPContent");
-                Bookmarks.ResetList();
                 bool success = await Core.Gallery.SearchGallery(Current_Query);
                 if (!success)
                 {
@@ -440,7 +471,6 @@ namespace HappyPandaXDroid.Custom_Views
                     SetMainLoading(false);
                     if (Core.Gallery.CurrentList.Count > 0)
                         mRecyclerView.ScrollToPosition(0);
-                    listener.AddBookmark(0);
                 });
                 GetTotalCount();
                 logger.Info("HPContent Refresh Successful");
@@ -479,13 +509,14 @@ namespace HappyPandaXDroid.Custom_Views
 
         }
 
-        int GetCachedBookmark(int page)
+        int GetFirstItem(int page)
         {
             int mark = -1;
-            var bookmark = Bookmarks.BookMarks.Find((x) => x.Page == page);
-            if (bookmark != null)
+            if (Core.Gallery.CurrentList.Count > 0)
             {
-                mark = Core.Gallery.CurrentList.FindIndex((x) => x == bookmark.Mark);
+                var item = Core.Gallery.CurrentList.FindIndex((x) => x.page == page);
+                if (item != -1)
+                    mark = item;
             }
             return mark;
         }
@@ -495,11 +526,14 @@ namespace HappyPandaXDroid.Custom_Views
 
             IsLoading = true;
             if (page == CurrentPage + 1)
+            {
+                isLoading = false;
                 return;
+            }
             var h = new Handler(Looper.MainLooper);
             logger.Info("Loading  Page " + page);
             {
-                int cachedPos = GetCachedBookmark(page-1);
+                int cachedPos = GetFirstItem(page-1);
                 if (cachedPos != -1)
                 {
                     h.Post(() =>
@@ -547,20 +581,16 @@ namespace HappyPandaXDroid.Custom_Views
                 lastindex = Core.Gallery.CurrentList.Count - 1;
                 GetTotalCount();
                 CurrentPage = page-1;
-                Bookmarks.ResetList();
-                listener.AddBookmark(0);
                 
 
             }
             h.Post(() =>
             {
-                if (CurrentPage != 0)
-                    mRefreshLayout.Enabled = false;
-                else
-                    mRefreshLayout.Enabled = true;
+                
                 SetMainLoading(false);
             });
             logger.Info("Loading Next Page Successful");
+            
             IsLoading = false;
         }
 
@@ -603,15 +633,15 @@ namespace HappyPandaXDroid.Custom_Views
 
         public class CountDown : CountDownTimer
         {
-            bool isLoading;
-            public CountDown(long ms, long interval, bool isLoading) : base(ms, interval)
+            HPContent content;
+            public CountDown(long ms, long interval, HPContent content) : base(ms, interval)
             {
-                this.isLoading = isLoading;
+                this.content = content;
             }
             
             public override void OnFinish()
             {
-                isLoading = false;
+                content.isLoading = false;
             }
 
             public override void OnTick(long millisUntilFinished)
@@ -650,7 +680,6 @@ namespace HappyPandaXDroid.Custom_Views
                     
                 });
                 CurrentPage++;
-                listener.AddBookmark(lastindex + 1);
                 lastindex = Core.Gallery.CurrentList.Count - 1;
                 
                 
@@ -679,10 +708,10 @@ namespace HappyPandaXDroid.Custom_Views
                 });
                 return;
             }
-            if (mRefreshLayout.IsFooterRefreshing() || mRefreshLayout.IsHeaderRefreshing())
+            if (mRefreshLayout.IsFooterRefreshing() )
             {
                 logger.Info("Refresh Operation already in progress");
-
+                isLoading = false;
                 return;
             }
             
@@ -691,18 +720,17 @@ namespace HappyPandaXDroid.Custom_Views
                 SetBottomLoading(true);
                 mRefreshLayout.HeaderRefreshing = true;
             });
-            int newitems = Core.Gallery.PreviousPage(CurrentPage + 1, Current_Query);
+            int newitems = Core.Gallery.PreviousPage(CurrentPage - 1, Current_Query);
             if (newitems > 0)
             {
                 h.Post(() =>
                 {
-                    adapter.NotifyItemRangeInserted(0, newitems);
+                    adapter.NotifyItemRangeInserted(0, 25);
                     
                 });
                 lastindex = Core.Gallery.CurrentList.Count - 1;
                 GetTotalCount();
                 CurrentPage--;
-                listener.AddBookmark(0);
             }
             h.Post(() =>
             {
@@ -713,44 +741,7 @@ namespace HappyPandaXDroid.Custom_Views
             isLoading = false;
         }
 
-        public class BookMarkList
-        {
-            public List<Bookmark> BookMarks { get; set; }
-
-            public class Bookmark
-            {
-                public Bookmark(Core.Gallery.GalleryItem mark,int page)
-                {
-                    this.Mark = mark;
-                    Page = page;
-                }
-                public Core.Gallery.GalleryItem Mark;
-                public int Page;
-            }
-
-            public void Add(Core.Gallery.GalleryItem gallery, int page)
-            {
-                Bookmark bookmark = new Bookmark(gallery, page);
-                BookMarks.Add(bookmark);
-            }
-
-            public int GetPage(Core.Gallery.GalleryItem gallery)
-            {
-                var bookmark = BookMarks.Find((x) => x.Mark == gallery);
-                if (bookmark != null)
-                    return bookmark.Page;
-                else
-                    return -1;
-            }
-
-            public void ResetList()
-            {
-                if (BookMarks == null)
-                    BookMarks = new List<Bookmark>();
-                BookMarks.Clear();
-            }
-        }
-
+        
 
         public class DialogEventListener : Custom_Views.PageSelector.INoticeDialogListener
         {
@@ -780,66 +771,38 @@ namespace HappyPandaXDroid.Custom_Views
         public class PageCheckListener : RecyclerView.OnScrollListener
         {
             HPContent content;
-            bool isUpdating = false;
+            bool isUpdating = false, isScrolling = false;
             public PageCheckListener(HPContent content)
             {
                 this.content = content;
             }
+
+            
+
             public override void OnScrolled(RecyclerView recyclerView, int dx, int dy)
             {
-                if (dy < 0)
-                {
-                    if (content.mRecyclerView != null)
-                    {
-                        if (content.CurrentPage > 0)
-                        {
-
-                            content.mRefreshLayout.Enabled = false;
-                           
-                        }
-                    }
-                }
-                else
-                    content.mRefreshLayout.Enabled = true;
-                if(!content.IsLoading)
-                if (!recyclerView.CanScrollVertically(-1) && content.CurrentPage!=0)
-                {
-                    content.SetBottomLoading(true);
-                    ThreadStart load = new ThreadStart(content.PreviousPage);
-                    Thread thread = new Thread(load);
-                    thread.Start();
-                }
+                
                 if (!isUpdating)
                     content.CurrentPage = GetPage();
                 base.OnScrolled(recyclerView, dx, dy);
             }
-
-            public void AddBookmark(int position)
-            {
-                isUpdating = true;
-                Core.Gallery.GalleryItem gallery = Core.Gallery.CurrentList[position];
-                if (gallery != null)
-                {
-                    content.Bookmarks.Add(gallery, content.CurrentPage);
-                }
-                isUpdating = false;
-            }
-
+            
             public int GetPage()
             {
                 int page = content.CurrentPage;
-                int firstposition = ((GridLayoutManager)content.mRecyclerView.GetLayoutManager()).FindFirstCompletelyVisibleItemPosition();
-                int lastposition = ((GridLayoutManager)content.mRecyclerView.GetLayoutManager()).FindLastCompletelyVisibleItemPosition();
-                if(content.Bookmarks!=null)
-                foreach (var bookmark in content.Bookmarks.BookMarks)
+                int firstposition = ((GridLayoutManager)content.mRecyclerView.GetLayoutManager()).FindFirstVisibleItemPosition();
+                var item = Core.Gallery.CurrentList[firstposition];
+                if (item != null)
                 {
-                    int position = Core.Gallery.CurrentList.FindIndex((x)=>x==bookmark.Mark);
-                    if (position > firstposition && position < lastposition)
-                        page = bookmark.Page;
-
+                    page = item.page;
                 }
-
                 return page;
+            }
+
+            public override void OnScrollStateChanged(RecyclerView recyclerView, int newState)
+            {
+               
+                base.OnScrollStateChanged(recyclerView, newState);
             }
         }
 
