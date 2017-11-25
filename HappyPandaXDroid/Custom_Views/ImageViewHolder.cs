@@ -73,9 +73,16 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     h.Post(() =>
                     {
-                        Glide.With(this.Context)
-                                .Load(Resource.Drawable.image_failed)
-                                .Into(img);
+                        try
+                        {
+                            Glide.With(this.Context)
+                                    .Load(Resource.Drawable.image_failed)
+                                    .Into(img);
+                        }
+                        catch (System.Exception ex)
+                        {
+
+                        }
                     });
                     return;
                 }
@@ -97,9 +104,16 @@ namespace HappyPandaXDroid.Custom_Views
                     {
                         h.Post(() =>
                         {
-                            Glide.With(this.Context)
-                                    .Load(Resource.Drawable.image_failed)
-                                    .Into(img);
+                            try
+                            {
+                                Glide.With(this.Context)
+                                        .Load(Resource.Drawable.image_failed)
+                                        .Into(img);
+                            }
+                            catch (System.Exception ex)
+                            {
+
+                            }
                         });
                         return;
                     }
@@ -133,10 +147,6 @@ namespace HappyPandaXDroid.Custom_Views
                         try
                         {
                             bool isLandscape = false;
-                           await  Task.Run( async() =>
-                            {
-                            });
-                            
                             img.SetImage(ImageSource.InvokeUri(page_path));
 
                             
@@ -169,9 +179,14 @@ namespace HappyPandaXDroid.Custom_Views
         {
 
             Loaded = true;
-            
+            try { 
                 img.Visibility = ViewStates.Visible;
-            
+            }
+            catch (System.Exception ex)
+            {
+
+            }
+
         }
 
         bool IsCached()

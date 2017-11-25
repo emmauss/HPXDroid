@@ -144,8 +144,15 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 h.Post(() =>
                 {
-                    Name.Text = Gallery.titles[0].name;
-                    img.SetImageResource(Resource.Drawable.image_failed);
+                    try
+                    {
+                        Name.Text = Gallery.titles[0].name;
+                        img.SetImageResource(Resource.Drawable.image_failed);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 });
                 return;
             }
@@ -155,8 +162,15 @@ namespace HappyPandaXDroid.Custom_Views
                 tries = 0;
                 h.Post(() =>
                 {
-                    Name.Text = Gallery.titles[0].name;
-                    img.SetImageResource(Resource.Drawable.image_failed);
+                    try
+                    {
+                        Name.Text = Gallery.titles[0].name;
+                        img.SetImageResource(Resource.Drawable.image_failed);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 });
                     return;
             }
@@ -237,9 +251,15 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     h.Post(() =>
                     {
+                        try { 
                         Glide.With(this.Context)
                                 .Load(Resource.Drawable.image_failed)
                                 .Into(img);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
                     });
                     return;
                 }

@@ -49,48 +49,56 @@ namespace HappyPandaXDroid
             InitializeViews();
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(data);
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
-            
+           
 
 
 
             ParseMeta();
             this.Window.SetType(WindowManagerTypes.KeyguardDialog);
-            string path = string.Empty ;
-            Task.Run(async () =>
+
+            ThreadStart start = new ThreadStart(() =>
             {
-                path = await Core.Gallery.GetThumb(gallery);
-                RunOnUiThread(() =>
+                Load();
+            });
+            Thread thread = new Thread(start);
+            thread.Start();
+            
+
+        }
+
+        public async void Load()
+        {
+            string path = string.Empty;
+            path = await Core.Gallery.GetThumb(gallery);
+            RunOnUiThread(() =>
+            {
+                try
                 {
-                    try
+                    if (path.Contains("fail"))
                     {
-                        if(path.Contains("fail"))
-                        {
-                            GalleryStatus.Text = "Gallery Not Found";
-                            Glide.With(this)
-                            .Load(Resource.Drawable.image_failed)
-                            .Into(ThumbView);
-                        }
-                        else
+                        GalleryStatus.Text = "Gallery Not Found";
+                        Glide.With(this)
+                        .Load(Resource.Drawable.image_failed)
+                        .Into(ThumbView);
+                    }
+                    else
                         Glide.With(this)
                             .Load(path)
                             .Into(ThumbView);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex, "\n Exception Caught In GalleryActivity.Oncreate.");
-                    }
-                });
-                gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery");
-                pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
-                ParseData();
-                RunOnUiThread(() =>
+                }
+                catch (Exception ex)
                 {
-                    mProgressView.Visibility = ViewStates.Invisible;
-                    MainView.Visibility = ViewStates.Visible;
-                });
+                    logger.Error(ex, "\n Exception Caught In GalleryActivity.Oncreate.");
+                }
             });
-            
-
+            gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery");
+            pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
+            ParseData();
+            RunOnUiThread(() =>
+            {
+                mProgressView.Visibility = ViewStates.Invisible;
+                MainView.Visibility = ViewStates.Visible;
+            });
         }
 
         protected override void OnDestroy()
@@ -403,11 +411,18 @@ namespace HappyPandaXDroid
                 bool exists = await Core.Gallery.IsSourceExist("page", page.id);
                 if (!exists)
                 {
+
                     h.Post(() =>
                     {
+                        try { 
                         Glide.With(preview.Context)
                                 .Load(Resource.Drawable.image_failed)
                                 .Into(img);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
                     });
                     return false;
                 }
@@ -433,9 +448,15 @@ namespace HappyPandaXDroid
                     {
                         h.Post(() =>
                         {
+                            try { 
                             Glide.With(preview.Context)
                                     .Load(Resource.Drawable.image_failed)
                                     .Into(img);
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
                         });
                         return false;
                     }
@@ -452,18 +473,31 @@ namespace HappyPandaXDroid
                                 }
                             h.Post(() =>
                             {
+                                try { 
                                 Glide.With(preview.Context)
                                 .Load(Resource.Drawable.image_failed)
                                 .Into(img);
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
                             });
                                 return false;
 
                             }
                         h.Post(() =>
                         {
-                            Glide.With(preview.Context)
-                            .Load(Resource.Drawable.image_failed)
-                            .Into(img);
+                            try
+                            {
+                                Glide.With(preview.Context)
+                                .Load(Resource.Drawable.image_failed)
+                                .Into(img);
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
                         });
                         return false;
                         }

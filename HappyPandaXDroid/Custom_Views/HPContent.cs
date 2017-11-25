@@ -28,6 +28,7 @@ namespace HappyPandaXDroid.Custom_Views
     {
         View ContentView;
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        public List<Core.Gallery.GalleryItem> CurrentList = new List<Core.Gallery.GalleryItem>();
         public Custom_Views.PageSelector mpageSelector;
         EasyRecyclerView.EasyRecyclerView mRecyclerView;
         bool IsRefreshing = false;
@@ -107,7 +108,7 @@ namespace HappyPandaXDroid.Custom_Views
             logger.Info("Initializing HPContent");
             ContentView = Inflate(Context, Resource.Layout.HPContent, this);
             mRecyclerView = FindViewById<EasyRecyclerView.EasyRecyclerView>(Resource.Id.recyclerView);
-            adapter = new GalleryCardAdapter(this.Context);
+            adapter = new GalleryCardAdapter(this.Context,this);
             mRecyclerView.SetOnItemClickListener(new RecyclerViewClickListener());
             mRefreshLayout = FindViewById<RefreshLayout.RefreshLayout>(Resource.Id.refresh_layout);
             mProgressView = FindViewById<ProgressView.MaterialProgressBar>(Resource.Id.progress_view);
@@ -307,7 +308,7 @@ namespace HappyPandaXDroid.Custom_Views
                  tries = 0;
                  if (Core.Net.Connected)
                  {
-                     if (Core.Net.session_id != string.Empty && Core.Net.session_id != null)
+                     if (Core.App.Server.Info.session != string.Empty && Core.App.Server.Info.session != null)
                      {
                          {
                              logger.Info("Getting Library");
@@ -317,7 +318,7 @@ namespace HappyPandaXDroid.Custom_Views
                              {
                                  SetMainLoading(false);
                                  adapter.ResetList();
-                                 lastindex = Core.Gallery.CurrentList.Count - 1;
+                                 lastindex = CurrentList.Count - 1;
                                  SetMainLoading(false);
 
                              });
@@ -433,9 +434,10 @@ namespace HappyPandaXDroid.Custom_Views
             }
         }
 
-        public void GetLib()
+        public async void GetLib()
         {
-            Core.Gallery.GetLibrary();
+            CurrentList.Clear();
+            CurrentList.AddRange(await Core.Gallery.GetPage(0));
         }
 
         public async void GetTotalCount()
@@ -450,11 +452,12 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 SetMainLoading(true);
             });
-            Task.Run(async () =>
+            await Task.Run(async () =>
             {
                 logger.Info("Refreshing HPContent");
-                bool success = await Core.Gallery.SearchGallery(Current_Query);
-                if (!success)
+                CurrentList.Clear();
+                CurrentList.AddRange( await Core.Gallery.GetPage(0,Current_Query));
+                if (CurrentList==null || CurrentList.Count<1)
                 {
                     h.Post(() =>
                     {
@@ -469,7 +472,7 @@ namespace HappyPandaXDroid.Custom_Views
                     adapter.NotifyDataSetChanged();
                     adapter.ResetList();
                     SetMainLoading(false);
-                    if (Core.Gallery.CurrentList.Count > 0)
+                    if (CurrentList.Count > 0)
                         mRecyclerView.ScrollToPosition(0);
                 });
                 GetTotalCount();
@@ -512,16 +515,16 @@ namespace HappyPandaXDroid.Custom_Views
         int GetFirstItem(int page)
         {
             int mark = -1;
-            if (Core.Gallery.CurrentList.Count > 0)
+            if (CurrentList.Count > 0)
             {
-                var item = Core.Gallery.CurrentList.FindIndex((x) => x.page == page);
+                var item = CurrentList.FindIndex((x) => x.page == page);
                 if (item != -1)
                     mark = item;
             }
             return mark;
         }
 
-        public void JumpTo(int page)
+        public async void JumpTo(int page)
         {
 
             IsLoading = true;
@@ -568,17 +571,18 @@ namespace HappyPandaXDroid.Custom_Views
                 IsLoading = false;
                 return;
             }
-            int newitems = Core.Gallery.JumpToPage(page-1, Current_Query);
-            if (newitems > 0)
+            CurrentList.Clear();
+            CurrentList.AddRange(await Core.Gallery.GetPage(page-1, Current_Query));
+            if (CurrentList.Count > 0)
             {
                 h.Post(() =>
                 {
                     adapter.ResetList() ;
-                    if (Core.Gallery.CurrentList.Count > 0)
+                    if (CurrentList.Count > 0)
                         mRecyclerView.ScrollToPosition(0);
 
                 });
-                lastindex = Core.Gallery.CurrentList.Count - 1;
+                lastindex = CurrentList.Count - 1;
                 GetTotalCount();
                 CurrentPage = page-1;
                 
@@ -651,7 +655,7 @@ namespace HappyPandaXDroid.Custom_Views
         }
 
 
-        public void NextPage()
+        public async void NextPage()
         {
             isLoading = true;
             logger.Info("Loading Next Page");
@@ -671,31 +675,32 @@ namespace HappyPandaXDroid.Custom_Views
                 });
                 return;
             }
-            int newitems = Core.Gallery.NextPage(CurrentPage + 1, Current_Query);
-            if (newitems > 0)
+            int lastin = CurrentList.Count - 1;
+            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage + 1, Current_Query));
+            if (CurrentList.Count > 0)
             {
                 h.Post(() =>
                 {
-                    adapter.NotifyItemRangeInserted(lastindex+1, newitems);
+                    adapter.NotifyItemRangeInserted(lastin+1, CurrentList.Count- (lastin+1));
                     
+                    mRefreshLayout.HeaderRefreshing = false;
+                    mRefreshLayout.FooterRefreshing = false;
+                    isLoading = false;
+                    SetBottomLoading(false);
+                    mRecyclerView.RefreshDrawableState();
+
                 });
                 CurrentPage++;
-                lastindex = Core.Gallery.CurrentList.Count - 1;
+                lastindex = CurrentList.Count - 1;
                 
                 
 
             }
-            h.Post(() =>
-            {
-                mRefreshLayout.HeaderRefreshing = false;
-                mRefreshLayout.FooterRefreshing = false;
-                SetBottomLoading(false);
-            });
             logger.Info("Loading Next Page Successful");
-            isLoading = false;
+            
         }
 
-        public void PreviousPage()
+        public async void PreviousPage()
         {
             isLoading = true;
             logger.Info("Loading Previous Page");
@@ -720,25 +725,26 @@ namespace HappyPandaXDroid.Custom_Views
                 SetBottomLoading(true);
                 mRefreshLayout.HeaderRefreshing = true;
             });
-            int newitems = Core.Gallery.PreviousPage(CurrentPage - 1, Current_Query);
+            var oldlist = new List<Core.Gallery.GalleryItem>(CurrentList);
+            CurrentList.Clear();
+            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage - 1, Current_Query));
+            int newitems = CurrentList.Count;
+            CurrentList.AddRange(oldlist);
             if (newitems > 0)
             {
                 h.Post(() =>
                 {
                     adapter.NotifyItemRangeInserted(0, 25);
-                    
+                    mRefreshLayout.HeaderRefreshing = false;
+                    isLoading = false;
+
                 });
-                lastindex = Core.Gallery.CurrentList.Count - 1;
-                GetTotalCount();
+                lastindex = CurrentList.Count - 1;
                 CurrentPage--;
             }
-            h.Post(() =>
-            {
-                mRefreshLayout.HeaderRefreshing = false;
-            });
             SetBottomLoading(false);
             logger.Info("Loading Previous Page Successful");
-            isLoading = false;
+            
         }
 
         
@@ -791,7 +797,7 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 int page = content.CurrentPage;
                 int firstposition = ((GridLayoutManager)content.mRecyclerView.GetLayoutManager()).FindFirstVisibleItemPosition();
-                var item = Core.Gallery.CurrentList[firstposition];
+                var item = content.CurrentList[firstposition];
                 if (item != null)
                 {
                     page = item.page;
@@ -811,17 +817,19 @@ namespace HappyPandaXDroid.Custom_Views
         {
             private static Logger logger = LogManager.GetCurrentClassLogger();
             public EventHandler<int> ItemClick;
-
+            HPContent content;
             void OnClick(int position)
             {
                 ItemClick?.Invoke(this, position);
             }
 
-            public List<Core.Gallery.GalleryItem> mdata = Core.Gallery.CurrentList;
+            public List<Core.Gallery.GalleryItem> mdata;
             Android.Content.Context mcontext;
-            public GalleryCardAdapter(Context context)
+            public GalleryCardAdapter(Context context, HPContent content)
             {
                 mcontext = context;
+                this.content = content;
+                mdata = content.CurrentList;
             }
 
             public override int ItemCount
@@ -831,7 +839,7 @@ namespace HappyPandaXDroid.Custom_Views
 
             public void ResetList()
             {
-                mdata = Core.Gallery.CurrentList;
+                mdata = content.CurrentList;
                 this.NotifyDataSetChanged();
             }
 

@@ -10,12 +10,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using NLog;
 
 namespace HappyPandaXDroid.Core
@@ -23,6 +17,7 @@ namespace HappyPandaXDroid.Core
     class Net
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        public static string session_id = string.Empty;
         public static bool Connected = false;
         
 
@@ -73,7 +68,7 @@ namespace HappyPandaXDroid.Core
         static string Connect(Client cli)
         {
             var listener = cli.client;
-            if (App.Server.Info.session == null || App.Server.Info.session == string.Empty)
+            if (session_id == null || session_id == string.Empty)
             {
                 try
                 {
@@ -92,7 +87,7 @@ namespace HappyPandaXDroid.Core
                         Array.Clear(res, 0, res.Length);
                     }
                     payload = payload.Replace("<EOF>", "");
-                    App.Server.Info = JSON.Serializer.SimpleSerializer.Deserialize<App.Server.ServerInfo>(payload);
+                    App.Server.info = JSON.Serializer.SimpleSerializer.Deserialize<App.Server.ServerInfo>(payload);
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     JSON.API.PushKey(ref main, "name", "test");
                     JSON.API.PushKey(ref main, "session", "");
@@ -126,7 +121,7 @@ namespace HappyPandaXDroid.Core
                         payload = payload.Replace("<EOF>", "");
                         Dictionary<string, string> reply =
                             JSON.Serializer.SimpleSerializer.Deserialize<Dictionary<string, string>>(payload);
-                        success = reply.TryGetValue("session", out App.Server.Info.session);
+                        success = reply.TryGetValue("session", out session_id);
                     }
                     cli.initialise = true;
                     return response;
@@ -167,9 +162,9 @@ namespace HappyPandaXDroid.Core
                 listener.client.GetStream().WriteTimeout = 30000;
                 try
                 {
-                    if (App.Server.Info.session == null || App.Server.Info.session == string.Empty || client==null | !client.client.Connected)
+                    if (session_id == null || session_id == string.Empty || client==null | !client.client.Connected)
                         Connect();
-                    if (App.Server.Info.session != null && App.Server.Info.session != string.Empty && client!=null & client.client.Connected)
+                    if (session_id != null && session_id != string.Empty && client!=null & client.client.Connected)
                     {
                         var stream = listener.client.GetStream();
                         byte[] req = Encoding.UTF8.GetBytes(payload + "<EOF>");
