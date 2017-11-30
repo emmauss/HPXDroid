@@ -377,13 +377,13 @@ namespace HappyPandaXDroid
 
         public bool OnQueryTextSubmit(string query)
         {
-            if (query != string.Empty)
-            {
-                SupportActionBar.InvalidateOptionsMenu();
-                SupportActionBar.Title = query;
-                logger.Info("Search query submit , query ={0}", query);
-                ContentView.Current_Query = query;
-            }
+
+            SupportActionBar.InvalidateOptionsMenu();
+            SupportActionBar.Title = query;
+            logger.Info("Search query submit , query ={0}", query);
+            ContentView.Current_Query = query;
+            searchView.SetQuery(query, false);
+
             return false;
         }
 
