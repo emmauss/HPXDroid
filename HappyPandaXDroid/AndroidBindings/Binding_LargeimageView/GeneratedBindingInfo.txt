@@ -1,0 +1,14 @@
+Binding for:
+com.github.seven332:largeimageview:0.1.0
+
+Dependencies:
+
+largeimageview-0.1.0.aar,    Path=C:\Users\Emmanuel Hansen\.gradle\caches\modules-2\files-2.1\com.github.seven332\largeimageview\0.1.0\e350e2246ed73d08f41fc3e1e5ff9ec0345295eb\largeimageview-0.1.0.aar
+	support-annotations-24.2.1.jar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\24.2.1\support-annotations-24.2.1.jar
+	support-compat-24.2.1.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-compat\24.2.1\support-compat-24.2.1.aar
+	support-core-ui-24.2.1.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-core-ui\24.2.1\support-core-ui-24.2.1.aar
+	support-core-utils-24.2.1.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-core-utils\24.2.1\support-core-utils-24.2.1.aar
+	support-fragment-24.2.1.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-fragment\24.2.1\support-fragment-24.2.1.aar
+	support-media-compat-24.2.1.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-media-compat\24.2.1\support-media-compat-24.2.1.aar
+	support-v4-24.2.1.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-v4\24.2.1\support-v4-24.2.1.aar
+	streampipe-0.1.0.aar,    Path=C:\Users\Emmanuel Hansen\.gradle\caches\modules-2\files-2.1\com.github.seven332\streampipe\0.1.0\24c29c89a5f57b1b22a8c4735cc7956305c8cd89\streampipe-0.1.0.aar

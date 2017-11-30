@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,8 +54,27 @@ namespace HappyPandaXDroid.Custom_Views
             view = Inflate(this.Context, Resource.Layout.ImageLayout, this);
             img = FindViewById<SubsamplingScaleImageView>(Resource.Id.image);
             img.Visibility = ViewStates.Visible;
+            img.ImageLoadError += Img_ImageLoadError;
         }
 
+        private void Img_ImageLoadError(object sender, SubsamplingScaleImageView.ImageLoadErrorEventArgs e)
+        {
+            if (e.P0.Message.Contains("Image format not supported"))
+            {
+                Task.Run(() =>
+                {
+                    File.Delete(page_path);
+                    Refresh();
+                });
+            }
+        }
+
+        public void Release()
+        {
+            
+            img.Recycle();
+            System.GC.Collect();
+        }
         public void Refresh()
         {
             if (Page != null)

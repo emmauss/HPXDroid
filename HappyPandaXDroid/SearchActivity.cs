@@ -210,6 +210,8 @@ namespace HappyPandaXDroid
         protected override void OnDestroy()
         {
             ContentView = null;
+            navDrawer.RemoveAllViews();
+            
             base.OnDestroy();
 
         }

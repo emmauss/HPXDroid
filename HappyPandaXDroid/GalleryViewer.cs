@@ -102,6 +102,21 @@ namespace HappyPandaXDroid
 
         protected override void OnDestroy()
         {
+            adapter.PageList.Clear();
+            adapter.NotifyDataSetChanged();
+            adapter = null;
+            galleryPager.RemoveAllViews();
+            galleryPager = null;
+            seekbar = null;
+            lay.RemoveAllViews();
+            toolbar = null;
+            options = null;
+            if (PageList != null)
+            {
+                PageList.Clear();
+                page_number = null;
+            }
+            System.GC.Collect();
             logger.Info("Closing Gallery Viewer");
             base.OnDestroy();
         }
@@ -460,7 +475,15 @@ namespace HappyPandaXDroid
             }
 
 
-            
+            public override void OnViewRecycled(Java.Lang.Object holder)
+            {
+                var hold = holder as ImageViewHolder;
+                if (hold != null)
+                {
+                    hold.imageView.Release();
+                }
+                base.OnViewRecycled(holder);
+            }
 
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {

@@ -66,6 +66,9 @@ namespace HappyPandaXDroid
 
         }
 
+
+        
+
         public async void Load()
         {
             string path = string.Empty;
@@ -104,6 +107,37 @@ namespace HappyPandaXDroid
         protected override void OnDestroy()
         {
             IsRunning = false;
+            mProgressView = null;
+            MainView.RemoveAllViews();
+            MainView = null;
+            title = null;
+            category = null;
+            read_action = null;
+            language = null;
+            pages = null;
+            time_posted = null;
+            no_tags = null;
+            scrollview.RemoveAllViews();
+            scrollview = null;
+            adapter.mdata.Clear();
+            adapter.NotifyDataSetChanged();
+            adapter = null;
+            grid_layout.RemoveAllViews();
+            grid_layout = null;
+            TagLayout.RemoveAllViews();
+            TagLayout = null;
+            InfoLayout.RemoveAllViews();
+            InfoLayout = null;
+            ActionCard.RemoveAllViews();
+            ActionCard = null;
+            GalleryStatus = null;
+            ThumbView.SetImageDrawable(null);
+            ThumbView = null;
+            if (pagelist != null) {
+                pagelist.Clear();
+                pagelist = null;
+                    }
+            System.GC.Collect();
             base.OnDestroy();
         }
 
@@ -528,6 +562,8 @@ namespace HappyPandaXDroid
             }
             
         }
+
+        
 
         class PreviewClickListener : Java.Lang.Object, View.IOnClickListener
         {
