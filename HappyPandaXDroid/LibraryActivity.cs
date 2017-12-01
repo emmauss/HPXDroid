@@ -26,8 +26,8 @@ using Android.Content.Res;
 
 namespace HappyPandaXDroid
 {
-    [Activity(Label = "SearchActivity", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class SearchActivity : AppCompatActivity, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
+    [Activity(Label = "LibraryActivity", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
+    public class LibraryActivity : AppCompatActivity, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
     {
 
         //public List<string> lists = new List<string>();
@@ -36,7 +36,6 @@ namespace HappyPandaXDroid
         bool RootActivity = true;
         public Custom_Views.HPContent ContentView;
         DrawerLayout navDrawer;
-        public bool SwitchedToSettings = false;
         Clans.Fab.FloatingActionMenu fam;
 
         AppBarLayout appBarLayout;
@@ -45,6 +44,7 @@ namespace HappyPandaXDroid
         private static Logger logger = LogManager.GetCurrentClassLogger();
         Clans.Fab.FloatingActionButton mRefreshFab;
         Clans.Fab.FloatingActionButton mJumpFab;
+        bool connected = false;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -54,6 +54,7 @@ namespace HappyPandaXDroid
 
             //init logger
             string data = Intent.GetStringExtra("query");
+            connected = Intent.GetBooleanExtra("connected",false);
             logger.Info("Main Actitvity Created");
             //LogManager.ReconfigExistingLoggers();
             Android.Support.V7.App.AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
@@ -63,7 +64,7 @@ namespace HappyPandaXDroid
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = data;
             ContentView = FindViewById<Custom_Views.HPContent>(Resource.Id.content_view);
-            activityName = "SearchActivity " + activityId;
+            activityName = "LibraryActivity " + activityId;
             ContentView.activityId = activityId;
             ContentView.activityName = activityName;
             appBarLayout = FindViewById<AppBarLayout>(Resource.Id.appbar);
@@ -128,24 +129,7 @@ namespace HappyPandaXDroid
 
         public override bool OnGenericMotionEvent(MotionEvent e)
         {
-            /*if(e.Source == InputSourceType.Touchscreen)
-            {
-                switch (e.Action)
-                {
-                    case MotionEventActions.PointerIdShift:
-                        if (e.GetAxisValue(Axis.Vscroll) < 0.0f)
-                        {
-                            fam.HideMenuButton(true);
-                            SupportActionBar.Hide();
-                        }
-                        else
-                        {
-                            fam.ShowMenuButton(true);
-                            SupportActionBar.Show();
-                        }
-                        break;
-                }
-            }*/
+           
             return base.OnGenericMotionEvent(e);
         }
 
@@ -182,9 +166,9 @@ namespace HappyPandaXDroid
 
         class FABClickListener : Java.Lang.Object, View.IOnClickListener
         {
-            SearchActivity main;
+            LibraryActivity main;
             private static Logger logger = LogManager.GetCurrentClassLogger();
-            public FABClickListener(SearchActivity main)
+            public FABClickListener(LibraryActivity main)
             {
                 this.main = main;
             }
@@ -220,15 +204,39 @@ namespace HappyPandaXDroid
         {
 
             base.OnResume();
-            if (SwitchedToSettings)
-                SwitchedToSettings = false;
-            else
-                return;
             if (Core.App.Settings.Refresh)
+            {
                 Core.App.Settings.Refresh = false;
-            else
-                return;
-            try
+
+                try
+                {
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(10);
+                        logger.Info("Refreshing library");
+                        RunOnUiThread(() =>
+                        {
+                            ContentView.SetMainLoading(true);
+                        });
+                        if (!Core.Net.Connect())
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                ContentView.SetMainLoading(false);
+                                ContentView.SetError(true);
+                            });
+                            return;
+                        }
+                        ContentView.Refresh();
+                        logger.Info("Refresh Done");
+                    });
+                }
+                catch (System.Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In MainActivity.OnResume");
+                }
+            }
+            else if (connected)
             {
                 Task.Run(async () =>
                 {
@@ -238,23 +246,11 @@ namespace HappyPandaXDroid
                     {
                         ContentView.SetMainLoading(true);
                     });
-                    if (!Core.Net.Connect())
-                    {
-                        RunOnUiThread(() =>
-                        {
-                            ContentView.SetMainLoading(false);
-                            ContentView.SetError(true);
-                        });
-                        return;
-                    }
                     ContentView.Refresh();
                     logger.Info("Refresh Done");
                 });
             }
-            catch (System.Exception ex)
-            {
-                logger.Error(ex, "\n Exception Caught In MainActivity.OnResume");
-            }
+            connected = false;
         }
 
         private void NavView_NavigationItemSelected(object sender, NavigationView.NavigationItemSelectedEventArgs e)
@@ -266,7 +262,6 @@ namespace HappyPandaXDroid
             {
                 case Resource.Id.action_setting:
                     intent = new Android.Content.Intent(this, typeof(SettingsActivity));
-                    SwitchedToSettings = true;
                     logger.Info("Settings Openned");
                     StartActivity(intent);
                     break;

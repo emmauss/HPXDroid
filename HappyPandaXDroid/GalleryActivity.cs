@@ -249,6 +249,13 @@ namespace HappyPandaXDroid
 
         protected override void OnPause()
         {
+           
+            base.OnPause();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
             Glide.With(this).Clear(ThumbView);
             cachedlist = new List<Core.Gallery.Page>(pagelist);
             pagelist.Clear();
@@ -257,7 +264,7 @@ namespace HappyPandaXDroid
             {
                 GC.Collect();
             });
-            base.OnPause();
+            
         }
 
 
@@ -317,7 +324,7 @@ namespace HappyPandaXDroid
             TextView tag_item = sender as TextView;
             if (tag_item == null)
                 return;
-            Android.Content.Intent intent = new Android.Content.Intent(this, typeof(SearchActivity));
+            Android.Content.Intent intent = new Android.Content.Intent(this, typeof(LibraryActivity));
             intent.PutExtra("query", (string)tag_item.Tag);
             logger.Info("search init :" + (string)tag_item);
             StartActivity(intent); 

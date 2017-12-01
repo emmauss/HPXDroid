@@ -185,7 +185,7 @@
     <Compile Include="GalleryActivity.cs" />
     <Compile Include="GalleryViewer.cs" />
     <Compile Include="Helpers\Settings.cs" />
-    <Compile Include="SearchActivity.cs" />
+    <Compile Include="LibraryActivity.cs" />
     <Compile Include="ServerSettingsActivity.cs" />
     <Compile Include="SettingsActivity.cs" />
     <Compile Include="Core\App.cs" />

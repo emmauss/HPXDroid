@@ -26,6 +26,26 @@ namespace HappyPandaXDroid.Core
         public static bool Connected = false;
         
 
+        public static bool IsServerReachable()
+        {
+            bool res = false;
+            try
+            {
+                var pinger = new System.Net.NetworkInformation.Ping();
+
+                if (pinger.Send(App.Settings.Server_IP).Status == System.Net.NetworkInformation.IPStatus.Success)
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return res;
+        }
+
         public class Client
         {
             public bool InUse = false;
