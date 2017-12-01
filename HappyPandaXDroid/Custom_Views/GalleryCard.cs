@@ -121,11 +121,13 @@ namespace HappyPandaXDroid.Custom_Views
             this.Touch += GalleryCard_Touch;*/
         }
 
-        public void Clear()
+        public void Recycle()
         {
             text.Text = string.Empty;
             text2.Text = string.Empty;
-            img.SetImageDrawable(null);
+            Gallery = null;
+            Glide.With(Context).Clear(img);
+            GC.Collect();
         }
 
         public async void Refresh()

@@ -27,6 +27,7 @@ namespace HappyPandaXDroid
             language, pages, time_posted, no_tags;
         public LinearLayout TagLayout, InfoLayout;
         CardView ActionCard;
+        public string thumb_path;
         public ImageView ThumbView;
         Core.Gallery.GalleryItem gallery;
         RecyclerView grid_layout;
@@ -34,11 +35,12 @@ namespace HappyPandaXDroid
         LinearLayout MainView;
         TextView GalleryStatus;
         PreviewAdapter adapter;
+        bool loaded = false;
         ScrollView scrollview;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
         public int activityId;
-        List<Core.Gallery.Page> pagelist;
+        List<Core.Gallery.Page> pagelist,cachedlist;
         //public List<Tuple<Task,CancellationTokenSource>> tasklist = new List<Tuple<Task, CancellationTokenSource>>();
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -71,13 +73,13 @@ namespace HappyPandaXDroid
 
         public async void Load()
         {
-            string path = string.Empty;
-            path = await Core.Gallery.GetThumb(gallery);
+            thumb_path = string.Empty;
+            thumb_path = await Core.Gallery.GetThumb(gallery);
             RunOnUiThread(() =>
             {
                 try
                 {
-                    if (path.Contains("fail"))
+                    if (thumb_path.Contains("fail"))
                     {
                         GalleryStatus.Text = "Gallery Not Found";
                         Glide.With(this)
@@ -86,7 +88,7 @@ namespace HappyPandaXDroid
                     }
                     else
                         Glide.With(this)
-                            .Load(path)
+                            .Load(thumb_path)
                             .Into(ThumbView);
                 }
                 catch (Exception ex)
@@ -102,6 +104,7 @@ namespace HappyPandaXDroid
                 mProgressView.Visibility = ViewStates.Invisible;
                 MainView.Visibility = ViewStates.Visible;
             });
+            loaded = true;
         }
 
         protected override void OnDestroy()
@@ -129,6 +132,7 @@ namespace HappyPandaXDroid
             InfoLayout.RemoveAllViews();
             InfoLayout = null;
             ActionCard.RemoveAllViews();
+            ActionCard.Click -= ActionCard_Click;
             ActionCard = null;
             GalleryStatus = null;
             ThumbView.SetImageDrawable(null);
@@ -144,6 +148,31 @@ namespace HappyPandaXDroid
         protected override void OnResume()
         {
             base.OnResume();
+            if (loaded)
+            {
+                try
+                {
+                    if (thumb_path.Contains("fail"))
+                    {
+                        GalleryStatus.Text = "Gallery Not Found";
+                        Glide.With(this)
+                        .Load(Resource.Drawable.image_failed)
+                        .Into(ThumbView);
+                    }
+                    else
+                        Glide.With(this)
+                            .Load(thumb_path)
+                            .Into(ThumbView);
+                }
+                catch (Exception ex)
+                {
+
+                }
+                pagelist.AddRange(cachedlist);
+                cachedlist.Clear();
+                adapter.NotifyDataSetChanged();
+            }           
+            
         }
 
         void InitializeViews()
@@ -220,6 +249,14 @@ namespace HappyPandaXDroid
 
         protected override void OnPause()
         {
+            Glide.With(this).Clear(ThumbView);
+            cachedlist = new List<Core.Gallery.Page>(pagelist);
+            pagelist.Clear();
+            adapter.NotifyDataSetChanged();
+            Task.Run(() =>
+            {
+                GC.Collect();
+            });
             base.OnPause();
         }
 

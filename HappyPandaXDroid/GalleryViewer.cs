@@ -105,8 +105,12 @@ namespace HappyPandaXDroid
             adapter.PageList.Clear();
             adapter.NotifyDataSetChanged();
             adapter = null;
+            galleryPager.ClearOnScrollListeners();
+            galleryPager.ClearOnPageChangedListeners();
             galleryPager.RemoveAllViews();
+
             galleryPager = null;
+            
             seekbar = null;
             lay.RemoveAllViews();
             toolbar = null;
@@ -203,7 +207,7 @@ namespace HappyPandaXDroid
 
         public class ExtraLayoutManager : LinearLayoutManager
         {
-            private static readonly int DEFAULT_EXTRA_LAYOUT_SPACE = 800;
+            private static readonly int DEFAULT_EXTRA_LAYOUT_SPACE = 600;
             private int extraLayoutSpace = -1;
             private Context context;
             

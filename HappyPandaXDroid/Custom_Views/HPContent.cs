@@ -843,7 +843,16 @@ namespace HappyPandaXDroid.Custom_Views
                 this.NotifyDataSetChanged();
             }
 
-            
+            public override void OnViewRecycled(Java.Lang.Object holder)
+            {
+                var hold = holder as GalleryCardHolder;
+                if (hold != null)
+                {
+                    hold.gcard.Recycle();
+                }
+                base.OnViewRecycled(holder);
+            }
+
 
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
@@ -882,7 +891,7 @@ namespace HappyPandaXDroid.Custom_Views
             public void Bind(Core.Gallery.GalleryItem item)
             {
                 gcard.Gallery = item;
-                gcard.Clear();
+                gcard.Recycle();
                 gcard.Refresh();
             }
 
