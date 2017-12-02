@@ -20,7 +20,7 @@ namespace HappyPandaXDroid.Custom_Views
         public int PageSelected = 0;
         public EditText PageInput;
         public Android.Support.Design.Widget.TextInputLayout FloatingTextLayout;
-        MainActivity mactivity;
+        LibraryActivity mactivity;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public override Dialog OnCreateDialog(Bundle savedInstanceState)
         {
@@ -28,7 +28,7 @@ namespace HappyPandaXDroid.Custom_Views
 
             builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));
             builder.SetNegativeButton("Cancel", new ClickListener(mDialogListener, this));
-            MainActivity mactivity = (MainActivity)Activity;
+            mactivity = (LibraryActivity)Activity;
 
             LayoutInflater inflater = mactivity.LayoutInflater;
             View pageseletor = inflater.Inflate(Resource.Layout.PageSelector,null);
@@ -88,7 +88,7 @@ namespace HappyPandaXDroid.Custom_Views
         public override void OnResume()
         {
             base.OnResume();
-            mactivity = (MainActivity)Activity;
+            mactivity = (LibraryActivity)Activity;
             PageCount = (int)Math.Round((double)mactivity.ContentView.count / 25);
             FloatingTextLayout.Hint = mactivity.ContentView.CurrentPage + 1 + " of " + PageCount;
         }
@@ -100,7 +100,7 @@ namespace HappyPandaXDroid.Custom_Views
             try
             {
                 // Instantiate the NoticeDialogListener so we can send events to the host
-                mDialogListener = ((MainActivity)activity).ContentView.dialogeventlistener;
+                mDialogListener = ((LibraryActivity)activity).ContentView.dialogeventlistener;
             }
             catch (Java.Lang.ClassCastException e)
             {

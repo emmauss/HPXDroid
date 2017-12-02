@@ -20,7 +20,6 @@
             android:layout_height="match_parent">
             <ImageView
                 android:layout_width="72dp"
-                android:src="@drawable/loading2"
                 android:layout_height="100dp"
                 android:id="@+id/imageView"
                 android:scaleType="centerCrop" />

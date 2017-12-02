@@ -22,8 +22,7 @@ namespace HappyPandaXDroid
 {
     [Activity(Label = "HPXDroid", MainLauncher = true, Icon = "@drawable/icon",
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation 
-        | Android.Content.PM.ConfigChanges.ScreenSize,
-        Theme = "@android:style/Theme.NoDisplay")]
+        | Android.Content.PM.ConfigChanges.ScreenSize)]
     public class MainActivity : AppCompatActivity
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -109,7 +108,13 @@ namespace HappyPandaXDroid
         {
             logger.Fatal(e.Exception, "Fatal Exception Thrown : "+ e.Exception.Message + System.Environment.NewLine + e.Exception.StackTrace);
         }
-        
+
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            Finish();
+        }
+
     }
 
     

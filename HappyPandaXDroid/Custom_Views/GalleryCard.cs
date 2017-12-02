@@ -114,30 +114,47 @@ namespace HappyPandaXDroid.Custom_Views
             
                 Label.Visibility = ViewStates.Gone;
             
-            //t.Text = "hey";
             Clickable = true;
-            /*this.Click += GalleryCard_Click;
-            this.LongClick += GalleryCard_LongClick;
-            this.Touch += GalleryCard_Touch;*/
         }
 
         public void Recycle()
         {
             text.Text = string.Empty;
             text2.Text = string.Empty;
-            Gallery = null;
+            loaded = false;
             Glide.With(Context).Clear(img);
             GC.Collect();
+        }
+
+        public void Reset()
+        {
+            loaded = false;
+            tries = 0;
+            thumb_path = string.Empty;
+        }
+
+        protected override void OnWindowVisibilityChanged([GeneratedEnum] ViewStates visibility)
+        {
+            if(visibility == ViewStates.Gone)
+            {
+
+            }
+            base.OnWindowVisibilityChanged(visibility);
         }
 
         public async void Refresh()
         {
             bool exists = false;
-            if (gallery == null)
+            if (Gallery == null)
             {
 
             }
                 var h = new Handler(Looper.MainLooper);
+            h.Post(() => {
+
+                Name.Text = Gallery.titles[0].name;
+            });
+
             await Task.Run( async () =>
             {
                 exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id);
@@ -179,26 +196,15 @@ namespace HappyPandaXDroid.Custom_Views
             logger.Info("Refreshing GalleryCard. GalleryId = {0}", Gallery.id);
             tries++;
             
-            h.Post(() =>
-            {
-                Name.Text = Gallery.titles[0].name;
-                try
-                {
-                    Glide.With(Context)
-                        .Load(Resource.Drawable.loading2)
-                        .Into(img);
-                }
-                catch (System.Exception ex)
-                {
-                    if (ex.Message.Contains("destroyed"))
-                        return;
-                }
-            });
             await Task.Run(async () =>
             {
                 if (!IsCached)
                 {
-
+                    h.Post(() =>
+                    {
+                        Name.Text = Gallery.titles[0].name;
+                        
+                    });
                     thumb_path = await Core.Gallery.GetImage(gallery, false);
 
                 }

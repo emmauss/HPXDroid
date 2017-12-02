@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:navdrawer="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:id="@+id/drawer_layout">
+  <HappyPandaXDroid.Custom_Views.SafeCoordinatorLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:id="@+id/safeCoordinatorLayout1">
+
+    <HappyPandaXDroid.Custom_Views.HPContent
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        navdrawer:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/content_view" />
+    <include
+          layout="@layout/toolbar" />
+    <com.github.clans.fab.FloatingActionMenu
+  xmlns:fam="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:src="@drawable/ic_add_white"
+    android:layout_gravity="bottom|right"
+  fam:layout_behavior="HappyPandaXDroid.LibraryActivity.HideOnScroll"
+    android:id="@+id/fam">
+      <com.github.clans.fab.FloatingActionButton
+          android:id="@+id/fabJumpTo"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          fam:srcCompat="@drawable/v_plus_dark_x24"
+          fam:fab_size="normal"
+          fam:fab_label="Jump To.." />
+      <com.github.clans.fab.FloatingActionButton
+          android:id="@+id/fabRefresh"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          fam:srcCompat="@drawable/v_plus_dark_x24"
+          fam:fab_size="normal"
+          fam:fab_label="Refresh" />
+    </com.github.clans.fab.FloatingActionMenu>
+  </HappyPandaXDroid.Custom_Views.SafeCoordinatorLayout>
+  <android.support.design.widget.NavigationView
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="start"
+      android:id="@+id/nav_view"
+      navdrawer:headerLayout="@layout/nav_header"
+      navdrawer:menu="@menu/nav_menu" />
+</android.support.v4.widget.DrawerLayout>

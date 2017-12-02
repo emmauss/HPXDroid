@@ -41,6 +41,7 @@ namespace HappyPandaXDroid
         AppBarLayout appBarLayout;
         public int activityId;
         public string activityName;
+        bool rootactivity = false;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         Clans.Fab.FloatingActionButton mRefreshFab;
         Clans.Fab.FloatingActionButton mJumpFab;
@@ -59,7 +60,7 @@ namespace HappyPandaXDroid
             //LogManager.ReconfigExistingLoggers();
             Android.Support.V7.App.AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
             // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.Main);
+            SetContentView(Resource.Layout.LibraryLayout);
             toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = data;
@@ -85,7 +86,13 @@ namespace HappyPandaXDroid
             FABClickListener fabclick = new FABClickListener(this);
             mJumpFab.SetOnClickListener(fabclick);
             mRefreshFab.SetOnClickListener(fabclick);
-            ContentView.Current_Query = data;
+            if (data.Trim() != string.Empty)
+            {
+                ContentView.Current_Query = data;
+                SupportActionBar.Title = data;
+            }
+            else
+                SupportActionBar.Title = "Library";
 
         }
 
@@ -195,7 +202,7 @@ namespace HappyPandaXDroid
         {
             ContentView = null;
             navDrawer.RemoveAllViews();
-            
+            SetResult(Result.Ok);
             base.OnDestroy();
 
         }

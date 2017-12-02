@@ -630,6 +630,7 @@ namespace HappyPandaXDroid.Custom_Views
                     mProgressView.Visibility = ViewStates.Gone;
                     mRefreshLayout.Visibility = ViewStates.Visible;
                     mRecyclerView.Visibility = ViewStates.Visible;
+                    mRefreshLayout.EnableSwipeHeader = true;
                     IsLoading = false;
                     break;
             }
@@ -797,10 +798,13 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 int page = content.CurrentPage;
                 int firstposition = ((GridLayoutManager)content.mRecyclerView.GetLayoutManager()).FindFirstVisibleItemPosition();
-                var item = content.CurrentList[firstposition];
-                if (item != null)
+                if (firstposition > 0)
                 {
-                    page = item.page;
+                    var item = content.CurrentList[firstposition];
+                    if (item != null)
+                    {
+                        page = item.page;
+                    }
                 }
                 return page;
             }
@@ -845,12 +849,14 @@ namespace HappyPandaXDroid.Custom_Views
 
             public override void OnViewRecycled(Java.Lang.Object holder)
             {
+                base.OnViewRecycled(holder);
                 var hold = holder as GalleryCardHolder;
                 if (hold != null)
                 {
+                    hold.gcard.Reset();
                     hold.gcard.Recycle();
                 }
-                base.OnViewRecycled(holder);
+                
             }
 
 
@@ -891,7 +897,6 @@ namespace HappyPandaXDroid.Custom_Views
             public void Bind(Core.Gallery.GalleryItem item)
             {
                 gcard.Gallery = item;
-                gcard.Recycle();
                 gcard.Refresh();
             }
 
