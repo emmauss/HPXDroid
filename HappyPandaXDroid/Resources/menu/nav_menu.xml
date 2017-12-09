@@ -7,6 +7,11 @@
          navmenu:showAsAction="always"
         android:title="Library"        
          />
+  <item android:id="@+id/action_recent"
+        android:icon="@drawable/v_history_black_x24"
+         navmenu:showAsAction="always"
+        android:title="Recents"
+         />
   <item android:id="@+id/action_setting"
         android:icon="@drawable/ic_settings"
          navmenu:showAsAction="always"

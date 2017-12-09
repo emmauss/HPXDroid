@@ -50,7 +50,8 @@ namespace HappyPandaXDroid
                 if (Core.Net.IsServerReachable())
                 {
                     Core.Net.Connect();
-                    connected = true;
+                    if (Core.Net.Connected)
+                        connected = true;
                 }
             });
             CreateFolders();
@@ -59,6 +60,7 @@ namespace HappyPandaXDroid
             InitLogging();
             if(!File.Exists(Core.App.Settings.basePath + ".nomedia"))
             File.Create(Core.App.Settings.basePath + ".nomedia");
+            Task.Run(()=>Core.Media.Recents.LoadRecents());
             var intent = new Intent(this, typeof(LibraryActivity));
             intent.PutExtra("connected", connected);
             intent.PutExtra("query", string.Empty);

@@ -186,6 +186,7 @@
     <Compile Include="GalleryViewer.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="LibraryActivity.cs" />
+    <Compile Include="RecentsActivity.cs" />
     <Compile Include="ServerSettingsActivity.cs" />
     <Compile Include="SettingsActivity.cs" />
     <Compile Include="Core\App.cs" />
@@ -283,6 +284,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\LibraryLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\RecentsLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

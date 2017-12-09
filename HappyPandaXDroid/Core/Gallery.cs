@@ -76,6 +76,20 @@ namespace HappyPandaXDroid.Core
             public string[] circles;
 
             public int page;
+            int lastPageRead =-1;
+
+            public int LastPageRead
+            {
+                get
+                {
+                    return lastPageRead;
+                }
+
+                set
+                {
+                    lastPageRead = value;
+                }
+            }
 
             public TagList tags;
         }

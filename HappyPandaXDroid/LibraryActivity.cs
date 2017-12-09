@@ -29,11 +29,8 @@ namespace HappyPandaXDroid
     [Activity(Label = "LibraryActivity", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
     public class LibraryActivity : AppCompatActivity, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
     {
-
-        //public List<string> lists = new List<string>();
-        //ArrayAdapter<string> adapter;
+        
         Toolbar toolbar;
-        bool RootActivity = true;
         public Custom_Views.HPContent ContentView;
         DrawerLayout navDrawer;
         Clans.Fab.FloatingActionMenu fam;
@@ -41,7 +38,6 @@ namespace HappyPandaXDroid
         AppBarLayout appBarLayout;
         public int activityId;
         public string activityName;
-        bool rootactivity = false;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         Clans.Fab.FloatingActionButton mRefreshFab;
         Clans.Fab.FloatingActionButton mJumpFab;
@@ -56,7 +52,7 @@ namespace HappyPandaXDroid
             //init logger
             string data = Intent.GetStringExtra("query");
             connected = Intent.GetBooleanExtra("connected",false);
-            logger.Info("Main Actitvity Created");
+            logger.Info("Library Actitvity Created");
             //LogManager.ReconfigExistingLoggers();
             Android.Support.V7.App.AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
             // Set our view from the "main" layout resource
@@ -132,13 +128,7 @@ namespace HappyPandaXDroid
             
 
         }
-
-
-        public override bool OnGenericMotionEvent(MotionEvent e)
-        {
-           
-            return base.OnGenericMotionEvent(e);
-        }
+        
 
         public class HideOnScroll : CoordinatorLayout.Behavior
         {
@@ -269,12 +259,18 @@ namespace HappyPandaXDroid
             {
                 case Resource.Id.action_setting:
                     intent = new Android.Content.Intent(this, typeof(SettingsActivity));
-                    logger.Info("Settings Openned");
+                    logger.Info("Settings Opened");
                     StartActivity(intent);
                     break;
                 case Resource.Id.action_home:
                     navDrawer.CloseDrawers();
                     break;
+                case Resource.Id.action_recent:
+                    intent = new Android.Content.Intent(this, typeof(RecentsActivity));
+                    logger.Info("Recents Opened");
+                    StartActivity(intent);
+                    break;
+
             }
 
         }

@@ -50,6 +50,8 @@ namespace HappyPandaXDroid
         SeekBar seekbar;
         UICountdown countDown;
 
+        Core.Gallery.GalleryItem gallery;
+
         Custom_Views.ImageViewHolder imageView;
         bool doubl_click = false;
         public int activityID;
@@ -65,6 +67,9 @@ namespace HappyPandaXDroid
             logger.Info("Initializing Gallery Viewer");
             //InitPageGen();
 
+            data = Intent.GetStringExtra("gallery");
+            gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(data);
+            int pageno = Intent.GetIntExtra("no", 0);
             options = new RequestOptions()
                 .Override(Target.SizeOriginal, Target.SizeOriginal);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
@@ -78,13 +83,15 @@ namespace HappyPandaXDroid
             galleryPager.SetAdapter(new RecyclerViewPagerAdapter(galleryPager, adapter));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             countDown = new UICountdown(2000, 10, this);
-
+            galleryPager.ScrollToPosition(pageno);
             seekbar = FindViewById<SeekBar>(Resource.Id.progress_seekbar);
             seekbar.Max = PageList.Count;
             seekbar.Progress = galleryPager.CurrentPosition + 1;
             galleryPager.GetAdapter().NotifyDataSetChanged();
             page_number = FindViewById<TextView>(Resource.Id.page_number);
             page_number.Text = seekbar.Progress.ToString();
+            Core.Media.Recents.AddToRecents(gallery);
+            gallery.LastPageRead = galleryPager.CurrentPosition;
             galleryPager.AddOnPageChangedListener(new PageChangeListener(this));
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
@@ -107,10 +114,11 @@ namespace HappyPandaXDroid
             adapter = null;
             galleryPager.ClearOnScrollListeners();
             galleryPager.ClearOnPageChangedListeners();
+            gallery.LastPageRead = galleryPager.CurrentPosition;
             galleryPager.RemoveAllViews();
-
+            gallery = null;
             galleryPager = null;
-            
+            Core.Media.Recents.SaveRecents();
             seekbar = null;
             lay.RemoveAllViews();
             toolbar = null;

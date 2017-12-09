@@ -26,7 +26,7 @@ namespace HappyPandaXDroid
         public TextView title, category, read_action,
             language, pages, time_posted, no_tags;
         public LinearLayout TagLayout, InfoLayout;
-        CardView ActionCard;
+        CardView ActionCard, ContinueCard;
         public string thumb_path;
         public ImageView ThumbView;
         Core.Gallery.GalleryItem gallery;
@@ -51,10 +51,17 @@ namespace HappyPandaXDroid
             InitializeViews();
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(data);
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
-           
 
 
+            var item = Core.Media.Recents.GetRecentGallery(gallery.id);
+            if(item!=null)
+            if(gallery.titles[0].name == item.titles[0].name)
+            {
+                gallery.LastPageRead = item.LastPageRead;
+            }
 
+            if (gallery.LastPageRead < 1)
+                ContinueCard.Enabled = false;
             ParseMeta();
             this.Window.SetType(WindowManagerTypes.KeyguardDialog);
 
@@ -177,6 +184,7 @@ namespace HappyPandaXDroid
 
         void InitializeViews()
         {
+            
             mProgressView = FindViewById<ProgressView.MaterialProgressBar>(Resource.Id.progress_view);
             mProgressView.Visibility = ViewStates.Visible;
             MainView = FindViewById<LinearLayout>(Resource.Id.below_header);
@@ -195,7 +203,8 @@ namespace HappyPandaXDroid
             ActionCard = FindViewById<CardView>(Resource.Id.action_card);
             GalleryStatus = FindViewById<TextView>(Resource.Id.status);
             ThumbView = FindViewById<ImageView>(Resource.Id.thumb);
-
+            ContinueCard = FindViewById<CardView>(Resource.Id.continue_card);
+            ContinueCard.Click += ContinueCard_Click;
             ActionCard.Clickable = true;
             ActionCard.Click += ActionCard_Click;
             adapter = new PreviewAdapter(this);
@@ -203,6 +212,22 @@ namespace HappyPandaXDroid
             grid_layout.SetAdapter(adapter);
             var layout = new GridLayoutManager(this, 5);
             grid_layout.SetLayoutManager(layout);
+        }
+
+        private void ContinueCard_Click(object sender, EventArgs e)
+        {
+            List<int> pages_ids = new List<int>();
+
+            if (pagelist == null)
+                return;
+            if (pagelist == null & pagelist.Count < 1)
+                return;
+
+            Intent intent = new Android.Content.Intent(this, typeof(GalleryViewer));
+            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
+            intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
+            intent.PutExtra("no", gallery.LastPageRead);
+            StartActivity(intent);
         }
 
         private void ActionCard_Click(object sender, EventArgs e)
@@ -213,9 +238,10 @@ namespace HappyPandaXDroid
                 return;
             if ( pagelist==null & pagelist.Count < 1)
                 return;
-
+            
             Intent intent = new Android.Content.Intent(this, typeof(GalleryViewer));
             intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
+            intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
             StartActivity(intent);
 
         }

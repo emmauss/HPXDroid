@@ -76,8 +76,11 @@ namespace HappyPandaXDroid.Core
             }catch(SocketException sex)
             {
                 logger.Error(sex, "\n Exception Caught In Net.Connect.");
-                client.client.Client.Disconnect(false);
-                client.client.Dispose();
+                if (client != null)
+                {
+                    client.client.Client.Disconnect(false);
+                    client.client.Dispose();
+                }
                 client = null;
                 return false;
 

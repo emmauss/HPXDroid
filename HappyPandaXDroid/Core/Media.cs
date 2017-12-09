@@ -77,6 +77,79 @@ namespace HappyPandaXDroid.Core
                 return true;
             }
         }
+
+        public class Recents
+        {
+            public static List<Gallery.GalleryItem> RecentList = new List<Gallery.GalleryItem>();
+            static string recentsPath = App.Settings.basePath + "recents";
+
+            public static void LoadRecents()
+            {
+                if (File.Exists(recentsPath))
+                {
+                    try
+                    {
+                        string rec = File.ReadAllText(recentsPath);
+                        var list = JSON.Serializer.SimpleSerializer.Deserialize<List<Gallery.GalleryItem>>(rec);
+                        if (list != null)
+                        {
+                            RecentList.Clear();
+                            RecentList.AddRange(list);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        File.Delete(recentsPath);
+                        File.Create(recentsPath).Close();
+                    }
+                }
+                else
+                    File.Create(recentsPath).Close();
+            }
+
+            public static void AddToRecents(Gallery.GalleryItem galleryItem)
+            {
+                var item = RecentList.Find((x) => x.id == galleryItem.id);
+                if (item != null)
+                {
+                    RecentList.Remove(item);
+                }
+                RecentList.Insert(0, galleryItem);
+                SaveRecents();
+            }
+
+            public static void RemoveFromRecents(Gallery.GalleryItem galleryItem)
+            {
+
+                SaveRecents();
+            }
+
+            public static void ClearRecents()
+            {
+                RecentList.Clear();
+                SaveRecents();
+            }
+
+            public static void SaveRecents()
+            {
+                lock (RecentList)
+                {
+                    string rec = JSON.Serializer.SimpleSerializer.Serialize(RecentList);
+                    File.WriteAllText(recentsPath, rec);
+                }
+            }
+
+            public static Gallery.GalleryItem GetRecentGallery(int galleryId)
+            {
+                var gallery = RecentList.Find((x) => x.id == galleryId);
+                if (gallery != null)
+                {
+                    return gallery;
+                }
+                else
+                    return null;
+            }
+        }
        
     }
 }

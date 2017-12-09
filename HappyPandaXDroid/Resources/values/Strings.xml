@@ -5,7 +5,8 @@
   <string name="open_drawer">Open Drawer</string>
   <string name="close_drawer">close Drawer</string>
   <string name="no_tags">No Tags Available</string>
-  <string name="read">READ</string>
+  <string name="read">START READING</string>
+  <string name="continue_read">CONTINUE READING</string>
   <string name="server_ip">HappyPandaX Server IP Address</string>
   <string name="server_port">HappyPandaX Server Port</string>
   <string name="webclient_port">HappyPandaX WebClient Port</string>
