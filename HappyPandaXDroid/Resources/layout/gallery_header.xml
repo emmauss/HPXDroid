@@ -71,13 +71,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:background="?attr/colorPrimary"
         android:orientation="horizontal">
       <android.support.v7.widget.CardView
         xmlns:gallerycard="http://schemas.android.com/apk/res-auto"
               android:id="@+id/action_card"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
+             android:layout_width="0dp"
+            android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/keyline_margin"
+          android:layout_marginRight="@dimen/keyline_margin"
+        android:gravity="center_horizontal"
+        android:layout_weight="1"
         gallerycard:contentPadding="2dp"
           gallerycard:cardElevation="4dp"
         android:focusable="true"
@@ -89,14 +94,13 @@
         <LinearLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginLeft="@dimen/keyline_margin"
-              android:layout_marginRight="@dimen/keyline_margin"
               android:orientation="horizontal">
           <TextView
               android:id="@+id/read"
               style="@style/ButtonInCard"
-              android:layout_width="0dp"
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_gravity="center"
               android:layout_weight="1"
               android:textColor="?attr/colorAccent"
               android:text="@string/read"/>
@@ -106,7 +110,9 @@
         xmlns:gallerycard="http://schemas.android.com/apk/res-auto"
               android:id="@+id/continue_card"
               android:layout_width="0dp"
-              android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+        android:layout_weight="1"
         gallerycard:contentPadding="2dp"
           gallerycard:cardElevation="4dp"
         android:focusable="true"
@@ -118,13 +124,12 @@
         <LinearLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginLeft="@dimen/keyline_margin"
-              android:layout_marginRight="@dimen/keyline_margin"
               android:orientation="horizontal">
           <TextView
               android:id="@+id/continue_read"
               style="@style/ButtonInCard"
-              android:layout_width="0dp"
+              android:layout_width="wrap_content"
+              android:layout_gravity="center"
               android:layout_height="wrap_content"
               android:layout_weight="1"
               android:textColor="?attr/colorAccent"

@@ -16,6 +16,7 @@
                 android:scrollbars="vertical"
                 android:clickable="true"
                 android:layout_width="match_parent"
+                navdrawer:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_height="match_parent" />
     <include
           layout="@layout/toolbar" />
