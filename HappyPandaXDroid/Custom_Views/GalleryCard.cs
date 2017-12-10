@@ -85,6 +85,14 @@ namespace HappyPandaXDroid.Custom_Views
                 text2 = value;
             }
         }
+
+        public string ThumbnailPath
+        {
+            get
+            {
+                return thumb_path; 
+            }
+        }
         public GalleryCard(Context context, IAttributeSet attrs) :
             base(context, attrs)
         {
@@ -124,6 +132,7 @@ namespace HappyPandaXDroid.Custom_Views
             loaded = false;
             Glide.With(Context).Clear(img);
             GC.Collect();
+            Java.Lang.JavaSystem.Gc();
         }
 
         public void Reset()

@@ -91,7 +91,6 @@ namespace HappyPandaXDroid
             page_number = FindViewById<TextView>(Resource.Id.page_number);
             page_number.Text = seekbar.Progress.ToString();
             Core.Media.Recents.AddToRecents(gallery);
-            gallery.LastPageRead = galleryPager.CurrentPosition;
             galleryPager.AddOnPageChangedListener(new PageChangeListener(this));
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
@@ -104,7 +103,20 @@ namespace HappyPandaXDroid
 
         protected override void OnResume()
         {
+            seekbar.Progress = galleryPager.CurrentPosition + 1;
             base.OnResume();
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+        }
+
+        protected override void OnStop()
+        {
+            gallery.LastPageRead = galleryPager.CurrentPosition;
+            base.OnStop();
+
         }
 
         protected override void OnDestroy()
@@ -114,7 +126,7 @@ namespace HappyPandaXDroid
             adapter = null;
             galleryPager.ClearOnScrollListeners();
             galleryPager.ClearOnPageChangedListeners();
-            gallery.LastPageRead = galleryPager.CurrentPosition;
+            
             galleryPager.RemoveAllViews();
             gallery = null;
             galleryPager = null;
@@ -129,6 +141,7 @@ namespace HappyPandaXDroid
                 page_number = null;
             }
             System.GC.Collect();
+            Java.Lang.JavaSystem.Gc();
             logger.Info("Closing Gallery Viewer");
             base.OnDestroy();
         }

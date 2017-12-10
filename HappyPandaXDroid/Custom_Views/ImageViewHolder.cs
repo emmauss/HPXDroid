@@ -74,6 +74,7 @@ namespace HappyPandaXDroid.Custom_Views
             
             img.Recycle();
             System.GC.Collect();
+            Java.Lang.JavaSystem.Gc();
         }
         public void Refresh()
         {

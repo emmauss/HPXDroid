@@ -51,17 +51,9 @@ namespace HappyPandaXDroid
             InitializeViews();
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(data);
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
+            thumb_path = Intent.GetStringExtra("thumb");
 
-
-            var item = Core.Media.Recents.GetRecentGallery(gallery.id);
-            if(item!=null)
-            if(gallery.titles[0].name == item.titles[0].name)
-            {
-                gallery.LastPageRead = item.LastPageRead;
-            }
-
-            if (gallery.LastPageRead < 1)
-                ContinueCard.Enabled = false;
+            
             ParseMeta();
             this.Window.SetType(WindowManagerTypes.KeyguardDialog);
 
@@ -149,6 +141,7 @@ namespace HappyPandaXDroid
                 pagelist = null;
                     }
             System.GC.Collect();
+            Java.Lang.JavaSystem.Gc();
             base.OnDestroy();
         }
 
@@ -178,8 +171,26 @@ namespace HappyPandaXDroid
                 pagelist.AddRange(cachedlist);
                 cachedlist.Clear();
                 adapter.NotifyDataSetChanged();
-            }           
-            
+            }
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);
+                var item = Core.Media.Recents.GetRecentGallery(gallery.id);
+                if (item != null)
+                    if (gallery.titles[0].name == item.titles[0].name)
+                    {
+                        gallery.LastPageRead = item.LastPageRead;
+                    }
+
+                RunOnUiThread(() =>
+                {
+                    if (gallery.LastPageRead < 1)
+                        ContinueCard.Enabled = false;
+                    else
+                        ContinueCard.Enabled = true;
+                });
+            });
+
         }
 
         void InitializeViews()
@@ -289,6 +300,7 @@ namespace HappyPandaXDroid
             Task.Run(() =>
             {
                 GC.Collect();
+                Java.Lang.JavaSystem.Gc();
             });
             
         }

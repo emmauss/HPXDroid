@@ -307,6 +307,7 @@ namespace HappyPandaXDroid
                 {
                     Intent intent = new Intent(parent.Context, typeof(GalleryActivity));
                     string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.Gallery);
+                    intent.PutExtra("thumb", vh.gcard.ThumbnailPath);
                     intent.PutExtra("gallery", gallerystring);
                     parent.Context.StartActivity(intent);
                 }

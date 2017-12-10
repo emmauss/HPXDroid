@@ -495,6 +495,18 @@ namespace HappyPandaXDroid.Custom_Views
             }
         }
 
+        public new void Dispose()
+        {
+            CurrentList.Clear();
+            adapter.NotifyDataSetChanged();
+            mRecyclerView.ClearOnScrollListeners();
+            mRecyclerView.SetAdapter(null);
+            adapter.Dispose();
+            adapter = null;
+            GC.Collect();
+            Java.Lang.JavaSystem.Gc();
+        }
+
         public void SetError(bool show)
         {
             switch (show)
@@ -607,6 +619,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     Intent intent = new Intent(parent.Context, typeof(GalleryActivity));
                     string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.Gallery);
+                    intent.PutExtra("thumb", vh.gcard.ThumbnailPath);
                     intent.PutExtra("gallery", gallerystring);
                     parent.Context.StartActivity(intent);
                 }

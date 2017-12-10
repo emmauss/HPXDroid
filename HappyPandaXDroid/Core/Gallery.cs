@@ -412,16 +412,11 @@ namespace HappyPandaXDroid.Core
             {
                 if (tries > 3)
                     break;
-                if (IsCached())
-                {
-
-                    break;
-                }
-                else
+                
                 {
                     await Task.Run(async () =>
                     {
-                        thumb_path = await Core.Gallery.GetImage(gallery, false);
+                        thumb_path = await Core.Gallery.GetImage(gallery, true);
                     });
 
                     gallery = Core.App.Server.GetItem<Core.Gallery.GalleryItem>(gallery.id, "Gallery");
