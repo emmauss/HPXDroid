@@ -212,6 +212,7 @@
     <AndroidResource Include="Resources\menu\viewer_menu.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\drawable\hpx_logo.svg" />
     <None Include="GettingStarted.Xamarin" />
     <AndroidResource Include="Resources\layout\nav_header.axml">
       <SubType>Designer</SubType>
