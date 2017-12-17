@@ -6,5 +6,5 @@
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:label="HPXDroid" android:theme="@style/MyTheme" android:icon="@mipmap/ic_launcher"></application>
+	<application android:label="HPXDroid" android:theme="@style/MyTheme" android:icon="@mipmap/ic_launcher_round"></application>
 </manifest>

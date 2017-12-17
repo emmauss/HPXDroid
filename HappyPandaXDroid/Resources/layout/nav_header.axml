@@ -10,7 +10,7 @@
       android:layout_marginTop="16dp"
       android:layout_width="80dp"
       android:layout_height="80dp"
-      android:src="@drawable/icon" />
+      android:src="@mipmap/ic_launcher" />
   <TextView
       android:id="@+id/nav_title"
       android:layout_below="@id/nav_head"

@@ -20,7 +20,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace HappyPandaXDroid
 {
-    [Activity(Label = "HPXDroid", MainLauncher = true, Icon = "@drawable/icon",
+    [Activity(Label = "HPXDroid", MainLauncher = true, Theme = "@style/MyTheme.Splash", NoHistory =true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation 
         | Android.Content.PM.ConfigChanges.ScreenSize)]
     public class MainActivity : AppCompatActivity
@@ -28,15 +28,27 @@ namespace HappyPandaXDroid
         private static Logger logger = LogManager.GetCurrentClassLogger();
         //public List<string> lists = new List<string>();
         //ArrayAdapter<string> adapter;
-
+        bool connected = false;
         protected async override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            bool connected = false;
+            
             //set unhandled exception handler
             AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironment_UnhandledExceptionRaiser;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            await Task.Run(() => {
+
+            await Load();
+
+            var intent = new Intent(this, typeof(LibraryActivity));
+            intent.PutExtra("connected", connected);
+            intent.PutExtra("query", string.Empty);
+            StartActivity(intent);
+            
+        }
+
+        async Task<bool> Load()
+        {
+            
                 string ds = @"{ 'name' : 'test',
 'session' : 'ed352d0aae5b4b11a0e9f64778270087',
 'data' : [
@@ -53,22 +65,19 @@ namespace HappyPandaXDroid
                     if (Core.Net.Connected)
                         connected = true;
                 }
-            });
             CreateFolders();
-            
+
 
             InitLogging();
-            if(!File.Exists(Core.App.Settings.basePath + ".nomedia"))
-            File.Create(Core.App.Settings.basePath + ".nomedia");
-            Task.Run(()=>Core.Media.Recents.LoadRecents());
-            var intent = new Intent(this, typeof(LibraryActivity));
-            intent.PutExtra("connected", connected);
-            intent.PutExtra("query", string.Empty);
-            StartActivity(intent);
-            
+            if (!File.Exists(Core.App.Settings.basePath + ".nomedia"))
+                File.Create(Core.App.Settings.basePath + ".nomedia");
+            Task.Run(() => Core.Media.Recents.LoadRecents());
+            return true;
         }
-        
 
+        public override void OnBackPressed()
+        {
+        }
 
         public static void InitLogging()
         {

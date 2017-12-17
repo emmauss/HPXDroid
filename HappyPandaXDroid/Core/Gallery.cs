@@ -48,7 +48,9 @@ namespace HappyPandaXDroid.Core
 
         public class GalleryItem
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int command_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int taggable_id;
             public string category_id;
             public string last_read;
@@ -56,18 +58,23 @@ namespace HappyPandaXDroid.Core
             public string language_id;
             public List<Artist> artists;
             public List<Page> pages;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int timestamp;
             public string[] filters;
             public string info;
             public bool fetched;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int grouping_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int number;
             public bool fav;
             public int id;
             public int rating;
             public List<Profile> profiles;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int times_read;
             public List<Title> titles;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int pub_date;
             public List<URL> urls;
             public bool inbox;
@@ -75,6 +82,7 @@ namespace HappyPandaXDroid.Core
             public string[] collections;
             public string[] circles;
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int page;
             int lastPageRead =-1;
 
@@ -98,14 +106,17 @@ namespace HappyPandaXDroid.Core
         {
             public int number;
             public int gallery_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int taggable_id;
             public int id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int last_updated;
             public bool in_archive;
             public string path;
             public string name;
             public string thumb_url;
             public string image_url;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int command_id;
         }
 
@@ -118,6 +129,7 @@ namespace HappyPandaXDroid.Core
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int timestamp;
             public string ext;
             public string size;

@@ -54,5 +54,12 @@
         <item name="android:singleLine">true</item>
         <item name="android:maxLines">1</item>
     </style>
-  
+
+  <style name="MyTheme.Splash" parent ="Theme.AppCompat.NoActionBar">
+    <item name="android:windowBackground">@drawable/logo</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowFullscreen">true</item>
+  </style>
+
+
 </resources>
