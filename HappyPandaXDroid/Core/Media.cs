@@ -120,7 +120,11 @@ namespace HappyPandaXDroid.Core
 
             public static void RemoveFromRecents(Gallery.GalleryItem galleryItem)
             {
-
+                var item = RecentList.Find((x) => x.id == galleryItem.id);
+                if (item != null)
+                {
+                    RecentList.Remove(item);
+                }
                 SaveRecents();
             }
 

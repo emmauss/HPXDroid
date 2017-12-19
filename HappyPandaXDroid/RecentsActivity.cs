@@ -147,7 +147,7 @@ namespace HappyPandaXDroid
                 {
                     case Resource.Id.fabClear:
                         Core.Media.Recents.ClearRecents();
-                        
+                        main.adapter.NotifyDataSetChanged();
                         break;
                         
                 }
