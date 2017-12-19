@@ -286,6 +286,7 @@ namespace HappyPandaXDroid.Custom_Views
         public  void InitLibrary()
         {
             int tries= 0;
+            if(Core.Net.Connect())
             Task.Run(async () =>
              {
                  while (tries <5 && !Core.Net.Connected)
@@ -337,6 +338,16 @@ namespace HappyPandaXDroid.Custom_Views
                      });
                  }
              });
+            else
+            {
+                    var h = new Handler(Looper.MainLooper);
+                    h.Post(() =>
+                    {
+                        SetMainLoading(false);
+                        SetError(true);
+                    });
+                
+            }
         }
 
         private void MErrorFrame_Click(object sender, EventArgs e)
@@ -437,7 +448,16 @@ namespace HappyPandaXDroid.Custom_Views
         public async void GetLib()
         {
             CurrentList.Clear();
+            if(Core.Net.Connect())
             CurrentList.AddRange(await Core.Gallery.GetPage(0));
+            else
+            {
+                var h = new Handler(Looper.MainLooper);
+                h.Post(() =>
+                {
+                    SetError(true);
+                });
+            }
         }
 
         public async void GetTotalCount()
@@ -448,36 +468,46 @@ namespace HappyPandaXDroid.Custom_Views
         public async void Refresh()
         {
             var h = new Handler(Looper.MainLooper);
-            h.Post(() =>
+            if (Core.Net.Connect())
             {
-                SetMainLoading(true);
-            });
-            await Task.Run(async () =>
-            {
-                logger.Info("Refreshing HPContent");
-                CurrentList.Clear();
-                CurrentList.AddRange( await Core.Gallery.GetPage(0,Current_Query));
-                if (CurrentList==null || CurrentList.Count<1)
-                {
-                    h.Post(() =>
-                    {
-                        SetMainLoading(false);
-                        SetError(true);
-                    });
-                    return;
-                }
-                CurrentPage = 0;
                 h.Post(() =>
                 {
-                    adapter.NotifyDataSetChanged();
-                    adapter.ResetList();
-                    SetMainLoading(false);
-                    if (CurrentList.Count > 0)
-                        mRecyclerView.ScrollToPosition(0);
+                    SetMainLoading(true);
                 });
-                GetTotalCount();
-                logger.Info("HPContent Refresh Successful");
-            });
+                await Task.Run(async () =>
+                {
+                    logger.Info("Refreshing HPContent");
+                    CurrentList.Clear();
+                    CurrentList.AddRange(await Core.Gallery.GetPage(0, Current_Query));
+                    if (CurrentList == null || CurrentList.Count < 1)
+                    {
+                        h.Post(() =>
+                        {
+                            SetMainLoading(false);
+                            SetError(true);
+                        });
+                        return;
+                    }
+                    CurrentPage = 0;
+                    h.Post(() =>
+                    {
+                        adapter.NotifyDataSetChanged();
+                        adapter.ResetList();
+                        SetMainLoading(false);
+                        if (CurrentList.Count > 0)
+                            mRecyclerView.ScrollToPosition(0);
+                    });
+                    GetTotalCount();
+                    logger.Info("HPContent Refresh Successful");
+                });
+            }
+            else
+            {
+                h.Post(() =>
+                {
+                    SetError(true);
+                });
+            }
         }
 
         public void SetBottomLoading(bool state)

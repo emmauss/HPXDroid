@@ -41,7 +41,6 @@ namespace HappyPandaXDroid
         private static Logger logger = LogManager.GetCurrentClassLogger();
         Clans.Fab.FloatingActionButton mRefreshFab;
         Clans.Fab.FloatingActionButton mJumpFab;
-        bool connected = false;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -51,7 +50,6 @@ namespace HappyPandaXDroid
 
             //init logger
             string data = Intent.GetStringExtra("query");
-            connected = Intent.GetBooleanExtra("connected",false);
             logger.Info("Library Actitvity Created");
             //LogManager.ReconfigExistingLoggers();
             Android.Support.V7.App.AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
@@ -233,7 +231,7 @@ namespace HappyPandaXDroid
                     logger.Error(ex, "\n Exception Caught In MainActivity.OnResume");
                 }
             }
-            else if (connected)
+            else if (Core.Net.Connect())
             {
                 Task.Run(async () =>
                 {
@@ -247,7 +245,14 @@ namespace HappyPandaXDroid
                     logger.Info("Refresh Done");
                 });
             }
-            connected = false;
+            else if (!Core.Net.Connected)
+            {
+                RunOnUiThread(() =>
+                {
+                    ContentView.SetMainLoading(false);
+                    ContentView.SetError(true);
+                });
+            }
         }
 
         private void NavView_NavigationItemSelected(object sender, NavigationView.NavigationItemSelectedEventArgs e)

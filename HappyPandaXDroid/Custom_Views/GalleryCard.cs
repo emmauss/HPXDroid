@@ -166,7 +166,13 @@ namespace HappyPandaXDroid.Custom_Views
 
             await Task.Run( async () =>
             {
-                exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id);
+                try
+                {
+                    exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id);
+                }catch(Exception ex)
+                {
+                    exists = true;
+                }
             });
             if (!exists)
             {
@@ -262,7 +268,14 @@ namespace HappyPandaXDroid.Custom_Views
                 bool exists = false;
                 await Task.Run(async () =>
                 {
-                    exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id);
+                    try
+                    {
+                        exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id);
+                    }
+                    catch (Exception ex)
+                    {
+                        exists = true;
+                    }
                 });
                 if (!exists)
                 {

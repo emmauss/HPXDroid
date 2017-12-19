@@ -2,6 +2,7 @@ using Android.App;
 using Android.OS;
 using Android.Content;
 using Android.Support.V7.App;
+using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using System.Threading;
@@ -23,12 +24,14 @@ namespace HappyPandaXDroid
     [Activity(Label = "GalleryActivity", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
     public class GalleryActivity : AppCompatActivity
     {
+        private TextView mErrorText;
         public TextView title, category, read_action,
             language, pages, time_posted, no_tags;
         public LinearLayout TagLayout, InfoLayout;
         CardView ActionCard, ContinueCard;
         public string thumb_path;
         public ImageView ThumbView;
+        FrameLayout errorFrame;
         Core.Gallery.GalleryItem gallery;
         RecyclerView grid_layout;
         ProgressView.MaterialProgressBar mProgressView;
@@ -41,11 +44,14 @@ namespace HappyPandaXDroid
         public bool IsRunning = true;
         public int activityId;
         List<Core.Gallery.Page> pagelist,cachedlist;
+        private ImageView mErrorImage;
+
         //public List<Tuple<Task,CancellationTokenSource>> tasklist = new List<Tuple<Task, CancellationTokenSource>>();
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
+            AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironment_UnhandledExceptionRaiser;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             SetContentView(Resource.Layout.Gallery_Details_Layout);
             string data = Intent.GetStringExtra("gallery");
             InitializeViews();
@@ -59,7 +65,24 @@ namespace HappyPandaXDroid
 
             ThreadStart start = new ThreadStart(() =>
             {
-                Load();
+                try
+                {
+                    Load();
+                }catch(Exception ex)
+                {
+                    loaded = false;
+                }
+
+                if (!loaded)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        mErrorText.Text = "Error";
+                        MainView.Visibility = ViewStates.Gone;
+                        mProgressView.Visibility = ViewStates.Gone;
+                        errorFrame.Visibility = ViewStates.Visible;
+                    });
+                }
             });
             Thread thread = new Thread(start);
             thread.Start();
@@ -68,42 +91,62 @@ namespace HappyPandaXDroid
         }
 
 
-        
+        //bg thread unhandled exception handler
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = (System.Exception)e.ExceptionObject;
+            logger.Fatal(ex, ex.Message);
+        }
+
+        //ui thread unhandled exception handler
+        private void AndroidEnvironment_UnhandledExceptionRaiser(object sender, RaiseThrowableEventArgs e)
+        {
+            logger.Fatal(e.Exception, "Fatal Exception Thrown : " + e.Exception.Message);
+        }
+
+
 
         public async void Load()
         {
-            thumb_path = string.Empty;
-            thumb_path = await Core.Gallery.GetThumb(gallery);
-            RunOnUiThread(() =>
+            if (Core.Net.Connect())
             {
-                try
+                thumb_path = string.Empty;
+                thumb_path = await Core.Gallery.GetThumb(gallery);
+                RunOnUiThread(() =>
                 {
-                    if (thumb_path.Contains("fail"))
+                    try
                     {
-                        GalleryStatus.Text = "Gallery Not Found";
-                        Glide.With(this)
-                        .Load(Resource.Drawable.image_failed)
-                        .Into(ThumbView);
-                    }
-                    else
-                        Glide.With(this)
-                            .Load(thumb_path)
+                        if (thumb_path.Contains("fail"))
+                        {
+                            GalleryStatus.Text = "Gallery Not Found";
+                            Glide.With(this)
+                            .Load(Resource.Drawable.image_failed)
                             .Into(ThumbView);
-                }
-                catch (Exception ex)
+                        }
+                        else
+                            Glide.With(this)
+                                .Load(thumb_path)
+                                .Into(ThumbView);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, "\n Exception Caught In GalleryActivity.Oncreate.");
+                    }
+                });
+                gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery");
+                pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
+                ParseData();
+                RunOnUiThread(() =>
                 {
-                    logger.Error(ex, "\n Exception Caught In GalleryActivity.Oncreate.");
-                }
-            });
-            gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery");
-            pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
-            ParseData();
-            RunOnUiThread(() =>
+                    mProgressView.Visibility = ViewStates.Invisible;
+                    MainView.Visibility = ViewStates.Visible;
+                });
+                loaded = true;
+            }
+            else
             {
-                mProgressView.Visibility = ViewStates.Invisible;
-                MainView.Visibility = ViewStates.Visible;
-            });
-            loaded = true;
+                loaded = false;
+            }
         }
 
         protected override void OnDestroy()
@@ -121,6 +164,9 @@ namespace HappyPandaXDroid
             no_tags = null;
             scrollview.RemoveAllViews();
             scrollview = null;
+            errorFrame.RemoveAllViews();
+            errorFrame.Dispose();
+            errorFrame = null;
             adapter.mdata.Clear();
             adapter.NotifyDataSetChanged();
             adapter = null;
@@ -199,7 +245,16 @@ namespace HappyPandaXDroid
             mProgressView = FindViewById<ProgressView.MaterialProgressBar>(Resource.Id.progress_view);
             mProgressView.Visibility = ViewStates.Visible;
             MainView = FindViewById<LinearLayout>(Resource.Id.below_header);
+            errorFrame = FindViewById<FrameLayout>(Resource.Id.error_frame);
+            errorFrame.Visibility = ViewStates.Gone;
+            errorFrame.Click += ErrorFrame_Click;
             MainView.Visibility = ViewStates.Gone;
+
+            mErrorImage = FindViewById<ImageView>(Resource.Id.error_image);
+            mErrorImage.SetImageResource(Resource.Drawable.big_weird_face);
+            mErrorText = FindViewById<TextView>(Resource.Id.error_text);
+
+
             title = FindViewById<TextView>(Resource.Id.title);
             category = FindViewById<TextView>(Resource.Id.category);
             read_action = FindViewById<TextView>(Resource.Id.read);
@@ -223,6 +278,34 @@ namespace HappyPandaXDroid
             grid_layout.SetAdapter(adapter);
             var layout = new GridLayoutManager(this, 5);
             grid_layout.SetLayoutManager(layout);
+        }
+
+        private void ErrorFrame_Click(object sender, EventArgs e)
+        {
+            ThreadStart start = new ThreadStart(() =>
+            {
+                try
+                {
+                    Load();
+                }
+                catch (Exception ex)
+                {
+                    loaded = false;
+                }
+
+                if (!loaded)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        mErrorText.Text = "Error";
+                        MainView.Visibility = ViewStates.Gone;
+                        mProgressView.Visibility = ViewStates.Gone;
+                        errorFrame.Visibility = ViewStates.Visible;
+                    });
+                }
+            });
+            Thread thread = new Thread(start);
+            thread.Start();
         }
 
         private void ContinueCard_Click(object sender, EventArgs e)
