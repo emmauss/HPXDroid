@@ -58,6 +58,17 @@ namespace HappyPandaXDroid.Core
             }
         }
 
+        public static void Disconnect()
+        {
+            if (client != null)
+                if (client.client.Connected)
+                {
+                    client.client.Client.Disconnect(false);
+                    client.client.Dispose();
+                    client = null;
+                }
+        }
+
         public static bool Connect()
         {
             
@@ -223,6 +234,13 @@ namespace HappyPandaXDroid.Core
                 }
                 
             }
+            if (App.Server.GetError(response).Contains("expire"))
+            {
+                Disconnect();
+                Connect();
+                return SendPost(payload);
+            }
+            else
             return response;
         }
         
