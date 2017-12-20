@@ -69,7 +69,7 @@ namespace HappyPandaXDroid
             navToggle.SyncState();
             
             mClearFAB = FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabClear);
-            mClearFAB.SetImageResource(Resource.Drawable.v_go_to_dark_x24);
+            mClearFAB.SetImageResource(Resource.Drawable.v_clear_all_dark_x24);
             fam = FindViewById<Clans.Fab.FloatingActionMenu>(Resource.Id.fam);
             FABClickListener fabclick = new FABClickListener(this);
             mClearFAB.SetOnClickListener(fabclick);

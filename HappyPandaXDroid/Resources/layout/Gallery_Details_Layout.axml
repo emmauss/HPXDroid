@@ -11,11 +11,12 @@
         android:orientation="vertical">
         <include
             layout="@layout/gallery_header" />
-      <include
-        layout="@layout/layout_error" />
+      
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+          <include
+        layout="@layout/layout_error" />
             <me.zhanghai.android.materialprogressbar.MaterialProgressBar
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

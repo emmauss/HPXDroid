@@ -41,6 +41,7 @@ namespace HappyPandaXDroid
         private static Logger logger = LogManager.GetCurrentClassLogger();
         Clans.Fab.FloatingActionButton mRefreshFab;
         Clans.Fab.FloatingActionButton mJumpFab;
+        bool init = false;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -223,6 +224,7 @@ namespace HappyPandaXDroid
                             return;
                         }
                         ContentView.Refresh();
+                        init = true;
                         logger.Info("Refresh Done");
                     });
                 }
@@ -231,7 +233,7 @@ namespace HappyPandaXDroid
                     logger.Error(ex, "\n Exception Caught In MainActivity.OnResume");
                 }
             }
-            else if (Core.Net.Connect())
+            else if (!init)
             {
                 Task.Run(async () =>
                 {
@@ -242,10 +244,11 @@ namespace HappyPandaXDroid
                         ContentView.SetMainLoading(true);
                     });
                     ContentView.Refresh();
+                    init = true;
                     logger.Info("Refresh Done");
                 });
             }
-            else if (!Core.Net.Connected)
+            else if (!Core.Net.Connect())
             {
                 RunOnUiThread(() =>
                 {

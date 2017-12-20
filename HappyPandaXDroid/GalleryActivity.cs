@@ -106,12 +106,12 @@ namespace HappyPandaXDroid
 
 
 
-        public async void Load()
+        public void Load()
         {
             if (Core.Net.Connect())
             {
                 thumb_path = string.Empty;
-                thumb_path = await Core.Gallery.GetThumb(gallery);
+                thumb_path = Core.Gallery.GetThumb(gallery).Result;
                 RunOnUiThread(() =>
                 {
                     try
@@ -133,13 +133,14 @@ namespace HappyPandaXDroid
                         logger.Error(ex, "\n Exception Caught In GalleryActivity.Oncreate.");
                     }
                 });
-                gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery");
+                gallery.tags = Core.Gallery.GetTags(gallery.id, "Gallery").Result;
                 pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
                 ParseData();
                 RunOnUiThread(() =>
                 {
                     mProgressView.Visibility = ViewStates.Invisible;
                     MainView.Visibility = ViewStates.Visible;
+                    errorFrame.Visibility = ViewStates.Gone;
                 });
                 loaded = true;
             }
@@ -274,7 +275,7 @@ namespace HappyPandaXDroid
             ActionCard.Clickable = true;
             ActionCard.Click += ActionCard_Click;
             adapter = new PreviewAdapter(this);
-
+            mProgressView.Visibility = ViewStates.Visible;
             grid_layout.SetAdapter(adapter);
             var layout = new GridLayoutManager(this, 5);
             grid_layout.SetLayoutManager(layout);
@@ -286,6 +287,8 @@ namespace HappyPandaXDroid
             {
                 try
                 {
+                    errorFrame.Visibility = ViewStates.Gone;
+                    mProgressView.Visibility = ViewStates.Visible;
                     Load();
                 }
                 catch (Exception ex)
