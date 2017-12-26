@@ -5,6 +5,7 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
@@ -124,12 +125,7 @@ namespace HappyPandaXDroid.Custom_Views
             
 
             mRecyclerView.AddOnScrollListener(listener);
-           
-            
-            if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
-                columns = 2;
-            else
-                columns = 1;
+            SetColumns();
             mLayoutManager = new ExtraLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
            
            
@@ -158,6 +154,20 @@ namespace HappyPandaXDroid.Custom_Views
             logger.Info("HPContent Initialized");
         }
 
+        void SetColumns()
+        {
+            var window = (IWindowManager)Context.GetSystemService(Context.WindowService);
+            var display = window.DefaultDisplay;
+            Point point = new Point();
+            Display.GetSize(point);
+            int gridFactor = 0;
+            float w = point.X;
+            gridFactor = (int)(Math.Ceiling(w / 200d));
+            if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
+                columns = gridFactor * 2;
+            else
+                columns = gridFactor;
+        }
 
 
         public class ExtraLayoutManager : GridLayoutManager
@@ -206,15 +216,7 @@ namespace HappyPandaXDroid.Custom_Views
 
         public void OrientationChanged(Android.Content.Res.Orientation orientation)
         {
-            switch (orientation)
-            {
-                case Android.Content.Res.Orientation.Landscape:
-                    columns = 2;
-                    break;
-                default:
-                    columns = 1;
-                    break;
-            }
+            SetColumns();
             mLayoutManager = new GridLayoutManager(this.Context, columns);
             mRecyclerView.SetLayoutManager(mLayoutManager);
         }

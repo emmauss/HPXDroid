@@ -15,19 +15,10 @@
         gallerycard:cardPreventCornerOverlap="false"
         gallerycard:cardUseCompatPadding="true">
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ImageView
-                android:layout_width="72dp"
-                android:layout_height="100dp"
-                android:id="@+id/imageView"
-                android:scaleType="centerCrop" />
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <TextView
+          <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -36,13 +27,24 @@
                     android:id="@+id/textViewholder"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="5dp" />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="140dp"
+                android:id="@+id/imageView"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines = "2"
                     android:minLines = "1"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="placeholder2"
+                    android:text=""
                     android:layout_marginLeft="5dp"
                     android:id="@+id/textViewholder2" />
             </LinearLayout>
