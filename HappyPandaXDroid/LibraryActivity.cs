@@ -243,6 +243,7 @@ namespace HappyPandaXDroid
                     {
                         ContentView.SetMainLoading(true);
                     });
+                    if(ContentView.Current_Query==string.Empty)
                     ContentView.Refresh();
                     init = true;
                     logger.Info("Refresh Done");

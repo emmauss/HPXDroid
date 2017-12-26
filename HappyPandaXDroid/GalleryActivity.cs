@@ -136,6 +136,7 @@ namespace HappyPandaXDroid
                 gallery.tags = Core.Gallery.GetTags(gallery.id, "Gallery").Result;
                 pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
                 ParseData();
+                if(!IsDestroyed)
                 RunOnUiThread(() =>
                 {
                     mProgressView.Visibility = ViewStates.Invisible;
@@ -168,8 +169,11 @@ namespace HappyPandaXDroid
             errorFrame.RemoveAllViews();
             errorFrame.Dispose();
             errorFrame = null;
-            adapter.mdata.Clear();
-            adapter.NotifyDataSetChanged();
+            if (adapter.mdata != null)
+            {
+                adapter.mdata.Clear();
+                adapter.NotifyDataSetChanged();
+            }
             adapter = null;
             grid_layout.RemoveAllViews();
             grid_layout = null;
@@ -187,8 +191,6 @@ namespace HappyPandaXDroid
                 pagelist.Clear();
                 pagelist = null;
                     }
-            System.GC.Collect();
-            Java.Lang.JavaSystem.Gc();
             base.OnDestroy();
         }
 
@@ -352,22 +354,35 @@ namespace HappyPandaXDroid
 
         async void ParseData()
         {
-            
 
-            RunOnUiThread(() =>
+            try
             {
-                if (gallery.tags.Language.Count > 0)
+                RunOnUiThread(() =>
                 {
-                    string lan = gallery.tags.Language[0].name;
-                    language.Text = System.Globalization.CultureInfo.CurrentCulture
-                        .TextInfo.ToTitleCase(lan.ToLower());
-                }
-                else
-                    language.Text = "eng";
-                pages.Text = pagelist.Count.ToString() + " Pages";
-                adapter.SetList(pagelist);
-                ParseTags();
-            });
+                    try
+                    {
+                        if (gallery.tags.Language.Count > 0)
+                        {
+                        if (language == null)
+                            language = FindViewById<TextView>(Resource.Id.language);
+                            string lan = gallery.tags.Language[0].name;
+                            language.Text = System.Globalization.CultureInfo.CurrentCulture
+                                .TextInfo.ToTitleCase(lan.ToLower());
+                        }
+                        else
+                            language.Text = "eng";
+                        pages.Text = pagelist.Count.ToString() + " Pages";
+                        adapter.SetList(pagelist);
+                        ParseTags();
+                    }catch(Exception ex)
+                    {
+
+                    }
+                });
+            }catch(Exception ex)
+            {
+
+            }
         }
 
         protected override void OnPause()
@@ -380,15 +395,12 @@ namespace HappyPandaXDroid
         {
             base.OnStop();
             Glide.With(this).Clear(ThumbView);
-            cachedlist = new List<Core.Gallery.Page>(pagelist);
-            pagelist.Clear();
-            adapter.NotifyDataSetChanged();
-            Task.Run(() =>
+            if (pagelist != null)
             {
-                GC.Collect();
-                Java.Lang.JavaSystem.Gc();
-            });
-            
+                cachedlist = new List<Core.Gallery.Page>(pagelist);
+                pagelist.Clear();
+            }
+            adapter.NotifyDataSetChanged();
         }
 
 
