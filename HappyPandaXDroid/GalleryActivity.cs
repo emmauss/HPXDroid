@@ -27,7 +27,7 @@ namespace HappyPandaXDroid
         private TextView mErrorText;
         public TextView title, category, read_action,
             language, pages, time_posted, no_tags;
-        public LinearLayout TagLayout, InfoLayout;
+        public LinearLayout TagLayout;
         CardView ActionCard, ContinueCard;
         public string thumb_path;
         public ImageView ThumbView;
@@ -174,7 +174,6 @@ namespace HappyPandaXDroid
             adapter = null;
             grid_layout = null;
             TagLayout = null;
-            InfoLayout = null;
             ActionCard.Click -= ActionCard_Click;
             ActionCard = null;
             GalleryStatus = null;
@@ -261,7 +260,6 @@ namespace HappyPandaXDroid
             scrollview = FindViewById<ScrollView>(Resource.Id.scroll_view);
            grid_layout = FindViewById<RecyclerView>(Resource.Id.grid_layout);
             TagLayout = FindViewById<LinearLayout>(Resource.Id.tags);
-            InfoLayout = FindViewById<LinearLayout>(Resource.Id.info);
             ActionCard = FindViewById<CardView>(Resource.Id.action_card);
             GalleryStatus = FindViewById<TextView>(Resource.Id.status);
             ThumbView = FindViewById<ImageView>(Resource.Id.thumb);
@@ -443,7 +441,7 @@ namespace HappyPandaXDroid
                             awl.AddView(tag_item);
                         }
                     }
-                }InfoLayout.RequestFocus();
+                }
             }
             
         }

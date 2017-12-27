@@ -131,8 +131,6 @@ namespace HappyPandaXDroid.Custom_Views
             text2.Text = string.Empty;
             loaded = false;
             Glide.With(Context).Clear(img);
-            GC.Collect();
-            Java.Lang.JavaSystem.Gc();
         }
 
         public void Reset()

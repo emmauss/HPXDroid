@@ -395,7 +395,10 @@ namespace HappyPandaXDroid
             public void Bind(Core.Gallery.GalleryItem item)
             {
                 gcard.Gallery = item;
-                gcard.Refresh();
+                Task.Run(() =>
+                {
+                    gcard.Refresh();
+                });
             }
 
 
