@@ -297,6 +297,8 @@ namespace HappyPandaXDroid
             return true;
         }
 
+        
+
         public bool OnQueryTextSubmit(string query)
         {
 
@@ -317,7 +319,13 @@ namespace HappyPandaXDroid
             var search = toolbar.Menu.FindItem(Resource.Id.search);
             searchView = (Android.Support.V7.Widget.SearchView)search.ActionView;
             searchView.SetOnQueryTextListener(this);
+            searchView.Click += SearchView_Click;
             return base.OnCreateOptionsMenu(menu);
+        }
+
+        private void SearchView_Click(object sender, EventArgs e)
+        {
+            searchView.SetQuery(ContentView.Current_Query,false);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

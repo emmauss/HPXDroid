@@ -86,18 +86,15 @@ namespace HappyPandaXDroid
             galleryPager.ScrollToPosition(pageno);
             seekbar = FindViewById<SeekBar>(Resource.Id.progress_seekbar);
             seekbar.Max = PageList.Count;
-            seekbar.Progress = galleryPager.CurrentPosition + 1;
+            
             galleryPager.GetAdapter().NotifyDataSetChanged();
             page_number = FindViewById<TextView>(Resource.Id.page_number);
+            seekbar.Progress = pageno + 1;
             page_number.Text = seekbar.Progress.ToString();
             Core.Media.Recents.AddToRecents(gallery);
             galleryPager.AddOnPageChangedListener(new PageChangeListener(this));
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
-            /*int pos = list.IndexOf(data);
-            if (pos < 0)
-                pos = 0;
-            imageHandler.StartReader(galleryPager, this, pos, galleryPager);*/
 
          }
 
