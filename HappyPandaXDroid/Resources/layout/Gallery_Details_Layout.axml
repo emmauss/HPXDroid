@@ -35,8 +35,6 @@
                 android:dividerPadding="@dimen/keyline_margin">
                 
                 <include
-                    layout="@layout/gallery_meta" />
-                <include
                     layout="@layout/gallery_tags" />
                 <include
                     layout="@layout/gallery_previews" />

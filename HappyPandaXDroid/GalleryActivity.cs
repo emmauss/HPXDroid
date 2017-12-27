@@ -155,7 +155,6 @@ namespace HappyPandaXDroid
         {
             IsRunning = false;
             mProgressView = null;
-            MainView.RemoveAllViews();
             MainView = null;
             title = null;
             category = null;
@@ -164,9 +163,7 @@ namespace HappyPandaXDroid
             pages = null;
             time_posted = null;
             no_tags = null;
-            scrollview.RemoveAllViews();
             scrollview = null;
-            errorFrame.RemoveAllViews();
             errorFrame.Dispose();
             errorFrame = null;
             if (adapter.mdata != null)
@@ -175,13 +172,9 @@ namespace HappyPandaXDroid
                 adapter.NotifyDataSetChanged();
             }
             adapter = null;
-            grid_layout.RemoveAllViews();
             grid_layout = null;
-            TagLayout.RemoveAllViews();
             TagLayout = null;
-            InfoLayout.RemoveAllViews();
             InfoLayout = null;
-            ActionCard.RemoveAllViews();
             ActionCard.Click -= ActionCard_Click;
             ActionCard = null;
             GalleryStatus = null;

@@ -156,12 +156,11 @@ namespace HappyPandaXDroid.Custom_Views
 
         void SetColumns()
         {
-            var window = (IWindowManager)Context.GetSystemService(Context.WindowService);
+            var windo = Context.GetSystemService(Context.WindowService);
+            var window = windo.JavaCast<IWindowManager>();
             var display = window.DefaultDisplay;
-            Point point = new Point();
-            Display.GetSize(point);
             int gridFactor = 0;
-            float w = point.X;
+            float w = display.Width;
             gridFactor = (int)(Math.Ceiling(w / 200d));
             if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
                 columns = gridFactor * 2;

@@ -79,12 +79,9 @@ namespace HappyPandaXDroid
             adapter = new GalleryCardAdapter(this);
             mRecyclerView.SetOnItemClickListener(new RecyclerViewClickListener());
 
-            if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
-                columns = 2;
-            else
-                columns = 1;
+            SetColumns();
 
-            mLayoutManager = new ExtraLayoutManager(this, columns, LinearLayoutManager.Vertical, false);
+            mLayoutManager = new ExtraLayoutManager(this, columns, GridLayoutManager.Vertical, false);
 
 
             mRecyclerView.SetAdapter(adapter);
@@ -92,7 +89,19 @@ namespace HappyPandaXDroid
             mRecyclerView.SetLayoutManager(mLayoutManager);
         }
 
-
+        void SetColumns()
+        {
+            var windo = GetSystemService(Context.WindowService);
+            var window = windo.JavaCast<IWindowManager>();
+            var display = window.DefaultDisplay;
+            int gridFactor = 0;
+            float w = display.Width;
+            gridFactor = (int)(Math.Ceiling(w / 200d));
+            if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
+                columns = gridFactor * 2;
+            else
+                columns = gridFactor;
+        }
 
         private void AppBarLayout_Drag(object sender, View.DragEventArgs e)
         {
@@ -181,15 +190,7 @@ namespace HappyPandaXDroid
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
-            switch (newConfig.Orientation)
-            {
-                case Android.Content.Res.Orientation.Landscape:
-                    columns = 2;
-                    break;
-                default:
-                    columns = 1;
-                    break;
-            }
+            SetColumns();
             mLayoutManager = new GridLayoutManager(this, columns);
             mRecyclerView.SetLayoutManager(mLayoutManager);
         }

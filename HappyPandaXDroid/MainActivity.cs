@@ -22,7 +22,7 @@ namespace HappyPandaXDroid
 {
     [Activity(Label = "HPXDroid", MainLauncher = true, Theme = "@style/MyTheme.Splash", NoHistory =true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation 
-        | Android.Content.PM.ConfigChanges.ScreenSize)]
+        | Android.Content.PM.ConfigChanges.ScreenSize , ScreenOrientation =Android.Content.PM.ScreenOrientation.Portrait)]
     public class MainActivity : AppCompatActivity
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -36,7 +36,7 @@ namespace HappyPandaXDroid
             //set unhandled exception handler
             AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironment_UnhandledExceptionRaiser;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
+            
             await Load();
 
             var intent = new Intent(this, typeof(LibraryActivity));
