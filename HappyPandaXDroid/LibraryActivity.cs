@@ -318,10 +318,10 @@ namespace HappyPandaXDroid
             logger.Info("Search query submit , query ={0}", query);
             ContentView.Current_Query = Parse(query,false);
             if (search != null)
-                search.CollapseActionView();
+                search.ActionView.ClearFocus() ;
             searchView.SetQuery(query, false);
 
-            return false;
+            return true;
         }
 
         

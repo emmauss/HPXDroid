@@ -96,9 +96,12 @@ namespace HappyPandaXDroid
             var display = window.DefaultDisplay;
             int gridFactor = 0;
             float w = display.Width;
-            gridFactor = (int)(Math.Ceiling(w / 200d));
+            gridFactor = (int)(Math.Ceiling(w / 300d));
             if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
+            {
+                gridFactor = (int)(Math.Ceiling(w / 400d));
                 columns = gridFactor * 2;
+            }
             else
                 columns = gridFactor;
         }
