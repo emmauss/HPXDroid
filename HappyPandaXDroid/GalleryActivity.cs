@@ -435,7 +435,7 @@ namespace HappyPandaXDroid
                             tag_item.Text = tag.name;                            
                             tag_item.SetBackgroundDrawable(new Custom_Views.RoundSideRectDrawable(color_tag));
                             tag_item.Click += Tag_item_Click;
-                            string fullTagName = _namespace.Name + ":" + "\\\""+tag.name+ "\\\"";
+                            string fullTagName = _namespace.Name + ":" + "\""+tag.name+ "\"";
                             tag_item.Tag = fullTagName;
                             tag_item.Clickable=true;
                             awl.AddView(tag_item);

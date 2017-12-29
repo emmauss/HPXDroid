@@ -178,7 +178,7 @@ namespace HappyPandaXDroid
                     StartActivity(intent);
                     break;
                 case Resource.Id.action_home:
-                    OnBackPressed();
+                    base.OnBackPressed();
                     break;
                 case Resource.Id.action_recent:
                     navDrawer.CloseDrawers();

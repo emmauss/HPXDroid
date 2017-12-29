@@ -83,7 +83,7 @@ namespace HappyPandaXDroid
             mRefreshFab.SetOnClickListener(fabclick);
             if (data.Trim() != string.Empty)
             {
-                ContentView.Current_Query = data;
+                ContentView.Current_Query = Parse(data,false);
                 SupportActionBar.Title = data;
             }
             else
@@ -297,37 +297,48 @@ namespace HappyPandaXDroid
             return true;
         }
 
+        public string Parse(string inString,bool IsEscaped = true)
+        {
+            string res = string.Empty;
+            if(IsEscaped)
+            res = inString.Replace("\\\"", "\"");
+            else
+                res = inString.Replace("\"", "\\\"");
+
+            return res;
+        }
+
         
 
         public bool OnQueryTextSubmit(string query)
         {
 
-            SupportActionBar.InvalidateOptionsMenu();
+            //SupportActionBar.InvalidateOptionsMenu();
             SupportActionBar.Title = query;
             logger.Info("Search query submit , query ={0}", query);
-            ContentView.Current_Query = query;
+            ContentView.Current_Query = Parse(query,false);
+            if (search != null)
+                search.CollapseActionView();
             searchView.SetQuery(query, false);
 
             return false;
         }
 
+        
+
         Android.Support.V7.Widget.SearchView searchView;
+        IMenuItem search;
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.gallerySearch, menu);
-            var search = toolbar.Menu.FindItem(Resource.Id.search);
+            search = toolbar.Menu.FindItem(Resource.Id.search);
+            
             searchView = (Android.Support.V7.Widget.SearchView)search.ActionView;
             searchView.SetOnQueryTextListener(this);
-            searchView.Click += SearchView_Click;
+            searchView.SetQuery(ContentView.Current_Query, false);
             return base.OnCreateOptionsMenu(menu);
         }
-
-        private void SearchView_Click(object sender, EventArgs e)
-        {
-            searchView.SetQuery(ContentView.Current_Query,false);
-        }
-
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
 
