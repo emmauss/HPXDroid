@@ -217,6 +217,14 @@
     <AndroidResource Include="Resources\drawable\splash.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_hpx_logo.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_hpx_logo.png" />
+    <AndroidResource Include="Resources\mipmap-hdpi\ic_contrast.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\ic_contrast.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\ic_contrast.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_contrast.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_contrast.png" />
+    <AndroidResource Include="Resources\drawable\ic_hpx_logo.png" />
     <None Include="GettingStarted.Xamarin" />
     <AndroidResource Include="Resources\layout\nav_header.axml">
       <SubType>Designer</SubType>

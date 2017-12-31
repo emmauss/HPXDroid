@@ -54,6 +54,19 @@ namespace HappyPandaXDroid.Core
 
             #endregion
 
+            public static int FilterLevel
+            {
+                get
+                {
+                    return int.Parse(AppSettings.GetValueOrDefault("filter_level", "0"));
+                }
+                set
+                {
+                    AppSettings.AddOrUpdateValue("filter_level", value.ToString());
+                }
+            }
+
+
             public static string Server_IP
             {
                 get

@@ -1,8 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:happypandaxdroid="http://schemas.android.com/apk/res-auto Jump" >
+  <item
+       android:id="@+id/filter"
+       happypandaxdroid:showAsAction="always"
+       android:icon="@mipmap/ic_contrast"
+       android:title="Dim Screen" />
   <item
        android:id="@+id/refresh"
-       android:showAsAction="ifRoom"
+       happypandaxdroid:showAsAction="always"
        android:icon="@drawable/refresh"
        android:title="Refresh" />
 

@@ -20,8 +20,15 @@
             android:background="#ff000000"
             package:rvp_triggerOffset="0.1"
             package:rvp_singlePageFling="true"
-            android:clipToPadding="false" />
+            android:clipToPadding="false" />    
     </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ff000000"
+        android:id="@+id/screenFilter"  
+    />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -46,7 +53,18 @@
             android:layout_height="wrap_content"
             android:id="@+id/progress_seekbar" />
     </LinearLayout>
+  <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar_alpha" />
+   <SeekBar
+            android:layout_width="match_parent"
+            android:background="#a0101010"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:id="@+id/filterSlider" />
+    </LinearLayout>
 </FrameLayout>

@@ -41,13 +41,14 @@ namespace HappyPandaXDroid
         bool overlayVisible = true;
         public  ImageAdapter adapter;
         public RequestOptions options;
+        LinearLayout ScreenFilter;
         FrameLayout lay;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         /*List<string> ImageList =
             new List<string>();*/
         List<Core.Gallery.Page> PageList =
             new List<Core.Gallery.Page>();
-        SeekBar seekbar;
+        SeekBar seekbar,FilterSlider;
         UICountdown countDown;
 
         Core.Gallery.GalleryItem gallery;
@@ -73,6 +74,12 @@ namespace HappyPandaXDroid
             options = new RequestOptions()
                 .Override(Target.SizeOriginal, Target.SizeOriginal);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            ScreenFilter = FindViewById<LinearLayout>(Resource.Id.screenFilter);
+            FilterSlider = FindViewById<SeekBar>(Resource.Id.filterSlider);
+            FilterSlider.Max = 255;
+            FilterSlider.Progress = 255;
+            FilterSlider.ProgressChanged += FilterSlider_ProgressChanged;
+            FilterSlider.Click += FilterSlider_Click;
             SetSupportActionBar(toolbar);
             lay = FindViewById<FrameLayout>(Resource.Id.frame);
             galleryPager = FindViewById<RecyclerViewPager>(Resource.Id.galleryViewPager);
@@ -86,7 +93,7 @@ namespace HappyPandaXDroid
             galleryPager.ScrollToPosition(pageno);
             seekbar = FindViewById<SeekBar>(Resource.Id.progress_seekbar);
             seekbar.Max = PageList.Count;
-            
+            FilterSlider.Progress = Core.App.Settings.FilterLevel;
             galleryPager.GetAdapter().NotifyDataSetChanged();
             page_number = FindViewById<TextView>(Resource.Id.page_number);
             seekbar.Progress = pageno + 1;
@@ -95,8 +102,46 @@ namespace HappyPandaXDroid
             galleryPager.AddOnPageChangedListener(new PageChangeListener(this));
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
+            countDown.Start();
+            SupportActionBar.Title = PageList[pageno].name;
 
          }
+
+        public override bool OnGenericMotionEvent(MotionEvent e)
+        {
+            countDown.Start();
+            return base.OnGenericMotionEvent(e);
+        }
+
+        private void FilterSlider_Click(object sender, EventArgs e)
+        {
+            countDown.Start();
+        }
+
+        private void FilterSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        {
+            int val = e.Progress;
+            countDown.Start();
+            SetScreenBrightness(val);
+        }
+
+        void SetScreenBrightness(int level)
+        {
+            int alpha = 255 - level;
+            if (alpha < 0)
+                alpha = 0;
+            if (alpha > 255)
+                alpha = 255;
+            SetAlpha(ScreenFilter, alpha);
+        }
+
+        void SetAlpha(View view, int alpha)
+        {
+            var bg = view.Background;
+            bg.SetAlpha(alpha);
+            Core.App.Settings.FilterLevel = alpha;
+
+        }
 
         protected override void OnResume()
         {
@@ -154,7 +199,32 @@ namespace HappyPandaXDroid
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.viewer_menu, menu);
+            var item = toolbar.Menu.FindItem(Resource.Id.filter);
+            FilterClickListerner lis = new FilterClickListerner(FilterSlider);
+            item.SetOnMenuItemClickListener(lis);
             return base.OnCreateOptionsMenu(menu);
+        }
+
+        class FilterClickListerner : Java.Lang.Object, IMenuItemOnMenuItemClickListener
+        {
+            SeekBar filterbar;
+
+            public FilterClickListerner(SeekBar bar)
+            {
+                filterbar = bar;
+            }
+
+            public bool OnMenuItemClick(IMenuItem item)
+            {
+                if (filterbar != null)
+                {
+                    if (filterbar.Visibility != ViewStates.Visible)
+                        filterbar.Visibility = ViewStates.Visible;
+                    else
+                        filterbar.Visibility = ViewStates.Gone;
+                }
+                return true;
+            }
         }
 
         public override bool DispatchTouchEvent(MotionEvent ev)
@@ -302,6 +372,7 @@ namespace HappyPandaXDroid
                     overlayVisible = false;
                     toolbar.Visibility = ViewStates.Gone;
                     seekbar.Visibility = ViewStates.Gone;
+                    FilterSlider.Visibility = ViewStates.Gone;
                 }
                 else
                 {
