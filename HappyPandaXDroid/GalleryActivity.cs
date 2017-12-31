@@ -18,6 +18,7 @@ using Com.Bumptech.Glide;
 using Com.Bumptech.Glide.Request;
 using ProgressView = XamarinBindings.MaterialProgressBar;
 using NLog;
+using Android.Content.Res;
 
 namespace HappyPandaXDroid
 {
@@ -42,7 +43,8 @@ namespace HappyPandaXDroid
         ScrollView scrollview;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
-        public int activityId;
+        GridLayoutManager layout;
+        public int activityId, PreviewColumns;
         List<Core.Gallery.Page> pagelist,cachedlist;
         private ImageView mErrorImage;
 
@@ -149,6 +151,14 @@ namespace HappyPandaXDroid
             {
                 loaded = false;
             }
+        }
+
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+            SetColumns();
+            layout = new GridLayoutManager(this, PreviewColumns);
+            grid_layout.SetLayoutManager(layout);
         }
 
         protected override void OnDestroy()
@@ -270,8 +280,26 @@ namespace HappyPandaXDroid
             adapter = new PreviewAdapter(this);
             mProgressView.Visibility = ViewStates.Visible;
             grid_layout.SetAdapter(adapter);
-            var layout = new GridLayoutManager(this, 5);
+            SetColumns();
+            layout = new GridLayoutManager(this, PreviewColumns);
             grid_layout.SetLayoutManager(layout);
+        }
+
+        void SetColumns()
+        {
+            var windo = GetSystemService(Context.WindowService);
+            var window = windo.JavaCast<IWindowManager>();
+            var display = window.DefaultDisplay;
+            int gridFactor = 0;
+            float w = display.Width;
+            gridFactor = (int)(Math.Ceiling(w / 300d));
+            if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
+            {
+                gridFactor = (int)(Math.Ceiling(w / 400d));
+                PreviewColumns = gridFactor * 2;
+            }
+            else
+                PreviewColumns = gridFactor;
         }
 
         private void ErrorFrame_Click(object sender, EventArgs e)
@@ -420,7 +448,7 @@ namespace HappyPandaXDroid
                     {
                         
                         var rtg = (LinearLayout)inflater.Inflate(Resource.Layout.tag_group_template, TagLayout, false);
-                        rtg.Orientation = Orientation.Horizontal;
+                        rtg.Orientation = Android.Widget.Orientation.Horizontal;
                         TagLayout.AddView(rtg);
                         TextView tag_header = (TextView)inflater.Inflate(Resource.Layout.tag_template, rtg, false);
                         tag_header.Text = name.ToLower();

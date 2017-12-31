@@ -25,6 +25,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:background="#a0101010"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:minWidth="25px"
@@ -35,7 +36,6 @@
             android:layout_gravity="center_horizontal"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#333333"
-            android:background="#10101010"
             android:text=""
             android:layout_marginLeft="5dp"
             android:paddingBottom="5dp"
@@ -44,7 +44,6 @@
             android:layout_width="match_parent"
             android:paddingBottom="?attr/actionBarSize"
             android:layout_height="wrap_content"
-            android:background="#10101010"
             android:id="@+id/progress_seekbar" />
     </LinearLayout>
     <include
