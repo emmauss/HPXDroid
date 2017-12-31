@@ -49,7 +49,7 @@ namespace HappyPandaXDroid
         List<Core.Gallery.Page> PageList =
             new List<Core.Gallery.Page>();
         SeekBar seekbar,FilterSlider;
-        UICountdown countDown;
+        public UICountdown countDown;
 
         Core.Gallery.GalleryItem gallery;
 
@@ -89,7 +89,7 @@ namespace HappyPandaXDroid
             adapter = new ImageAdapter(PageList,this);
             galleryPager.SetAdapter(new RecyclerViewPagerAdapter(galleryPager, adapter));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            countDown = new UICountdown(2000, 10, this);
+            countDown = new UICountdown(3000, 10, this);
             galleryPager.ScrollToPosition(pageno);
             seekbar = FindViewById<SeekBar>(Resource.Id.progress_seekbar);
             seekbar.Max = PageList.Count;
@@ -200,7 +200,7 @@ namespace HappyPandaXDroid
         {
             MenuInflater.Inflate(Resource.Menu.viewer_menu, menu);
             var item = toolbar.Menu.FindItem(Resource.Id.filter);
-            FilterClickListerner lis = new FilterClickListerner(FilterSlider);
+            FilterClickListerner lis = new FilterClickListerner(this);
             item.SetOnMenuItemClickListener(lis);
             return base.OnCreateOptionsMenu(menu);
         }
@@ -208,10 +208,12 @@ namespace HappyPandaXDroid
         class FilterClickListerner : Java.Lang.Object, IMenuItemOnMenuItemClickListener
         {
             SeekBar filterbar;
+            GalleryViewer activity;
 
-            public FilterClickListerner(SeekBar bar)
+            public FilterClickListerner(GalleryViewer act)
             {
-                filterbar = bar;
+                activity = act;
+                filterbar = act.FilterSlider;
             }
 
             public bool OnMenuItemClick(IMenuItem item)
@@ -223,7 +225,8 @@ namespace HappyPandaXDroid
                     else
                         filterbar.Visibility = ViewStates.Gone;
                 }
-                return true;
+                activity.countDown.Start();
+                return false;
             }
         }
 
