@@ -182,6 +182,8 @@ namespace HappyPandaXDroid
                 PageList.Clear();
                 page_number = null;
             }
+            FilterSlider = null;
+            ScreenFilter = null;
             System.GC.Collect();
             Java.Lang.JavaSystem.Gc();
             logger.Info("Closing Gallery Viewer");

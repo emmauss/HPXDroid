@@ -193,6 +193,8 @@ namespace HappyPandaXDroid
                 pagelist.Clear();
                 pagelist = null;
                     }
+            GC.Collect();
+            Java.Lang.JavaSystem.Gc();
             base.OnDestroy();
         }
 
