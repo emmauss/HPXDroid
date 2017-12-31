@@ -65,7 +65,7 @@ namespace HappyPandaXDroid
                 string data = Intent.GetStringExtra("page");
                 PageList = Core.JSON.Serializer.SimpleSerializer.Deserialize<List<Core.Gallery.Page>>(data);
             logger.Info("Initializing Gallery Viewer");
-            //InitPageGen();
+            Task.Run(()=>InitPageGen());
 
             data = Intent.GetStringExtra("gallery");
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(data);
