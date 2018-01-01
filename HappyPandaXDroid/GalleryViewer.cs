@@ -139,7 +139,7 @@ namespace HappyPandaXDroid
         {
             var bg = view.Background;
             bg.SetAlpha(alpha);
-            Core.App.Settings.FilterLevel = alpha;
+            Core.App.Settings.FilterLevel = FilterSlider.Progress;
 
         }
 
