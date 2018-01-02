@@ -294,10 +294,10 @@ namespace HappyPandaXDroid
             var display = window.DefaultDisplay;
             int gridFactor = 0;
             float w = display.Width;
-            gridFactor = (int)(Math.Ceiling(w / 300d));
+            gridFactor = (int)(Math.Ceiling(w / (160*2)));
             if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
             {
-                gridFactor = (int)(Math.Ceiling(w / 400d));
+                gridFactor = (int)(Math.Ceiling(w / (160*3)));
                 PreviewColumns = gridFactor * 2;
             }
             else
@@ -526,7 +526,10 @@ namespace HappyPandaXDroid
             else
                 return true;
         }
+
     }
+
+
 
     public class PreviewAdapter : RecyclerView.Adapter
     {
@@ -636,6 +639,8 @@ namespace HappyPandaXDroid
             }
         }
 
+
+
         public async Task<bool> LoadPreview(Core.Gallery.Page page)
         {
             this.page = page;
@@ -657,7 +662,8 @@ namespace HappyPandaXDroid
                         }
                         catch (Exception ex)
                         {
-
+                            logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
+                                        "Failure in \'source exist check'. Exception Message\n" + ex.Message);
                         }
                     });
                     return false;
@@ -673,6 +679,8 @@ namespace HappyPandaXDroid
                     }
                     catch (System.Exception ex)
                     {
+                        logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
+                                        "Failure in setting koadung image. Exception Message\n" + ex.Message);
                         if (ex.Message.Contains("destroyed"))
                             return;
                     }
@@ -691,7 +699,8 @@ namespace HappyPandaXDroid
                             }
                             catch (Exception ex)
                             {
-
+                                logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
+                                        "Failure in setting failed source. Exception Message\n" + ex.Message);
                             }
                         });
                         return false;
@@ -716,7 +725,8 @@ namespace HappyPandaXDroid
                                 }
                                 catch (Exception ex)
                                 {
-
+                                    logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
+                                        "Failure in getting Image. Exception Message\n" + ex.Message);
                                 }
                             });
                                 return false;
@@ -732,7 +742,8 @@ namespace HappyPandaXDroid
                             }
                             catch (Exception ex)
                             {
-
+                                logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview" +
+                                    ". Exception Message\n" + ex.Message);
                             }
                         });
                         return false;
@@ -757,7 +768,7 @@ namespace HappyPandaXDroid
             }
             catch(Exception ex)
             {
-                logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview.");
+                logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview. Exception Message\n"+ex.Message);
 
                 tries = 0;
                 return false;
