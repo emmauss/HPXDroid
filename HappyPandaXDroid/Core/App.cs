@@ -58,7 +58,7 @@ namespace HappyPandaXDroid.Core
             {
                 get
                 {
-                    return int.Parse(AppSettings.GetValueOrDefault("filter_level", "255"));
+                    return int.Parse(AppSettings.GetValueOrDefault("filter_level", "0"));
                 }
                 set
                 {
