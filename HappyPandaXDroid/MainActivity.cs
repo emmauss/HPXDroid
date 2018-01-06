@@ -28,7 +28,6 @@ namespace HappyPandaXDroid
         private static Logger logger = LogManager.GetCurrentClassLogger();
         //public List<string> lists = new List<string>();
         //ArrayAdapter<string> adapter;
-        bool connected = false;
         protected async override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -40,7 +39,7 @@ namespace HappyPandaXDroid
             await Load();
 
             var intent = new Intent(this, typeof(LibraryActivity));
-            intent.PutExtra("connected", connected);
+            intent.PutExtra("connected", Core.Net.Connected);
             intent.PutExtra("query", string.Empty);
             StartActivity(intent);
             
@@ -62,8 +61,7 @@ namespace HappyPandaXDroid
                 if (Core.Net.IsServerReachable())
                 {
                     Core.Net.Connect();
-                    if (Core.Net.Connected)
-                        connected = true;
+                    
                 }
             CreateFolders();
 
