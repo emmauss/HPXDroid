@@ -180,6 +180,8 @@
     <Compile Include="Custom_Views\ImageViewHolder.cs" />
     <Compile Include="Custom_Views\OptionDialogPreference.cs" />
     <Compile Include="Custom_Views\PageSelector.cs" />
+    <Compile Include="Custom_Views\PreviewAdapter.cs" />
+    <Compile Include="Custom_Views\PreviewHolder.cs" />
     <Compile Include="Custom_Views\RoundSideRectDrawable.cs" />
     <Compile Include="Custom_Views\SafeCoordinatorLayout.cs" />
     <Compile Include="GalleryActivity.cs" />

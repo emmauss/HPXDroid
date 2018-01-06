@@ -38,14 +38,14 @@ namespace HappyPandaXDroid
         ProgressView.MaterialProgressBar mProgressView;
         LinearLayout MainView;
         TextView GalleryStatus;
-        PreviewAdapter adapter;
+        Custom_Views.PreviewAdapter adapter;
         bool loaded = false;
         ScrollView scrollview;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
         GridLayoutManager layout;
         public int activityId, PreviewColumns;
-        List<Core.Gallery.Page> pagelist,cachedlist;
+        List<Core.Gallery.Page> pagelist, cachedlist;
         private ImageView mErrorImage;
 
         //public List<Tuple<Task,CancellationTokenSource>> tasklist = new List<Tuple<Task, CancellationTokenSource>>();
@@ -61,7 +61,7 @@ namespace HappyPandaXDroid
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
             thumb_path = Intent.GetStringExtra("thumb");
 
-            
+
             ParseMeta();
             this.Window.SetType(WindowManagerTypes.KeyguardDialog);
 
@@ -70,7 +70,8 @@ namespace HappyPandaXDroid
                 try
                 {
                     Load();
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     loaded = false;
                 }
@@ -88,7 +89,7 @@ namespace HappyPandaXDroid
             });
             Thread thread = new Thread(start);
             thread.Start();
-            
+
 
         }
 
@@ -138,13 +139,13 @@ namespace HappyPandaXDroid
                 gallery.tags = Core.Gallery.GetTags(gallery.id, "Gallery").Result;
                 pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
                 ParseData();
-                if(!IsDestroyed)
-                RunOnUiThread(() =>
-                {
-                    mProgressView.Visibility = ViewStates.Invisible;
-                    MainView.Visibility = ViewStates.Visible;
-                    errorFrame.Visibility = ViewStates.Gone;
-                });
+                if (!IsDestroyed)
+                    RunOnUiThread(() =>
+                    {
+                        mProgressView.Visibility = ViewStates.Invisible;
+                        MainView.Visibility = ViewStates.Visible;
+                        errorFrame.Visibility = ViewStates.Gone;
+                    });
                 loaded = true;
             }
             else
@@ -189,10 +190,11 @@ namespace HappyPandaXDroid
             GalleryStatus = null;
             ThumbView.SetImageDrawable(null);
             ThumbView = null;
-            if (pagelist != null) {
+            if (pagelist != null)
+            {
                 pagelist.Clear();
                 pagelist = null;
-                    }
+            }
             GC.Collect();
             Java.Lang.JavaSystem.Gc();
             base.OnDestroy();
@@ -248,7 +250,7 @@ namespace HappyPandaXDroid
 
         void InitializeViews()
         {
-            
+
             mProgressView = FindViewById<ProgressView.MaterialProgressBar>(Resource.Id.progress_view);
             mProgressView.Visibility = ViewStates.Visible;
             MainView = FindViewById<LinearLayout>(Resource.Id.below_header);
@@ -270,7 +272,7 @@ namespace HappyPandaXDroid
             time_posted = FindViewById<TextView>(Resource.Id.posted);
             no_tags = FindViewById<TextView>(Resource.Id.no_tags);
             scrollview = FindViewById<ScrollView>(Resource.Id.scroll_view);
-           grid_layout = FindViewById<RecyclerView>(Resource.Id.grid_layout);
+            grid_layout = FindViewById<RecyclerView>(Resource.Id.grid_layout);
             TagLayout = FindViewById<LinearLayout>(Resource.Id.tags);
             ActionCard = FindViewById<CardView>(Resource.Id.action_card);
             GalleryStatus = FindViewById<TextView>(Resource.Id.status);
@@ -279,12 +281,30 @@ namespace HappyPandaXDroid
             ContinueCard.Click += ContinueCard_Click;
             ActionCard.Clickable = true;
             ActionCard.Click += ActionCard_Click;
-            adapter = new PreviewAdapter(this);
+            adapter = new Custom_Views.PreviewAdapter(this);
+            adapter.ItemClick += Adapter_ItemClick;
             mProgressView.Visibility = ViewStates.Visible;
             grid_layout.SetAdapter(adapter);
             SetColumns();
             layout = new GridLayoutManager(this, PreviewColumns);
             grid_layout.SetLayoutManager(layout);
+        }
+
+        private void Adapter_ItemClick(object sender, Custom_Views.PreviewAdapterClickEventArgs e)
+        {
+            int pos = e.Position;
+            List<int> pages_ids = new List<int>();
+
+            if (pagelist == null)
+                return;
+            if (pagelist == null & pagelist.Count < 1)
+                return;
+
+            Intent intent = new Android.Content.Intent(this, typeof(GalleryViewer));
+            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
+            intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
+            intent.PutExtra("no", pos);
+            StartActivity(intent);
         }
 
         void SetColumns()
@@ -294,10 +314,10 @@ namespace HappyPandaXDroid
             var display = window.DefaultDisplay;
             int gridFactor = 0;
             float w = display.Width;
-            gridFactor = (int)(Math.Ceiling(w / (160*2)));
+            gridFactor = (int)(Math.Ceiling(w / (160 * 2)));
             if (Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
             {
-                gridFactor = (int)(Math.Ceiling(w / (160*3)));
+                gridFactor = (int)(Math.Ceiling(w / (160 * 3)));
                 PreviewColumns = gridFactor * 2;
             }
             else
@@ -336,7 +356,6 @@ namespace HappyPandaXDroid
 
         private void ContinueCard_Click(object sender, EventArgs e)
         {
-            List<int> pages_ids = new List<int>();
 
             if (pagelist == null)
                 return;
@@ -356,9 +375,9 @@ namespace HappyPandaXDroid
 
             if (pagelist == null)
                 return;
-            if ( pagelist==null & pagelist.Count < 1)
+            if (pagelist == null & pagelist.Count < 1)
                 return;
-            
+
             Intent intent = new Android.Content.Intent(this, typeof(GalleryViewer));
             intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
             intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
@@ -370,7 +389,7 @@ namespace HappyPandaXDroid
         {
             title.Text = gallery.titles[0].name;
             category.Text = "place_holder";
-            
+
         }
 
         async void ParseData()
@@ -384,8 +403,8 @@ namespace HappyPandaXDroid
                     {
                         if (gallery.tags.Language.Count > 0)
                         {
-                        if (language == null)
-                            language = FindViewById<TextView>(Resource.Id.language);
+                            if (language == null)
+                                language = FindViewById<TextView>(Resource.Id.language);
                             string lan = gallery.tags.Language[0].name;
                             language.Text = System.Globalization.CultureInfo.CurrentCulture
                                 .TextInfo.ToTitleCase(lan.ToLower());
@@ -395,12 +414,14 @@ namespace HappyPandaXDroid
                         pages.Text = pagelist.Count.ToString() + " Pages";
                         adapter.SetList(pagelist);
                         ParseTags();
-                    }catch(Exception ex)
+                    }
+                    catch (Exception ex)
                     {
 
                     }
                 });
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
 
             }
@@ -408,7 +429,7 @@ namespace HappyPandaXDroid
 
         protected override void OnPause()
         {
-           
+
             base.OnPause();
         }
 
@@ -437,7 +458,7 @@ namespace HappyPandaXDroid
             int color_tag = Resources.GetColor(Resource.Color.purple_a700);
             Type t = gallery.tags.GetType();
             PropertyInfo[] namespaces = t.GetProperties();
-            foreach(var _namespace in namespaces)
+            foreach (var _namespace in namespaces)
             {
                 object value = _namespace.GetValue(gallery.tags);
                 string name = _namespace.Name;
@@ -448,7 +469,7 @@ namespace HappyPandaXDroid
                     var tags = (List<Core.Gallery.TagItem>)value;
                     if (tags.Count > 0)
                     {
-                        
+
                         var rtg = (LinearLayout)inflater.Inflate(Resource.Layout.tag_group_template, TagLayout, false);
                         rtg.Orientation = Android.Widget.Orientation.Horizontal;
                         TagLayout.AddView(rtg);
@@ -462,18 +483,18 @@ namespace HappyPandaXDroid
                         foreach (var tag in tags)
                         {
                             TextView tag_item = (TextView)inflater.Inflate(Resource.Layout.tag_template, awl, false);
-                            tag_item.Text = tag.name;                            
+                            tag_item.Text = tag.name;
                             tag_item.SetBackgroundDrawable(new Custom_Views.RoundSideRectDrawable(color_tag));
                             tag_item.Click += Tag_item_Click;
-                            string fullTagName = _namespace.Name + ":" + "\""+tag.name+ "\"";
+                            string fullTagName = _namespace.Name + ":" + "\"" + tag.name + "\"";
                             tag_item.Tag = fullTagName;
-                            tag_item.Clickable=true;
+                            tag_item.Clickable = true;
                             awl.AddView(tag_item);
                         }
                     }
                 }
             }
-            
+
         }
 
         private void Tag_item_Click(object sender, EventArgs e)
@@ -485,7 +506,7 @@ namespace HappyPandaXDroid
 
             intent.PutExtra("query", (string)tag_item.Tag);
             logger.Info("search init :" + (string)tag_item);
-            StartActivity(intent); 
+            StartActivity(intent);
 
         }
 
@@ -495,11 +516,11 @@ namespace HappyPandaXDroid
                 return;
             TagLayout.RemoveAllViews();
 
-            
-            
+
+
             SetTagLayout();
             TagLayout.Visibility = ViewStates.Visible;
-            
+
         }
 
         bool IsTagAvailable()
@@ -526,271 +547,6 @@ namespace HappyPandaXDroid
             else
                 return true;
         }
-
-    }
-
-
-
-    public class PreviewAdapter : RecyclerView.Adapter
-    {
-        public int preview_count = 10;
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-        public List<Core.Gallery.Page> mdata;
-        Android.Content.Context mcontext;
-        public PreviewAdapter(Context context)
-        {
-            mcontext = context;
-        }
-
-        public override int ItemCount
-        {
-            get { return mdata==null?0:mdata.Count; }
-        }
-
-        public void SetList(List<Core.Gallery.Page> UrlList) 
-        {
-            int number = preview_count;
-            if (UrlList.Count < 10)
-                number = UrlList.Count;
-            mdata = new List<Core.Gallery.Page>();
-            for(int i = 0; i < number; i++)
-            {
-                mdata.Add(UrlList[i]);
-            }
-            //mdata.Capacity = 20;
-            mdata.TrimExcess();
-            NotifyDataSetChanged();
-        }
-
-        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
-        {
-            PreviewViewHolder vh = holder as PreviewViewHolder;
-            var page = mdata[position];
-            var activity = (GalleryActivity)mcontext;
-            var cts = new CancellationTokenSource();
-
-            Task.Run(async () =>
-          {
-              try
-              {
-                  await vh.LoadPreview(page);
-              }
-              catch (Exception ex)
-              {
-                  logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewAdaptor.OnBindViewHolder.");
-              }
-
-          });
-            
-            vh.txt.Text = mdata[position].number.ToString();
-        }
-
-
-
-
-        public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
-        {
-            View itemview = LayoutInflater.From(parent.Context)
-                .Inflate(Resource.Layout.preview_template, parent, false);
-            PreviewViewHolder vh = new PreviewViewHolder(itemview);
-            return vh;
-        }
-    }
-
-    
-
-    public class PreviewViewHolder : RecyclerView.ViewHolder
-    {
-        public View preview;
-        public ImageView img;
-        public TextView txt;
-        public int position;
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-        public bool loaded = false;
-        public Core.Gallery.Page page;
-        string thumb_path;
-        public PreviewViewHolder(View itemView) : base(itemView)
-        {
-            
-            preview = itemView;
-            img = preview.FindViewById<ImageView>(Resource.Id.preview);
-            txt = preview.FindViewById<TextView>(Resource.Id.title);
-            preview.SetOnClickListener(new PreviewClickListener());
-        }
-
-        bool IsCached
-        {
-            get
-            {
-                int item_id = page.id;
-                try
-                {
-                    thumb_path = Core.App.Settings.cache + "preview/" + Core.App.Server.HashGenerator("medium", "preview", item_id) + ".jpg";
-                    bool check = Core.Media.Cache.IsCached(thumb_path);
-
-                    return check;
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
-
-                    return false;
-                }
-            }
-        }
-
-
-
-        public async Task<bool> LoadPreview(Core.Gallery.Page page)
-        {
-            this.page = page;
-            int tries = 0;
-            try
-            {
-
-                var h = new Handler(Looper.MainLooper);
-                bool exists = await Core.Gallery.IsSourceExist("page", page.id);
-                if (!exists)
-                {
-
-                    h.Post(() =>
-                    {
-                        try { 
-                        Glide.With(preview.Context)
-                                .Load(Resource.Drawable.image_failed)
-                                .Into(img);
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
-                                        "Failure in \'source exist check'. Exception Message\n" + ex.Message);
-                        }
-                    });
-                    return false;
-                }
-                h.Post(() =>
-                {
-                try
-                {
-                    if (((GalleryActivity)(preview.Context)).IsRunning)
-                        Glide.With(preview.Context)
-                 .Load(Resource.Drawable.loading2)
-                 .Into(img);
-                    }
-                    catch (System.Exception ex)
-                    {
-                        logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
-                                        "Failure in setting koadung image. Exception Message\n" + ex.Message);
-                        if (ex.Message.Contains("destroyed"))
-                            return;
-                    }
-                });
-                    while (!IsCached)
-                    {
-                    exists = await Core.Gallery.IsSourceExist("page", page.id);
-                    if (!exists)
-                    {
-                        h.Post(() =>
-                        {
-                            try { 
-                            Glide.With(preview.Context)
-                                    .Load(Resource.Drawable.image_failed)
-                                    .Into(img);
-                            }
-                            catch (Exception ex)
-                            {
-                                logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
-                                        "Failure in setting failed source. Exception Message\n" + ex.Message);
-                            }
-                        });
-                        return false;
-                    }
-
-                    page.thumb_url = await Core.Gallery.GetImage(page, false,"medium",true);
-                        if (page.thumb_url.Contains("fail"))
-                        {
-                            if (page.thumb_url.Contains("misc"))
-                            {
-                                tries++;
-                                if (tries < 4)
-                                {
-                                    continue;
-                                }
-                            h.Post(() =>
-                            {
-                                try { 
-                                Glide.With(preview.Context)
-                                .Load(Resource.Drawable.image_failed)
-                                .Into(img);
-                                }
-                                catch (Exception ex)
-                                {
-                                    logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
-                                        "Failure in getting Image. Exception Message\n" + ex.Message);
-                                }
-                            });
-                                return false;
-
-                            }
-                        h.Post(() =>
-                        {
-                            try
-                            {
-                                Glide.With(preview.Context)
-                                .Load(Resource.Drawable.image_failed)
-                                .Into(img);
-                            }
-                            catch (Exception ex)
-                            {
-                                logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview" +
-                                    ". Exception Message\n" + ex.Message);
-                            }
-                        });
-                        return false;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                
-                h = new Handler(Looper.MainLooper);
-                h.Post(() =>
-                {
-                    if(((GalleryActivity)(preview.Context)).IsRunning)
-                    Glide.With(preview.Context)
-                         .Load(thumb_path)
-                         .Into(img);
-                    loaded = true;
-                });
-                tries = 0;
-                return true;
-            }
-            catch(Exception ex)
-            {
-                logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview. Exception Message\n"+ex.Message);
-
-                tries = 0;
-                return false;
-            }
-            
-        }
-
-        
-
-        class PreviewClickListener : Java.Lang.Object, View.IOnClickListener
-        {
-            View preview;
-            public void OnClick(View v)
-            {
-                /*preview = v;
-                Intent intent = new Intent(preview.Context, typeof(GalleryActivity));
-                /*string gallerystring = Core.JSON.Serializer.simpleSerializer.Serialize(preview.Gallery);
-                intent.PutExtra("gallery", gallerystring);
-                card.Context.StartActivity(intent);*/
-            }
-        }
-
 
     }
 }
