@@ -15,7 +15,6 @@ namespace HappyPandaXDroid.Custom_Views
     {
         public event EventHandler<PreviewAdapterClickEventArgs> ItemClick;
         public event EventHandler<PreviewAdapterClickEventArgs> ItemLongClick;
-        public int preview_count = 10;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public List<Core.Gallery.Page> mdata;
         Android.Content.Context mcontext;
@@ -31,16 +30,8 @@ namespace HappyPandaXDroid.Custom_Views
 
         public void SetList(List<Core.Gallery.Page> UrlList)
         {
-            int number = preview_count;
-            if (UrlList.Count < 10)
-                number = UrlList.Count;
             mdata = new List<Core.Gallery.Page>();
-            for (int i = 0; i < number; i++)
-            {
-                mdata.Add(UrlList[i]);
-            }
-            //mdata.Capacity = 20;
-            mdata.TrimExcess();
+            mdata.AddRange(UrlList);
             NotifyDataSetChanged();
         }
 
@@ -48,7 +39,6 @@ namespace HappyPandaXDroid.Custom_Views
         {
             Custom_Views.PreviewHolder vh = holder as Custom_Views.PreviewHolder;
             var page = mdata[position];
-            var activity = (GalleryActivity)mcontext;
 
             Task.Run(async () =>
             {

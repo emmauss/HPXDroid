@@ -15,6 +15,7 @@ using Com.Bumptech.Glide;
 using NLog;
 
 using Android.Support.V7.Widget;
+using Android.Support.V7.App;
 
 namespace HappyPandaXDroid.Custom_Views
 {
@@ -67,10 +68,29 @@ namespace HappyPandaXDroid.Custom_Views
         {
             this.page = page;
             int tries = 0;
+            var h = new Handler(Looper.MainLooper);
             try
             {
-
-                var h = new Handler(Looper.MainLooper);
+                if (page.isPlaceholder)
+                {
+                    h.Post(() =>
+                    {
+                        try
+                        {
+                            Glide.With(preview.Context)
+                                    .Load(Resource.Drawable.ic_add_white)
+                                    .Into(img);
+                            txt.Text = page.name;
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewHolder.LoadPreview." +
+                                        "Failure in \'source exist check'. Exception Message\n" + ex.Message);
+                        }
+                    });
+                    return true;
+                }
+               
                 bool exists = await Core.Gallery.IsSourceExist("page", page.id);
                 if (!exists)
                 {
@@ -182,7 +202,6 @@ namespace HappyPandaXDroid.Custom_Views
                 h = new Handler(Looper.MainLooper);
                 h.Post(() =>
                 {
-                    if (((GalleryActivity)(preview.Context)).IsRunning)
                         Glide.With(preview.Context)
                              .Load(thumb_path)
                              .Into(img);

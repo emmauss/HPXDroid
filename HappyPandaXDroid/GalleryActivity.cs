@@ -44,7 +44,7 @@ namespace HappyPandaXDroid
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
         GridLayoutManager layout;
-        public int activityId, PreviewColumns;
+        public int PreviewColumns;
         List<Core.Gallery.Page> pagelist, cachedlist;
         private ImageView mErrorImage;
 
@@ -299,11 +299,20 @@ namespace HappyPandaXDroid
                 return;
             if (pagelist == null & pagelist.Count < 1)
                 return;
+            var page = adapter.mdata[pos];
+            Intent intent = new Android.Content.Intent();
+            if (page.isPlaceholder)
+            {
+                intent = new Intent(this, typeof(PreviewActivity));
+            }
+            else
+            {
 
-            Intent intent = new Android.Content.Intent(this, typeof(GalleryViewer));
+                intent = new Intent(this, typeof(GalleryViewer));
+                intent.PutExtra("no", pos);
+            }
             intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
             intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
-            intent.PutExtra("no", pos);
             StartActivity(intent);
         }
 
@@ -412,7 +421,22 @@ namespace HappyPandaXDroid
                         else
                             language.Text = "eng";
                         pages.Text = pagelist.Count.ToString() + " Pages";
-                        adapter.SetList(pagelist);
+                        int number = 10;
+                        if (pagelist.Count < 10)
+                            number = pagelist.Count;
+                        var mdata = new List<Core.Gallery.Page>();
+                        for (int i = 0; i < number; i++)
+                        {
+                            mdata.Add(pagelist[i]);
+                        }
+                        if(pagelist.Count>number)
+                        {
+                            Core.Gallery.Page loadMore = new Core.Gallery.Page();
+                            loadMore.isPlaceholder = true;
+                            loadMore.name = "Show More...";
+                            mdata.Add(loadMore);
+                        }
+                        adapter.SetList(mdata);
                         ParseTags();
                     }
                     catch (Exception ex)
