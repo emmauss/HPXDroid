@@ -5965,8 +5965,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0065
 			public const int image = 2131427429;
 			
-			// aapt resource value: 0x7f0b00bc
-			public const int imageView = 2131427516;
+			// aapt resource value: 0x7f0b00bb
+			public const int imageView = 2131427515;
 			
 			// aapt resource value: 0x7f0b00b5
 			public const int info = 2131427509;
@@ -6307,8 +6307,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00f7
 			public const int textView1 = 2131427575;
 			
-			// aapt resource value: 0x7f0b00bb
-			public const int textViewholder = 2131427515;
+			// aapt resource value: 0x7f0b00bc
+			public const int textViewholder = 2131427516;
 			
 			// aapt resource value: 0x7f0b00bd
 			public const int textViewholder2 = 2131427517;
