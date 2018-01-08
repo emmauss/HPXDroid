@@ -62,7 +62,17 @@ namespace HappyPandaXDroid.Custom_Views
             }
         }
 
+        public void Recycle()
+        {
+            loaded = false;
+            Glide.With(preview.Context).Clear(img);
+        }
 
+        public void Reset()
+        {
+            loaded = false;
+            thumb_path = string.Empty;
+        }
 
         public async Task<bool> LoadPreview(Core.Gallery.Page page)
         {

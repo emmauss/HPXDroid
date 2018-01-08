@@ -8,6 +8,7 @@ using Android.Widget;
 using Android.Support.V7.Widget;
 
 using NLog;
+using Java.Lang;
 
 namespace HappyPandaXDroid.Custom_Views
 {
@@ -46,7 +47,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     await vh.LoadPreview(page);
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewAdaptor.OnBindViewHolder.");
                 }
@@ -55,7 +56,18 @@ namespace HappyPandaXDroid.Custom_Views
 
             vh.txt.Text = mdata[position].number.ToString();
         }
-        
+
+        public override void OnViewRecycled(Java.Lang.Object holder)
+        {
+            base.OnViewRecycled(holder);
+            var hold = holder as PreviewHolder;
+            if (hold != null)
+            {
+                hold.Reset();
+                hold.Recycle();
+            }
+        }
+
 
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -71,19 +83,7 @@ namespace HappyPandaXDroid.Custom_Views
 
     }
 
-    public class PreviewAdapterViewHolder : RecyclerView.ViewHolder
-    {
-        //public TextView TextView { get; set; }
-
-
-        public PreviewAdapterViewHolder(View itemView, Action<PreviewAdapterClickEventArgs> clickListener,
-                            Action<PreviewAdapterClickEventArgs> longClickListener) : base(itemView)
-        {
-            //TextView = v;
-            itemView.Click += (sender, e) => clickListener(new PreviewAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-            itemView.LongClick += (sender, e) => longClickListener(new PreviewAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-        }
-    }
+    
 
     public class PreviewAdapterClickEventArgs : EventArgs
     {
