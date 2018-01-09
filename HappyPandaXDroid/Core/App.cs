@@ -451,8 +451,7 @@ namespace HappyPandaXDroid.Core
                     JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                     response = JSON.API.ParseToString(main);
                     string responsestring = Net.SendPost(response);
-
-                    responsestring = responsestring.Remove(responsestring.LastIndexOf("<EOF>"));
+                    
                     var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
                     var array = obj.data as Newtonsoft.Json.Linq.JArray;
                     var config = new ServerSettings();
@@ -796,8 +795,7 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
                 string responsestring = Net.SendPost(response);
-
-                responsestring = responsestring.Remove(responsestring.LastIndexOf("<EOF>"));
+                
                 var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
                 
@@ -824,7 +822,6 @@ namespace HappyPandaXDroid.Core
 
                 response = Net.SendPost(response);
                 string countstring = response;
-                countstring = countstring.Remove(countstring.LastIndexOf("<EOF>"));
                 var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
                 List<T> list = new List<T>();

@@ -346,7 +346,6 @@ namespace HappyPandaXDroid.Core
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
             string countstring = Net.SendPost(response);
-            countstring = countstring.Remove(countstring.LastIndexOf("<EOF>"));
             var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
             var array = obj.data as Newtonsoft.Json.Linq.JArray;
             List<GalleryItem> list = new List<GalleryItem>();
@@ -403,7 +402,6 @@ namespace HappyPandaXDroid.Core
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
             string responsestring = Net.SendPost(response);
-            responsestring = responsestring.Remove(responsestring.LastIndexOf("<EOF>"));
             var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
             var array = obj.data as Newtonsoft.Json.Linq.JArray;
             var taglist = new TagList();

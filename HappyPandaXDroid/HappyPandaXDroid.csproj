@@ -175,6 +175,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\IO.cs" />
     <Compile Include="Custom_Views\AutoWrapLayout.cs" />
     <Compile Include="Custom_Views\HPContent.cs" />
     <Compile Include="Custom_Views\ImageViewHolder.cs" />

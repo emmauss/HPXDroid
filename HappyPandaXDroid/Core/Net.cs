@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Threading;
 
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -112,43 +113,25 @@ namespace HappyPandaXDroid.Core
                 try
                 {
                     logger.Info("Connection Successful. Starting Handshake");
-                    string response = string.Empty;
-                    string payload;
+                    string response = string.Empty,pay = string.Empty;
+                    
                     var stream = listener.GetStream();
-                    byte[] res = new byte[1024];
-                    while (true)
-                    {
-                        stream.Read(res, 0, res.Length);
-                        payload = Encoding.UTF8.GetString(res).TrimEnd('\0');
-                        response += payload;
-                        if (response.Contains("<EOF>"))
-                            break;
-                        Array.Clear(res, 0, res.Length);
-                    }
-                    payload = payload.Replace("<EOF>", "");
-                    App.Server.Info = JSON.Serializer.SimpleSerializer.Deserialize<App.Server.ServerInfo>(payload);
+                    byte[] decom = Receive(stream);
+                    pay = Encoding.UTF8.GetString(decom).TrimEnd('\0');
+                    App.Server.Info = JSON.Serializer.SimpleSerializer.Deserialize<App.Server.ServerInfo>(pay);
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     JSON.API.PushKey(ref main, "name", "test");
                     JSON.API.PushKey(ref main, "session", "");
                     JSON.API.PushKey(ref main, "data", "{}");
                     string request = JSON.API.ParseToString(main);
-                    byte[] req = Encoding.UTF8.GetBytes(request + "<EOF>");
-                    stream.Write(req, 0, req.Length);
-                    Array.Clear(res, 0, res.Length);
+                    Send(Encoding.UTF8.GetBytes(request), stream);
+                    
                     response = string.Empty;
-                    while (true)
-                    {
-                        
-                        stream.Read(res, 0, res.Length);
-                        payload = Encoding.UTF8.GetString(res).TrimEnd('\0');
-                        response += payload;
-                        if (response.Contains("<EOF>"))
-                            break;
-                        Array.Clear(res, 0, res.Length);
-                    }
-                    payload = response;
+                    
+                    decom = Receive(stream);
+                    pay = Encoding.UTF8.GetString(decom).TrimEnd('\0');
                     bool success = false;
-                    if (!payload.Contains("Authenticated"))
+                    if (!pay.Contains("Authenticated"))
                     {
                         logger.Info("Handshake Failed");
                         success = true;
@@ -157,9 +140,9 @@ namespace HappyPandaXDroid.Core
                     else
                     {
                         logger.Info("Handshake Successful");
-                        payload = payload.Replace("<EOF>", "");
+                        pay = pay.Replace("<EOF>", "");
                         Dictionary<string, string> reply =
-                            JSON.Serializer.SimpleSerializer.Deserialize<Dictionary<string, string>>(payload);
+                            JSON.Serializer.SimpleSerializer.Deserialize<Dictionary<string, string>>(pay);
                         success = reply.TryGetValue("session", out App.Server.Info.session);
                     }
                     cli.initialise = true;
@@ -176,7 +159,48 @@ namespace HappyPandaXDroid.Core
             }
             else return null;
 }
+        static void Send(byte[] packet,NetworkStream stream)
+        {
+            byte[] req = IO.Compression.Compress(packet);
+            byte[] res = new byte[512];
+            var eof = Encoding.UTF8.GetBytes("<EOF>");
+            stream.Write(req, 0, req.Length);
+            stream.Write(eof, 0, eof.Length);
+            Array.Clear(res, 0, res.Length);
+        }
 
+        static byte[] Receive(NetworkStream stream)
+        {
+            List<byte> payload = new List<byte>();
+            byte[] res = new byte[4];
+            stream.Read(res, 0, res.Length);
+            payload.AddRange(res);
+            res = new byte[512];
+            while (stream.DataAvailable)
+            {
+
+                stream.Read(res, 0, res.Length);
+                payload.AddRange(TrimEnd(res));
+                Array.Clear(res, 0, res.Length);
+                Thread.Sleep(100);
+            }
+            byte[] decom = TrimEOF(payload.ToArray());
+            decom = IO.Compression.Decompress(decom);
+            return decom;
+        } 
+
+        static byte[] TrimEnd(byte[] payload)
+        {
+            int lastIndex = Array.FindLastIndex(payload, a => a != 0);
+            Array.Resize(ref payload, lastIndex + 1);
+            return payload;
+        }
+
+        static byte[] TrimEOF(byte[] payload)
+        {
+            Array.Resize(ref payload, payload.Length - 5);
+            return payload;
+        }
 
         static Client GetActiveConnection()
         {
@@ -190,10 +214,11 @@ namespace HappyPandaXDroid.Core
         }
         public static object locker = new object();
 
-        public  static string SendPost(string payload)
+        public  static string SendPost(string request)
         {
-            logger.Info("Sending Request.\n Request : \n {0} \n", payload);
-            string response = "fail";
+            logger.Info("Sending Request.\n Request : \n {0} \n", request);
+            string response = "fail",pay = string.Empty;
+            var payload = new List<byte>();
             lock (locker)
             {
                 Client listener = GetActiveConnection();
@@ -206,21 +231,11 @@ namespace HappyPandaXDroid.Core
                     if (App.Server.Info.session != null && App.Server.Info.session != string.Empty && client!=null & client.client.Connected)
                     {
                         var stream = listener.client.GetStream();
-                        byte[] req = Encoding.UTF8.GetBytes(payload + "<EOF>");
-                        byte[] res = new byte[1024 * 10];
-                        stream.Write(req, 0, req.Length);
-                        Array.Clear(res, 0, res.Length);
+                        Send(Encoding.UTF8.GetBytes(request), stream);
                         response = string.Empty;
-                        while (true)
-                        {
-                            stream.Read(res, 0, res.Length);
-                            string reply = Encoding.UTF8.GetString(res).TrimEnd('\0');
-                            response += reply;
-                            if (response.Contains("<EOF>"))
-                                break;
-                            Array.Clear(res, 0, res.Length);
-                        }
+                        var decomp = Receive(stream);
                         logger.Info("Received response from server");
+                        response = Encoding.UTF8.GetString(decomp);
                     }
 
                 }
@@ -238,7 +253,7 @@ namespace HappyPandaXDroid.Core
             {
                 Disconnect();
                 Connect();
-                return SendPost(payload);
+                return SendPost(request);
             }
             else
             return response;
