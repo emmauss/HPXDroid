@@ -5965,8 +5965,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0065
 			public const int image = 2131427429;
 			
-			// aapt resource value: 0x7f0b00bc
-			public const int imageView = 2131427516;
+			// aapt resource value: 0x7f0b00bb
+			public const int imageView = 2131427515;
 			
 			// aapt resource value: 0x7f0b00b5
 			public const int info = 2131427509;
@@ -6307,8 +6307,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00f7
 			public const int textView1 = 2131427575;
 			
-			// aapt resource value: 0x7f0b00bb
-			public const int textViewholder = 2131427515;
+			// aapt resource value: 0x7f0b00bc
+			public const int textViewholder = 2131427516;
 			
 			// aapt resource value: 0x7f0b00bd
 			public const int textViewholder2 = 2131427517;
@@ -6739,46 +6739,49 @@ namespace HappyPandaXDroid
 			public const int preview_template = 2130968670;
 			
 			// aapt resource value: 0x7f04005f
-			public const int RecentsLayout = 2130968671;
+			public const int PreviewsLayout = 2130968671;
 			
 			// aapt resource value: 0x7f040060
-			public const int select_dialog_item_material = 2130968672;
+			public const int RecentsLayout = 2130968672;
 			
 			// aapt resource value: 0x7f040061
-			public const int select_dialog_multichoice_material = 2130968673;
+			public const int select_dialog_item_material = 2130968673;
 			
 			// aapt resource value: 0x7f040062
-			public const int select_dialog_singlechoice_material = 2130968674;
+			public const int select_dialog_multichoice_material = 2130968674;
 			
 			// aapt resource value: 0x7f040063
-			public const int server_settings = 2130968675;
+			public const int select_dialog_singlechoice_material = 2130968675;
 			
 			// aapt resource value: 0x7f040064
-			public const int settings = 2130968676;
+			public const int server_settings = 2130968676;
 			
 			// aapt resource value: 0x7f040065
-			public const int settingViewText = 2130968677;
+			public const int settings = 2130968677;
 			
 			// aapt resource value: 0x7f040066
-			public const int support_simple_spinner_dropdown_item = 2130968678;
+			public const int settingViewText = 2130968678;
 			
 			// aapt resource value: 0x7f040067
-			public const int tag_group_template = 2130968679;
+			public const int support_simple_spinner_dropdown_item = 2130968679;
 			
 			// aapt resource value: 0x7f040068
-			public const int tag_template = 2130968680;
+			public const int tag_group_template = 2130968680;
 			
 			// aapt resource value: 0x7f040069
-			public const int test = 2130968681;
+			public const int tag_template = 2130968681;
 			
 			// aapt resource value: 0x7f04006a
-			public const int toolbar = 2130968682;
+			public const int test = 2130968682;
 			
 			// aapt resource value: 0x7f04006b
-			public const int toolbar_alpha = 2130968683;
+			public const int toolbar = 2130968683;
 			
 			// aapt resource value: 0x7f04006c
-			public const int tooltip = 2130968684;
+			public const int toolbar_alpha = 2130968684;
+			
+			// aapt resource value: 0x7f04006d
+			public const int tooltip = 2130968685;
 			
 			static Layout()
 			{

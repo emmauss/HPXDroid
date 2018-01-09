@@ -5,7 +5,6 @@
         android:layout_width="match_parent"
     android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        gallerycard:contentPadding="10dp"
         gallerycard:cardElevation="4dp"
         android:id="@+id/gallercard"
         
@@ -18,22 +17,25 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+          <ImageView
+                android:layout_width="195dp"
+                android:scaleType="fitCenter"
+                android:minHeight="270dp"
+                android:adjustViewBounds="true"
+                    android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"/>
           <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:maxLines = "2"
+                    android:maxLines = "3"
                     android:minLines = "1"
                     android:id="@+id/textViewholder"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="5dp" />
-            <ImageView
-                android:layout_width="100dp"
-      android:layout_height="140dp"
-                android:id="@+id/imageView"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:scaleType="centerCrop" />
+            
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -42,7 +44,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines = "2"
+                    android:maxLines = "3"
                     android:minLines = "1"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text=""

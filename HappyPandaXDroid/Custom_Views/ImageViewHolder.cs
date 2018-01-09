@@ -59,14 +59,13 @@ namespace HappyPandaXDroid.Custom_Views
 
         private void Img_ImageLoadError(object sender, SubsamplingScaleImageView.ImageLoadErrorEventArgs e)
         {
-            if (e.P0.Message.Contains("Image format not supported"))
-            {
+            
                 Task.Run(() =>
                 {
                     File.Delete(page_path);
                     Refresh();
                 });
-            }
+            
         }
 
         public void Release()

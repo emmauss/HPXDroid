@@ -181,12 +181,15 @@
     <Compile Include="Custom_Views\ImageViewHolder.cs" />
     <Compile Include="Custom_Views\OptionDialogPreference.cs" />
     <Compile Include="Custom_Views\PageSelector.cs" />
+    <Compile Include="Custom_Views\PreviewAdapter.cs" />
+    <Compile Include="Custom_Views\PreviewHolder.cs" />
     <Compile Include="Custom_Views\RoundSideRectDrawable.cs" />
     <Compile Include="Custom_Views\SafeCoordinatorLayout.cs" />
     <Compile Include="GalleryActivity.cs" />
     <Compile Include="GalleryViewer.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="LibraryActivity.cs" />
+    <Compile Include="PreviewActivity.cs" />
     <Compile Include="RecentsActivity.cs" />
     <Compile Include="ServerSettingsActivity.cs" />
     <Compile Include="SettingsActivity.cs" />
@@ -301,6 +304,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\RecentsLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\PreviewsLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

@@ -8,9 +8,13 @@
     android:padding="@dimen/keyline_margin"
     >
   <ImageView
-          android:id="@+id/preview" 
+          android:id="@+id/preview"
       android:layout_width="160dp"
-          android:layout_height="268dp"/>
+                android:scaleType="fitCenter"
+                android:minHeight="270dp"
+                android:adjustViewBounds="true"
+                    android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
   <TextView
       android:id="@+id/title"
       android:layout_width="wrap_content"

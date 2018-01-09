@@ -104,6 +104,7 @@ namespace HappyPandaXDroid
             logger.Info("Gallery Viewer Initialized");
             countDown.Start();
             SupportActionBar.Title = PageList[pageno].name;
+            Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 
          }
 
