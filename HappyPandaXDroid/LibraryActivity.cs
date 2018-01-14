@@ -4,23 +4,13 @@ using Android.Content;
 using Android.Support.V7.App;
 using Android.Runtime;
 using Android.Views;
-using Android.Widget;
 using Android.Util;
 using System.Threading.Tasks;
 using System;
-using System.Collections.Generic;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.Design.Widget;
-using Android.Support.V7.Widget;
-using System.IO;
-using System.Threading;
-using System.Xml;
-using Android.Support.V7.View;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
-using ProgressView = XamarinBindings.MaterialProgressBar;
-using Java.Lang;
-using NLog.Config;
 using NLog;
 using Android.Content.Res;
 
@@ -60,9 +50,6 @@ namespace HappyPandaXDroid
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = data;
             ContentView = FindViewById<Custom_Views.HPContent>(Resource.Id.content_view);
-            activityName = "LibraryActivity " + activityId;
-            ContentView.activityId = activityId;
-            ContentView.activityName = activityName;
             appBarLayout = FindViewById<AppBarLayout>(Resource.Id.appbar);
             appBarLayout.Drag += AppBarLayout_Drag;
 
@@ -128,37 +115,6 @@ namespace HappyPandaXDroid
 
         }
         
-
-        public class HideOnScroll : CoordinatorLayout.Behavior
-        {
-            public HideOnScroll(Context context, IAttributeSet attrs) : base(context, attrs)
-            {
-
-            }
-
-
-
-            public override void OnNestedScroll(CoordinatorLayout coordinatorLayout, Java.Lang.Object child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed)
-            {
-                if (child is Clans.Fab.FloatingActionMenu c)
-                {
-                    base.OnNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-                    if (dyConsumed > 0)
-                    {
-                        c.HideMenuButton(true);
-                    }
-                    else if (dyConsumed < 0)
-                    {
-                        c.ShowMenuButton(true);
-                    }
-                }
-            }
-
-            public override bool OnStartNestedScroll(CoordinatorLayout coordinatorLayout, Java.Lang.Object child, View directTargetChild, View target, int nestedScrollAxes)
-            {
-                return nestedScrollAxes == ViewCompat.ScrollAxisVertical;
-            }
-        }
 
         class FABClickListener : Java.Lang.Object, View.IOnClickListener
         {

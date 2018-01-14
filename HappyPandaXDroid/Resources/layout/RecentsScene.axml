@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HappyPandaXDroid.Custom_Views.SafeCoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:navdrawer="http://schemas.android.com/apk/res-auto"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:id="@+id/safeCoordinatorLayout1">
+  <EasyRecyclerView.EasyRecyclerView
+              android:id="@+id/recyclerView"
+              android:scrollbars="vertical"
+              android:clickable="true"
+              android:layout_width="match_parent"
+              navdrawer:layout_behavior="@string/appbar_scrolling_view_behavior"
+              android:layout_height="match_parent" />
+  <include
+        layout="@layout/toolbar" />
+  <com.github.clans.fab.FloatingActionMenu
+xmlns:fam="http://schemas.android.com/apk/res-auto"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:src="@drawable/ic_add_white"
+  android:layout_gravity="bottom|right"
+  android:id="@+id/fam">
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fam:srcCompat="@android:drawable/ic_menu_delete"
+        fam:fab_size="normal"
+        fam:fab_label="Clear Recents" />
+  </com.github.clans.fab.FloatingActionMenu>
+</HappyPandaXDroid.Custom_Views.SafeCoordinatorLayout>

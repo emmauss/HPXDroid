@@ -188,9 +188,14 @@
     <Compile Include="GalleryActivity.cs" />
     <Compile Include="GalleryViewer.cs" />
     <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="HPXSceneActivity.cs" />
     <Compile Include="LibraryActivity.cs" />
     <Compile Include="PreviewActivity.cs" />
     <Compile Include="RecentsActivity.cs" />
+    <Compile Include="Scenes\GalleryScene.cs" />
+    <Compile Include="Scenes\LibraryScene.cs" />
+    <Compile Include="Scenes\PreviewScene.cs" />
+    <Compile Include="Scenes\RecentsScene.cs" />
     <Compile Include="ServerSettingsActivity.cs" />
     <Compile Include="SettingsActivity.cs" />
     <Compile Include="Core\App.cs" />
@@ -307,6 +312,15 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\PreviewsLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\HPXStage.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\LibraryScene.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\RecentsScene.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -920,11 +934,16 @@
       <Project>{432dc086-415c-41db-88f3-a4995f0038e5}</Project>
       <Name>RefreshLayout</Name>
     </ProjectReference>
+    <ProjectReference Include="..\external\Stage\Stage.csproj">
+      <Project>{00c8482d-4401-4724-bfd0-26f87aa3f9c3}</Project>
+      <Name>Stage</Name>
+    </ProjectReference>
     <ProjectReference Include="AndroidBindings\Binding_SubsamplingScaleImageView\Binding_SubsamplingScaleImageView.csproj">
       <Project>{063CBDBF-87C0-4E58-9DC2-966E7D908043}</Project>
       <Name>Binding_SubsamplingScaleImageView</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -38,7 +38,7 @@ namespace HappyPandaXDroid
             
             await Load();
 
-            var intent = new Intent(this, typeof(LibraryActivity));
+            var intent = new Intent(this, typeof(HPXSceneActivity));
             intent.PutExtra("connected", Core.Net.Connected);
             intent.PutExtra("query", string.Empty);
             StartActivity(intent);

@@ -22,19 +22,21 @@ using ProgressView = XamarinBindings.MaterialProgressBar;
 using EasyRecyclerView;
 using EasyRecyclerView.Addons;
 using NLog;
+using Com.Hippo.Stage;
 
 namespace HappyPandaXDroid.Custom_Views
 {
     public class HPContent : FrameLayout
     {
+        EventHandler<GalleryArgs> LoadGallery;
+
+
         View ContentView;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public List<Core.Gallery.GalleryItem> CurrentList = new List<Core.Gallery.GalleryItem>();
         public Custom_Views.PageSelector mpageSelector;
         EasyRecyclerView.EasyRecyclerView mRecyclerView;
         bool IsRefreshing = false;
-        public string activityName;
-        public int activityId;
         PageCheckListener listener;
         bool initialized = false;
 
@@ -49,6 +51,19 @@ namespace HappyPandaXDroid.Custom_Views
         CountDown countDown;
         
         bool isLoading = false;
+        Scene parent;
+        public Scene ParentScene
+        {
+            get
+            {
+                return parent;
+            }
+            set
+            {
+                parent = value;
+                adapter.scene = value;
+            }
+        }
         bool IsLoading {
             get { return isLoading; }
             set
@@ -101,6 +116,8 @@ namespace HappyPandaXDroid.Custom_Views
             Initialize();
         }
 
+        
+
         int columns = 0;
         private void Initialize()
         {
@@ -152,6 +169,11 @@ namespace HappyPandaXDroid.Custom_Views
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");
+        }
+
+        void OnLoadGallery()
+        {
+
         }
 
         void SetColumns()
@@ -651,11 +673,10 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 if (holder is GalleryCardHolder vh)
                 {
-                    Intent intent = new Intent(parent.Context, typeof(GalleryActivity));
                     string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.Gallery);
-                    intent.PutExtra("thumb", vh.gcard.ThumbnailPath);
-                    intent.PutExtra("gallery", gallerystring);
-                    parent.Context.StartActivity(intent);
+                    var galleryscene = new Scenes.GalleryScene(gallerystring, vh.gcard.ThumbnailPath);
+                    var pscene = ((Scenes.LibraryScene)((GalleryCardAdapter)parent.GetAdapter()).scene);
+                    pscene.Stage.PushScene(galleryscene);
                 }
 
             }
@@ -868,11 +889,13 @@ namespace HappyPandaXDroid.Custom_Views
         {
             private static Logger logger = LogManager.GetCurrentClassLogger();
             public EventHandler<int> ItemClick;
-            HPContent content;
+            public HPContent content;
             void OnClick(int position)
             {
                 ItemClick?.Invoke(this, position);
             }
+
+            public Scene scene;
 
             public List<Core.Gallery.GalleryItem> mdata;
             Android.Content.Context mcontext;
@@ -951,7 +974,14 @@ namespace HappyPandaXDroid.Custom_Views
             }
 
 
-        }       
+        }
+
+        public class GalleryArgs : EventArgs {
+           public string GalleryData;
+           public string ThumbPath;
+
+        }
+
 
 
     }
