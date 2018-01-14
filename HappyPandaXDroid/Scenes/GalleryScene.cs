@@ -23,7 +23,7 @@ using Com.Hippo.Stage;
 
 namespace HappyPandaXDroid.Scenes
 {
-    class GalleryScene : Scene
+    class GalleryScene : HPXScene
     {
         private TextView mErrorText;
         public TextView title, category, read_action,
@@ -546,5 +546,11 @@ namespace HappyPandaXDroid.Scenes
                 return true;
         }
 
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            SetColumns();
+            layout = new GridLayoutManager(this.Context, PreviewColumns);
+            grid_layout.SetLayoutManager(layout);
+        }
     }
 }

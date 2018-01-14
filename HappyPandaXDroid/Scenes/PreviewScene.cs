@@ -24,7 +24,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace HappyPandaXDroid.Scenes
 {
-    class PreviewScene : Scene
+    class PreviewScene : HPXScene
     {
         RecyclerView grid_layout;
         Toolbar toolbar;
@@ -111,5 +111,11 @@ namespace HappyPandaXDroid.Scenes
                 PreviewColumns = gridFactor;
         }
 
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            SetColumns();
+            layout = new GridLayoutManager(this.Context, PreviewColumns);
+            grid_layout.SetLayoutManager(layout);
+        }
     }
 }

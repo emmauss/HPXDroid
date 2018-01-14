@@ -17,7 +17,7 @@ using Com.Hippo.Stage;
 
 namespace HappyPandaXDroid.Scenes
 {
-    public class LibraryScene : Scene, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
+    public class LibraryScene : HPXScene, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
     {
 
         Toolbar toolbar;
@@ -161,7 +161,7 @@ namespace HappyPandaXDroid.Scenes
             base.OnDestroy();
         }
 
-        void OnConfigurationChanged(Configuration newConfig)
+        public override void OnConfigurationChanged(Configuration newConfig)
         {
             ContentView.OrientationChanged(newConfig.Orientation);
         }

@@ -181,7 +181,8 @@ namespace HappyPandaXDroid
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
-            //ContentView.OrientationChanged(newConfig.Orientation);
+            var scene = (Scenes.HPXScene)stage.TopScene;
+            scene.OnConfigurationChanged(newConfig);
         }
 
         protected override void OnDestroy()

@@ -13,10 +13,11 @@ using NLog;
 using Com.Hippo.Stage;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using EasyRecyclerView;
+using Android.Content.Res;
 
 namespace HappyPandaXDroid.Scenes
 {
-    class RecentsScene : Scene
+    class RecentsScene : HPXScene
     {
 
         Toolbar toolbar;
@@ -92,6 +93,13 @@ namespace HappyPandaXDroid.Scenes
         private void AppBarLayout_Drag(object sender, View.DragEventArgs e)
         {
             e.Handled = true;
+        }
+
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            SetColumns();
+            mLayoutManager = new GridLayoutManager(this.Context, columns);
+            mRecyclerView.SetLayoutManager(mLayoutManager);
         }
 
         class FABClickListener : Java.Lang.Object, View.IOnClickListener

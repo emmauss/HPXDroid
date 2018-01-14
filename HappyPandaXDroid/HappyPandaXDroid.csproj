@@ -193,6 +193,7 @@
     <Compile Include="PreviewActivity.cs" />
     <Compile Include="RecentsActivity.cs" />
     <Compile Include="Scenes\GalleryScene.cs" />
+    <Compile Include="Scenes\HPXScene.cs" />
     <Compile Include="Scenes\LibraryScene.cs" />
     <Compile Include="Scenes\PreviewScene.cs" />
     <Compile Include="Scenes\RecentsScene.cs" />
