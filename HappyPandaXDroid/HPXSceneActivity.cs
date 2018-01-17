@@ -22,7 +22,8 @@ using Com.Hippo.Stage.Curtain;
 namespace HappyPandaXDroid
 {
 
-    [Activity(Label = "HPXSceneActivity" , ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Activity(Label = "HPXSceneActivity" , ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation 
+        | Android.Content.PM.ConfigChanges.ScreenSize)]
     public class HPXSceneActivity : AppCompatActivity, ICurtainSuppler
     {
         Director director;

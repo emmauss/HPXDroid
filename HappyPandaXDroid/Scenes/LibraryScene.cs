@@ -224,7 +224,7 @@ namespace HappyPandaXDroid.Scenes
             gridFactor = (int)(Math.Ceiling(w / 300d));
             if (Context.Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
             {
-                gridFactor = (int)(Math.Ceiling(w / 400d));
+                gridFactor = (int)(Math.Ceiling(w / 600d));
                 columns = gridFactor * 2;
             }
             else
