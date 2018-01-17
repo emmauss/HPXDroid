@@ -59,6 +59,8 @@ namespace HappyPandaXDroid
             AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironment_UnhandledExceptionRaiser;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            
+
             if (!IsInitialized)
             {
                 stage.PushScene(new Scenes.LibraryScene(string.Empty,string.Empty));
@@ -188,6 +190,7 @@ namespace HappyPandaXDroid
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            stage.Close();
             director.SetCurtainSuppler(null);
         }
 

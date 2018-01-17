@@ -116,7 +116,10 @@ namespace HappyPandaXDroid.Custom_Views
             Initialize();
         }
 
-        
+        protected override void OnAttachedToWindow()
+        {
+            base.OnAttachedToWindow();
+        }
 
         int columns = 0;
         private void Initialize()

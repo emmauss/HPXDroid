@@ -6,14 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/safeCoordinatorLayout1">
-
-  <HappyPandaXDroid.Custom_Views.HPContent
-      android:minWidth="25px"
-      android:minHeight="25px"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      navdrawer:layout_behavior="@string/appbar_scrolling_view_behavior"
-      android:id="@+id/content_view" />
+ <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     >
+  <include
+        layout="@layout/HPContent" />
+   </FrameLayout>
   <include
         layout="@layout/toolbar" />
   <com.github.clans.fab.FloatingActionMenu

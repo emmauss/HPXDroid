@@ -18,6 +18,10 @@ namespace HappyPandaXDroid.Scenes
     {
         public abstract void OnConfigurationChanged(Configuration newConfig);
         
+        public HPXScene()
+        {
+            SetWillRetainView(true);
+        }
 
     }
 }

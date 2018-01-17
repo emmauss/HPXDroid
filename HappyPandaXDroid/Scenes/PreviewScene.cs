@@ -63,6 +63,25 @@ namespace HappyPandaXDroid.Scenes
             gallery = galleryItem;
         }
 
+        protected override void OnSaveInstanceState(Bundle p0)
+        {
+            base.OnSaveInstanceState(p0);
+            var bundle = p0;
+            bundle.PutString("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
+            bundle.PutString("list", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
+        }
+
+        protected override void OnRestoreInstanceState(Bundle p0)
+        {
+            var bundle = p0;
+            gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize
+                <Core.Gallery.GalleryItem>(bundle.GetString("gallery"));
+            pagelist =Core.JSON.Serializer.SimpleSerializer.DeserializeToList
+                <Core.Gallery.Page>(bundle.GetString("gallery"));
+            base.OnRestoreInstanceState(p0);
+
+        }
+
         void Init()
         {
             toolbar = MainView.FindViewById<Toolbar>(Resource.Id.toolbar);

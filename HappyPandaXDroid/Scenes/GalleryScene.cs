@@ -55,8 +55,7 @@ namespace HappyPandaXDroid.Scenes
             InitializeViews();
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(gallerydata);
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
-
-
+            
             ParseMeta();
             var h = new Handler(Looper.MainLooper);
                 ThreadStart start = new ThreadStart(() =>
@@ -139,7 +138,24 @@ namespace HappyPandaXDroid.Scenes
                 loaded = false;
             }
         }
-        
+
+        protected override void OnSaveInstanceState(Bundle p0)
+        {
+            base.OnSaveInstanceState(p0);
+            var bundle = p0;
+            bundle.PutString("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
+            bundle.PutString("thumb", thumb_path);
+        }
+
+        protected override void OnRestoreInstanceState(Bundle p0)
+        {
+            var bundle = p0;
+            gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize
+                <Core.Gallery.GalleryItem>(bundle.GetString("gallery"));
+            thumb_path = bundle.GetString("thumb");
+            base.OnRestoreInstanceState(p0);
+
+        }
 
         protected override void OnDestroyView(View p0)
         {

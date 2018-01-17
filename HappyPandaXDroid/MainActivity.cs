@@ -110,6 +110,7 @@ namespace HappyPandaXDroid
         {
             var ex = (System.Exception)e.ExceptionObject;
             logger.Fatal(ex, "Fatal Exception Thrown : " + ex.Message + System.Environment.NewLine + ex.StackTrace);
+            //Process.KillProcess(Process.MyPid());
         }
 
         //ui thread unhandled exception handler
