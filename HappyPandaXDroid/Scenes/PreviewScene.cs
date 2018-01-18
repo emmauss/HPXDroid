@@ -37,7 +37,7 @@ namespace HappyPandaXDroid.Scenes
 
         protected override View OnCreateView(LayoutInflater p0, ViewGroup p1)
         {
-            MainView = p0.Inflate(Resource.Layout.Gallery_Details_Layout, p1, false);
+            MainView = p0.Inflate(Resource.Layout.PreviewsLayout, p1, false);
             Init();
             adapter.SetList(pagelist);
             return MainView;
@@ -86,7 +86,7 @@ namespace HappyPandaXDroid.Scenes
         {
             toolbar = MainView.FindViewById<Toolbar>(Resource.Id.toolbar);
             grid_layout = MainView.FindViewById<RecyclerView>(Resource.Id.grid_layout);
-            adapter = new Custom_Views.PreviewAdapter(this.Context);
+            adapter = new Custom_Views.PreviewAdapter(this.Context,this);
             adapter.ItemClick += Adapter_ItemClick;
             grid_layout.SetAdapter(adapter);
             SetColumns();

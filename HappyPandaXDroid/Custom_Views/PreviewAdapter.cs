@@ -6,6 +6,7 @@ using Android.Content;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.Widget;
+using Com.Hippo.Stage;
 
 using NLog;
 using Java.Lang;
@@ -19,8 +20,10 @@ namespace HappyPandaXDroid.Custom_Views
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public List<Core.Gallery.Page> mdata;
         Android.Content.Context mcontext;
-        public PreviewAdapter(Context context)
+        Scene previewScene;
+        public PreviewAdapter(Context context,Scene scene)
         {
+            previewScene = scene;
             mcontext = context;
         }
 
@@ -74,7 +77,7 @@ namespace HappyPandaXDroid.Custom_Views
         {
             View itemview = LayoutInflater.From(parent.Context)
                 .Inflate(Resource.Layout.preview_template, parent, false);
-            Custom_Views.PreviewHolder vh = new Custom_Views.PreviewHolder(itemview,OnClick,OnLongClick);
+            Custom_Views.PreviewHolder vh = new Custom_Views.PreviewHolder(itemview,OnClick,OnLongClick,previewScene);
             return vh;
         }
 

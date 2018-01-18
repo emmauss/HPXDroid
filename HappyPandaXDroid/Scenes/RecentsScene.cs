@@ -36,7 +36,7 @@ namespace HappyPandaXDroid.Scenes
 
         protected override View OnCreateView(LayoutInflater p0, ViewGroup p1)
         {
-            MainView = p0.Inflate(Resource.Layout.RecentsLayout, p1, false);
+            MainView = p0.Inflate(Resource.Layout.RecentsScene, p1, false);
             Initialize();
 
             return MainView;

@@ -278,7 +278,7 @@ namespace HappyPandaXDroid.Scenes
             ContinueCard.Click += ContinueCard_Click;
             ActionCard.Clickable = true;
             ActionCard.Click += ActionCard_Click;
-            adapter = new Custom_Views.PreviewAdapter(Context);
+            adapter = new Custom_Views.PreviewAdapter(Context,this);
             adapter.ItemClick += Adapter_ItemClick;
             mProgressView.Visibility = ViewStates.Visible;
             grid_layout.SetAdapter(adapter);

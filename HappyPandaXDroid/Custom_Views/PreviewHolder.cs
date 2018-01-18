@@ -16,6 +16,7 @@ using NLog;
 
 using Android.Support.V7.Widget;
 using Android.Support.V7.App;
+using Com.Hippo.Stage;
 
 namespace HappyPandaXDroid.Custom_Views
 {
@@ -29,10 +30,11 @@ namespace HappyPandaXDroid.Custom_Views
         public bool loaded = false;
         public Core.Gallery.Page page;
         string thumb_path;
+        Scene scene;
         public PreviewHolder(View itemView, Action<PreviewAdapterClickEventArgs> clickListener,
-                            Action<PreviewAdapterClickEventArgs> longClickListener) : base(itemView)
+                            Action<PreviewAdapterClickEventArgs> longClickListener,Scene scene ) : base(itemView)
         {
-
+            this.scene = scene;
             preview = itemView;
             img = preview.FindViewById<ImageView>(Resource.Id.preview);
             txt = preview.FindViewById<TextView>(Resource.Id.title);
@@ -125,7 +127,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     try
                     {
-                        if (((GalleryActivity)(preview.Context)).IsRunning)
+                        if (scene.IsResumed)
                             Glide.With(preview.Context)
                      .Load(Resource.Drawable.loading2)
                      .Into(img);
