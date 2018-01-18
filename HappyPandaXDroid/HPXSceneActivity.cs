@@ -37,7 +37,7 @@ namespace HappyPandaXDroid
             if(p1!=null)
             if (p1.Count != 0)
             {
-                    ShiftCurtain curtain = new ShiftCurtain();
+                    var curtain = new FadeCurtain();
                     curtain.SetDuration(150);
                     curtain.SetInterpolator(new FastOutSlowInInterpolator());
                     return curtain;

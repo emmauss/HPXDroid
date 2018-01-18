@@ -634,7 +634,6 @@ namespace HappyPandaXDroid.Scenes
             adapter.Dispose();
             mRefreshLayout.SetOnScrollChangeListener(null);
             adapter = null;
-            appBarLayout.Drag -= AppBarLayout_Drag;
             mJumpFab.SetImageDrawable(null);
             mJumpFab.SetOnClickListener(null);
             mRefreshFab.SetImageDrawable(null);
