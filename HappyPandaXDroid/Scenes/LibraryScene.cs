@@ -25,6 +25,7 @@ using EasyRecyclerView;
 using EasyRecyclerView.Addons;
 using NLog;
 using Android.Content.Res;
+using RefreshLayout = Com.Hippo.Refreshlayout;
 using Com.Hippo.Stage;
 
 
@@ -154,7 +155,8 @@ namespace HappyPandaXDroid.Scenes
 
 
             mRecyclerView.SetAdapter(adapter);
-            mRefreshLayout.SetOnRefreshListener(new OnRefreshListener(this));
+            mRefreshLayout.HeaderRefresh += MRefreshLayout_HeaderRefresh;
+            mRefreshLayout.FooterRefresh += MRefreshLayout_FooterRefresh;
 
             mRecyclerView.SetLayoutManager(mLayoutManager);
             mRefreshLayout.SetHeaderColorSchemeResources(new int[] {
@@ -164,15 +166,15 @@ namespace HappyPandaXDroid.Scenes
                 Resource.Color.loading_indicator_cyan,
                 Resource.Color.loading_indicator_green,
                 Resource.Color.loading_indicator_yellow });
-            mRefreshLayout.SetFooterColorSchemeResources(new int[] {
-                    Resource.Color.loading_indicator_red,
+            mRefreshLayout.SetFooterColorSchemeResources(
                     Resource.Color.loading_indicator_blue,
                     Resource.Color.loading_indicator_green,
-                    Resource.Color.loading_indicator_orange });
+                    Resource.Color.loading_indicator_orange,
+                    Resource.Color.loading_indicator_red);
 
 
             SetMainLoading(true);
-            mpageSelector = new Custom_Views.PageSelector();
+            mpageSelector = new Custom_Views.PageSelector(this);
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");
@@ -185,6 +187,48 @@ namespace HappyPandaXDroid.Scenes
             else
                 toolbar.Title = "Library";
             Current_Query = Parse(query, false);
+        }
+
+        private void MRefreshLayout_FooterRefresh(object sender, EventArgs e)
+        {
+            logger.Info("Swipe Footer Refreshing");
+            SetBottomLoading(true);
+            ThreadStart load = new ThreadStart(NextPage);
+            Thread thread = new Thread(load);
+            thread.Start();
+       
+            
+        }
+
+        private void MRefreshLayout_HeaderRefresh(object sender, EventArgs e)
+        {
+            var h = new Handler(Looper.MainLooper);
+            if (!IsRefreshing)
+                Task.Run(async () =>
+                {
+                    IsRefreshing = true;
+                    if (CurrentPage != 0)
+                    {
+                        await Task.Run(async () =>
+                        {
+                            PreviousPage();
+                        });
+                    }
+                    else
+                    {
+                        logger.Info("Swipe Header Refreshing");
+
+                        await Task.Delay(10);
+                        Refresh();
+                    }
+
+                    h.Post(() =>
+                    {
+                        mRefreshLayout.HeaderRefreshing = false;
+                        mRefreshLayout.FooterRefreshing = false;
+                    });
+                    IsRefreshing = false;
+                });
         }
 
         public LibraryScene(string title,string query) : base()
@@ -451,7 +495,7 @@ namespace HappyPandaXDroid.Scenes
                 });
         }
 
-        class OnRefreshListener : RefreshLayout.RefreshLayout.IOnRefreshListener
+        class OnRefreshListener : Java.Lang.Object, RefreshLayout.RefreshLayout.IOnRefreshListener
         {
             LibraryScene content;
             public OnRefreshListener(LibraryScene content)
@@ -742,7 +786,7 @@ namespace HappyPandaXDroid.Scenes
                     mProgressView.Visibility = ViewStates.Gone;
                     mRefreshLayout.Visibility = ViewStates.Visible;
                     mRecyclerView.Visibility = ViewStates.Visible;
-                    mRefreshLayout.EnableSwipeHeader = true;
+                    //mRefreshLayout.EnableSwipeHeader = true;
                     IsLoading = false;
                     break;
             }
@@ -826,7 +870,7 @@ namespace HappyPandaXDroid.Scenes
                 });
                 return;
             }
-            if (mRefreshLayout.IsFooterRefreshing())
+            if (mRefreshLayout.FooterRefreshing)
             {
                 logger.Info("Refresh Operation already in progress");
                 isLoading = false;

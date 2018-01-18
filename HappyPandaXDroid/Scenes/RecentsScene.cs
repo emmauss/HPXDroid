@@ -60,7 +60,7 @@ namespace HappyPandaXDroid.Scenes
 
 
             mRecyclerView = MainView.FindViewById<EasyRecyclerView.EasyRecyclerView>(Resource.Id.recyclerView);
-            adapter = new GalleryCardAdapter(this.Context);
+            adapter = new GalleryCardAdapter(this.Context,this);
             mRecyclerView.SetOnItemClickListener(new RecyclerViewClickListener());
 
             SetColumns();
@@ -236,11 +236,10 @@ namespace HappyPandaXDroid.Scenes
             {
                 if (holder is GalleryCardHolder vh)
                 {
-                    Intent intent = new Intent(parent.Context, typeof(GalleryActivity));
-                    string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.Gallery);
-                    intent.PutExtra("thumb", vh.gcard.ThumbnailPath);
-                    intent.PutExtra("gallery", gallerystring);
-                    parent.Context.StartActivity(intent);
+                    GalleryScene galleryScene = new GalleryScene
+                        (Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.Gallery), vh.gcard.ThumbnailPath);
+                    var pscene = (((GalleryCardAdapter)parent.GetAdapter()).rscene);
+                    pscene.Stage.PushScene(galleryScene);
                 }
 
             }
@@ -256,10 +255,12 @@ namespace HappyPandaXDroid.Scenes
                 ItemClick?.Invoke(this, position);
             }
 
+            public RecentsScene rscene;
             public List<Core.Gallery.GalleryItem> mdata;
             Android.Content.Context mcontext;
-            public GalleryCardAdapter(Context context)
+            public GalleryCardAdapter(Context context,RecentsScene scene)
             {
+                rscene = scene;
                 mcontext = context;
                 mdata = Core.Media.Recents.RecentList;
             }

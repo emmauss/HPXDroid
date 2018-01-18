@@ -7,14 +7,14 @@
 
   <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:layout_height="260dp"
         android:orientation="vertical">
 
     <LinearLayout
             android:layout_width="match_parent"
             android:orientation ="horizontal"
-            android:layout_height="wrap_content">
+            android:layout_height="260dp">
 
       <ImageView
           android:id="@+id/thumb"

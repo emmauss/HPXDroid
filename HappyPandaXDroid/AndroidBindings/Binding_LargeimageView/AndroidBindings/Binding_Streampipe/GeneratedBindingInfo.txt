@@ -1,7 +1,0 @@
-Binding for:
-com.github.seven332:streampipe:0.1.0
-
-Dependencies:
-
-streampipe-0.1.0.aar,    Path=C:\Users\Emmanuel Hansen\.gradle\caches\modules-2\files-2.1\com.github.seven332\streampipe\0.1.0\24c29c89a5f57b1b22a8c4735cc7956305c8cd89\streampipe-0.1.0.aar
-	support-annotations-23.3.0.jar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.3.0\support-annotations-23.3.0.jar

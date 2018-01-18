@@ -20,7 +20,7 @@ namespace HappyPandaXDroid.Custom_Views
         public int PageSelected = 0;
         public EditText PageInput;
         public Android.Support.Design.Widget.TextInputLayout FloatingTextLayout;
-        LibraryActivity mactivity;
+        Scenes.LibraryScene mscene;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public override Dialog OnCreateDialog(Bundle savedInstanceState)
         {
@@ -28,18 +28,22 @@ namespace HappyPandaXDroid.Custom_Views
 
             builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));
             builder.SetNegativeButton("Cancel", new ClickListener(mDialogListener, this));
-            mactivity = (LibraryActivity)Activity;
 
-            LayoutInflater inflater = mactivity.LayoutInflater;
+            LayoutInflater inflater = mscene.Activity.LayoutInflater;
             View pageseletor = inflater.Inflate(Resource.Layout.PageSelector,null);
             PageInput = pageseletor.FindViewById<EditText>(Resource.Id.setpage);
             FloatingTextLayout = pageseletor
                 .FindViewById<Android.Support.Design.Widget.TextInputLayout>(Resource.Id.textInputLayout1);
-            PageCount = (int)Math.Round((double)mactivity.ContentView.count / 25);
-            FloatingTextLayout.Hint = mactivity.ContentView.CurrentPage + 1 + " of " + PageCount;
+            PageCount = (int)Math.Round((double)mscene.count / 25);
+            FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
             builder.SetView(pageseletor);
             AlertDialog dialog = builder.Create();
             return dialog;
+        }
+
+        public PageSelector(Scenes.LibraryScene scene)
+        {
+            mscene = scene;
         }
 
         public class ClickListener : Java.Lang.Object, IDialogInterfaceOnClickListener
@@ -58,7 +62,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     case DialogButtonType.Positive:
                         if (int.TryParse(pg.PageInput.Text, out pg.PageSelected))
-                            if (pg.PageSelected > 0 && pg.PageSelected !=pg.mactivity.ContentView.CurrentPage+1 ) 
+                            if (pg.PageSelected > 0 && pg.PageSelected !=pg.mscene.CurrentPage+1 ) 
                             listener.OnDialogPositiveClick(pg);
                         break;
                     case DialogButtonType.Negative:
@@ -88,28 +92,26 @@ namespace HappyPandaXDroid.Custom_Views
         public override void OnResume()
         {
             base.OnResume();
-            mactivity = (LibraryActivity)Activity;
-            PageCount = (int)Math.Round((double)mactivity.ContentView.count / 25);
-            FloatingTextLayout.Hint = mactivity.ContentView.CurrentPage + 1 + " of " + PageCount;
+            PageCount = (int)Math.Round((double)mscene.count / 25);
+            FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
         }
 
-        public override void OnAttach(Activity activity)
+        public override void OnAttach(Context context)
         {
-            base.OnAttach(activity);
-
+            base.OnAttach(context);
             try
             {
                 // Instantiate the NoticeDialogListener so we can send events to the host
-                mDialogListener = ((LibraryActivity)activity).ContentView.dialogeventlistener;
+                mDialogListener = mscene.dialogeventlistener;
             }
             catch (Java.Lang.ClassCastException e)
             {
                 // The activity doesn't implement the interface, throw exception
-                throw new Java.Lang.ClassCastException(activity.ToString()
+                throw new Java.Lang.ClassCastException(context.ToString()
                         + " must implement NoticeDialogListener");
             }
-
         }
+        
 
 
     }

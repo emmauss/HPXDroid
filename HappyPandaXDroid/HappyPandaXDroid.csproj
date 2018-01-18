@@ -177,7 +177,6 @@
   <ItemGroup>
     <Compile Include="Core\IO.cs" />
     <Compile Include="Custom_Views\AutoWrapLayout.cs" />
-    <Compile Include="Custom_Views\HPContent.cs" />
     <Compile Include="Custom_Views\ImageViewHolder.cs" />
     <Compile Include="Custom_Views\OptionDialogPreference.cs" />
     <Compile Include="Custom_Views\PageSelector.cs" />
@@ -185,13 +184,9 @@
     <Compile Include="Custom_Views\PreviewHolder.cs" />
     <Compile Include="Custom_Views\RoundSideRectDrawable.cs" />
     <Compile Include="Custom_Views\SafeCoordinatorLayout.cs" />
-    <Compile Include="GalleryActivity.cs" />
     <Compile Include="GalleryViewer.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="HPXSceneActivity.cs" />
-    <Compile Include="LibraryActivity.cs" />
-    <Compile Include="PreviewActivity.cs" />
-    <Compile Include="RecentsActivity.cs" />
     <Compile Include="Scenes\GalleryScene.cs" />
     <Compile Include="Scenes\HPXScene.cs" />
     <Compile Include="Scenes\LibraryScene.cs" />
@@ -209,7 +204,6 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="test.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\arrays.xml">
@@ -235,6 +229,8 @@
     <AndroidResource Include="Resources\mipmap-xxhdpi\ic_contrast.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_contrast.png" />
     <AndroidResource Include="Resources\drawable\ic_hpx_logo.png" />
+    <AndroidResource Include="Resources\drawable\v_plus_dark_x24.xml" />
+    <AndroidResource Include="Resources\drawable\spacer_keyline.xml" />
     <None Include="GettingStarted.Xamarin" />
     <AndroidResource Include="Resources\layout\nav_header.axml">
       <SubType>Designer</SubType>
@@ -246,12 +242,6 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <AndroidResource Include="Resources\layout\toolbar.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\cview.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\test.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\galleryCard.axml">
@@ -272,22 +262,12 @@
     <AndroidResource Include="Resources\layout\toolbar_alpha.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\FileBrowser.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\fileListItem.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
     <AndroidResource Include="Resources\layout\GalleryFragment.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\ImageLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\sadpanda_low_poly.webp" />
-    <AndroidResource Include="Resources\drawable-mdpi\sadpanda_low_poly.webp" />
-    <AndroidResource Include="Resources\drawable-xhdpi\sadpanda_low_poly.webp" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\sadpanda_low_poly.webp" />
     <AndroidResource Include="Resources\layout\PageSelector.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -304,12 +284,6 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\server_settings.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\LibraryLayout.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\RecentsLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\PreviewsLayout.axml">
@@ -334,9 +308,6 @@
     <AndroidResource Include="Resources\values\Strings.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\Icon.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml">
@@ -461,16 +432,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\ic_folder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\ic_file.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_up.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\ic_filemanager.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\ImageViewTemplate.xml">
@@ -547,34 +509,7 @@
     <AndroidResource Include="Resources\drawable\card_background_no_padding.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\default_avatar.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\divider_gallery_detail.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\preference_header_background.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\shadow_bottom.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\shadow_top.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\spacer_keyline.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\tile_background.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_adb_primary_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_alert_red_x48.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_archive_primary_x48.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_arrow_left_dark_x24.xml" />
@@ -586,9 +521,6 @@
     <AndroidResource Include="Resources\drawable\v_bug_black_x48.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_chart_accent_x48.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_check_all_dark_x24.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -596,9 +528,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_close_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_cookie_brown_x48.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_delete_dark_x24.xml" />
@@ -610,9 +539,6 @@
     <AndroidResource Include="Resources\drawable\v_delete_x24.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_dots_vertical_secondary_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_download_black_x24.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -620,12 +546,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_download_primary_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_file_find_primary_x48.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_fire_black_x24.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_folder_move_dark_x24.xml" />
@@ -652,64 +572,13 @@
     <AndroidResource Include="Resources\drawable\v_history_black_x24.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_homepage_black_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_info_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_info_outline_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_info_primary_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_magnify_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_magnify_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_pause_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_pause_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_play_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_play_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_plus_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_refresh_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_reply_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_sad_panda_primary_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_send_dark_x24.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_settings_black_x24.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_settings_dark_x24.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_share_primary_x48.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_similar_primary_x48.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_slider_bubble.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\v_star_half_x16.xml" />
@@ -721,31 +590,10 @@
     <AndroidResource Include="Resources\drawable\v_star_x16.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_thumb_up_primary_x48.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\v_utorrent_primary_x48.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\card_grey_no_padding_2dp.9.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\card_white_no_padding_2dp.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\drawer_shadow_left.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\drawer_shadow_right.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\ic_fp_40px.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\ic_pause_x24.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\ic_stat_alert.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\image_failed.png" />
@@ -757,27 +605,6 @@
     <AndroidResource Include="Resources\drawable-mdpi\card_white_no_padding_2dp.9.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\drawer_shadow_left.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\drawer_shadow_right.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\ic_fingerprint_error.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\ic_fingerprint_success.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\ic_fp_40px.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\ic_pause_x24.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-mdpi\ic_stat_alert.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-mdpi\image_failed.png" />
   </ItemGroup>
   <ItemGroup>
@@ -785,21 +612,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xhdpi\card_white_no_padding_2dp.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\drawer_shadow_left.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\drawer_shadow_right.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\ic_fp_40px.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\ic_pause_x24.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\ic_stat_alert.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xhdpi\image_failed.png" />
@@ -811,28 +623,7 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\card_white_no_padding_2dp.9.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\drawer_shadow_left.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\drawer_shadow_right.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\ic_fp_40px.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\ic_pause_x24.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\ic_stat_alert.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxhdpi\image_failed.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\shadow_2dp.9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\shadow_8dp.9.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher.png" />
@@ -900,12 +691,6 @@
     <AndroidResource Include="Resources\layout\tag_group_template.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\tag_namespace.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\tag_shape.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\values\attrs.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -915,9 +700,6 @@
     <AndroidResource Include="Resources\layout\preview_template.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\Loading.gif" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\loading2.gif" />
@@ -931,9 +713,9 @@
       <Project>{e0e86419-629c-4d1c-b108-8bd9c313c42d}</Project>
       <Name>RecyclerViewPager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\external\RefreshLayout-Xamarin\RefreshLayout.csproj">
-      <Project>{432dc086-415c-41db-88f3-a4995f0038e5}</Project>
-      <Name>RefreshLayout</Name>
+    <ProjectReference Include="..\external\RefreshLayoutBinding\RefreshLayoutBinding.csproj">
+      <Project>{2e3fc01b-065d-4c8e-9e06-5d8cb2e1d03f}</Project>
+      <Name>RefreshLayoutBinding</Name>
     </ProjectReference>
     <ProjectReference Include="..\external\Stage\Stage.csproj">
       <Project>{00c8482d-4401-4724-bfd0-26f87aa3f9c3}</Project>

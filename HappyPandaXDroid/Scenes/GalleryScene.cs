@@ -297,20 +297,22 @@ namespace HappyPandaXDroid.Scenes
             if (pagelist == null & pagelist.Count < 1)
                 return;
             var page = adapter.mdata[pos];
-            Intent intent = new Android.Content.Intent();
+            
             if (page.isPlaceholder)
             {
-                intent = new Intent(Context, typeof(PreviewActivity));
+                PreviewScene previewScene = new PreviewScene(pagelist, gallery);
+                Stage.PushScene(previewScene);
             }
             else
             {
 
-                intent = new Intent(Context, typeof(GalleryViewer));
+                Intent intent = new Intent(Context, typeof(GalleryViewer));
                 intent.PutExtra("no", pos);
+                intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
+                intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
+                StartActivity(intent);
             }
-            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
-            intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
-            StartActivity(intent);
+            
         }
 
         void SetColumns()
@@ -520,7 +522,7 @@ namespace HappyPandaXDroid.Scenes
             TextView tag_item = sender as TextView;
             if (tag_item == null)
                 return;
-            Stage.PushScene(new LibraryScene(string.Empty, (string)tag_item.Tag));
+            Stage.PushScene(new LibraryScene((string)tag_item.Tag, (string)tag_item.Tag));
 
         }
 
