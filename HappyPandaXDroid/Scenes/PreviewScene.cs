@@ -30,7 +30,7 @@ namespace HappyPandaXDroid.Scenes
         Toolbar toolbar;
         Custom_Views.PreviewAdapter adapter;
         GridLayoutManager layout;
-        public int activityId, PreviewColumns;
+        public int PreviewColumns;
         List<Core.Gallery.Page> pagelist;
         Core.Gallery.GalleryItem gallery;
         View MainView;

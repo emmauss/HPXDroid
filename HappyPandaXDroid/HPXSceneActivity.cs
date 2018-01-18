@@ -115,6 +115,7 @@ namespace HappyPandaXDroid
 
             var item = e.MenuItem;
             Android.Content.Intent intent;
+            var scene = stage.TopScene;
             switch (item.ItemId)
             {
                 case Resource.Id.action_setting:
@@ -123,11 +124,17 @@ namespace HappyPandaXDroid
                     StartActivity(intent);
                     break;
                 case Resource.Id.action_home:
-                    navDrawer.CloseDrawers();
+                    if (!(scene is Scenes.LibraryScene)) { 
+                        Scenes.LibraryScene library = new Scenes.LibraryScene("", "");
+                        stage.PushScene(library);
+                    }
                     break;
                 case Resource.Id.action_recent:
-                    Scene recents = new Scenes.RecentsScene();
-                    stage.PushScene(recents);
+                    if (!(scene is Scenes.RecentsScene))
+                    {
+                        Scene recents = new Scenes.RecentsScene();
+                        stage.PushScene(recents);
+                    }
                     break;
 
             }
@@ -147,23 +154,7 @@ namespace HappyPandaXDroid
                     Task.Run(async () =>
                     {
                         await Task.Delay(10);
-                        logger.Info("Refreshing library");
-                        /*RunOnUiThread(() =>
-                        {
-                            ContentView.SetMainLoading(true);
-                        });
-                        if (!Core.Net.Connect())
-                        {
-                            RunOnUiThread(() =>
-                            {
-                                ContentView.SetMainLoading(false);
-                                ContentView.SetError(true);
-                            });
-                            return;
-                        }
-                        ContentView.Refresh();
-                        init = true;
-                        logger.Info("Refresh Done");*/
+                        Core.Net.Connect();
                     });
                 }
                 catch (System.Exception ex)
