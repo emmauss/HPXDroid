@@ -50,7 +50,7 @@ namespace HappyPandaXDroid
             new List<Core.Gallery.Page>();
         SeekBar seekbar,FilterSlider;
         public UICountdown countDown;
-
+        GestureDetector gestureDetector;
         Core.Gallery.GalleryItem gallery;
 
         Custom_Views.ImageViewHolder imageView;
@@ -75,6 +75,7 @@ namespace HappyPandaXDroid
                 .Override(Target.SizeOriginal, Target.SizeOriginal);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             ScreenFilter = FindViewById<LinearLayout>(Resource.Id.screenFilter);
+            
             FilterSlider = FindViewById<SeekBar>(Resource.Id.filterSlider);
             FilterSlider.Max = 255;
             FilterSlider.Progress = 255;
@@ -85,11 +86,11 @@ namespace HappyPandaXDroid
             galleryPager = FindViewById<RecyclerViewPager>(Resource.Id.galleryViewPager);
             var layout = new ExtraLayoutManager(this, LinearLayoutManager.Horizontal, false);    
             galleryPager.SetLayoutManager(layout);
-
+            gestureDetector = new GestureDetector(this, new TapsDetector(this));
             adapter = new ImageAdapter(PageList,this);
             galleryPager.SetAdapter(new RecyclerViewPagerAdapter(galleryPager, adapter));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            countDown = new UICountdown(3000, 10, this);
+            countDown = new UICountdown(5000, 10, this);
             galleryPager.ScrollToPosition(pageno);
             seekbar = FindViewById<SeekBar>(Resource.Id.progress_seekbar);
             seekbar.Max = PageList.Count;
@@ -103,20 +104,36 @@ namespace HappyPandaXDroid
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
             countDown.Start();
+            ScreenFilter.SetOnTouchListener(new ScreenTouchListener(this));
             SupportActionBar.Title = PageList[pageno].name;
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 
          }
 
-        public override bool OnGenericMotionEvent(MotionEvent e)
+        public class ScreenTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
-            countDown.Start();
-            return base.OnGenericMotionEvent(e);
+            GalleryViewer galleryViewer;
+            public ScreenTouchListener(GalleryViewer viewer)
+            {
+                galleryViewer = viewer;
+            }
+
+            public bool OnTouch(View v, MotionEvent e)
+            {
+                return galleryViewer.gestureDetector.OnTouchEvent(e);
+            }
         }
+
 
         private void FilterSlider_Click(object sender, EventArgs e)
         {
             countDown.Start();
+        }
+
+
+        public override bool DispatchTouchEvent(MotionEvent ev)
+        {
+            return base.DispatchTouchEvent(ev);
         }
 
         private void FilterSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
@@ -193,10 +210,9 @@ namespace HappyPandaXDroid
 
         public override bool OnTouchEvent(MotionEvent e)
         {
-            {
-                ToggleOverlay(true);
-            }
-            return base.OnTouchEvent(e);
+
+            return gestureDetector.OnTouchEvent(e);
+
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -229,17 +245,10 @@ namespace HappyPandaXDroid
                         filterbar.Visibility = ViewStates.Gone;
                 }
                 activity.countDown.Start();
-                return false;
+                return true;
             }
         }
-
-        public override bool DispatchTouchEvent(MotionEvent ev)
-        {
-            
-            bool res = base.DispatchTouchEvent(ev);
-            return res;
-        }
-
+        
 
         public class PhotoImageVIew: PhotoView.PhotoView
         {
@@ -252,6 +261,32 @@ namespace HappyPandaXDroid
             
         }
         
+        public class TapsDetector : GestureDetector.SimpleOnGestureListener
+        {
+            GalleryViewer galleryViewer;
+            public TapsDetector(GalleryViewer viewer)
+            {
+                galleryViewer = viewer;
+            }
+
+            public override bool OnSingleTapConfirmed(MotionEvent e)
+            {
+                galleryViewer.ToggleOverlay();
+                return true;
+            }
+
+            public override bool OnSingleTapUp(MotionEvent e)
+            {
+                return base.OnSingleTapUp(e);
+            }
+
+            public override bool OnDown(MotionEvent e)
+            {
+                return true;
+            }
+
+        }
+
 
         public class SeekBarChangeListener : Java.Lang.Object, SeekBar.IOnSeekBarChangeListener
         {
@@ -369,24 +404,31 @@ namespace HappyPandaXDroid
             
         }
 
-        public async void ToggleOverlay(bool toggle)
+        public void ToggleOverlay()
         {
             RunOnUiThread(() =>
             {
-                if (!toggle)
+                try
                 {
-                    overlayVisible = false;
-                    toolbar.Visibility = ViewStates.Gone;
-                    seekbar.Visibility = ViewStates.Gone;
-                    FilterSlider.Visibility = ViewStates.Gone;
-                }
-                else
+                    if (overlayVisible)
+                    {
+                        overlayVisible = false;
+                        toolbar.Visibility = ViewStates.Gone;
+                        seekbar.Visibility = ViewStates.Gone;
+                        FilterSlider.Visibility = ViewStates.Gone;
+                        countDown.Cancel();
+                    }
+                    else
+                    {
+                        overlayVisible = true;
+                        toolbar.Visibility = ViewStates.Visible;
+                        seekbar.Visibility = ViewStates.Visible;
+                        countDown.Start();
+
+                    }
+                }catch(System.Exception ex)
                 {
-                    overlayVisible = true;
-                    toolbar.Visibility = ViewStates.Visible;
-                    seekbar.Visibility = ViewStates.Visible;
-                    countDown.Start();
-                    
+
                 }
             });
 
@@ -509,7 +551,7 @@ namespace HappyPandaXDroid
 
             public override void OnFinish()
             {
-                viewer.ToggleOverlay(false);
+                viewer.ToggleOverlay();
             }
 
             public override void OnTick(long millisUntilFinished)
