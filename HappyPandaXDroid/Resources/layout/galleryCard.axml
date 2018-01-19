@@ -50,6 +50,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text=""
                     android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="10dp"
                     android:id="@+id/textViewholder2" />
             </LinearLayout>
         </LinearLayout>
