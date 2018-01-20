@@ -71,8 +71,8 @@
           android:id="@+id/options"
           android:layout_width="wrap_content"
                 android:scaleType="fitCenter"
-          android:src="@drawable/ic_settings"
-          android:alpha="0.3"
+          android:src="@drawable/ic_arrow_downward"
+          android:alpha="0.5"
                 android:adjustViewBounds="true"
                     android:layout_height="wrap_content"
                 android:layout_gravity="left"/>
