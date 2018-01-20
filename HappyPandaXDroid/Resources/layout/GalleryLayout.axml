@@ -30,16 +30,22 @@
         android:id="@+id/screenFilter"  
     />
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:background="#a0101010"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:minWidth="25px"
         android:minHeight="25px">
-        <TextView
-            android:layout_width="wrap_content"
+        
+        <SeekBar
+            android:layout_width="match_parent"
+            android:paddingBottom="?attr/actionBarSize"
             android:layout_height="wrap_content"
+            android:id="@+id/progress_seekbar" />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#333333"
@@ -47,11 +53,6 @@
             android:layout_marginLeft="5dp"
             android:paddingBottom="5dp"
             android:id="@+id/page_number" />
-        <SeekBar
-            android:layout_width="match_parent"
-            android:paddingBottom="?attr/actionBarSize"
-            android:layout_height="wrap_content"
-            android:id="@+id/progress_seekbar" />
     </LinearLayout>
   <LinearLayout
         android:orientation="vertical"
@@ -66,5 +67,14 @@
             android:visibility="gone"
             android:layout_height="wrap_content"
             android:id="@+id/filterSlider" />
+  <ImageView
+          android:id="@+id/options"
+          android:layout_width="wrap_content"
+                android:scaleType="fitCenter"
+          android:src="@drawable/ic_settings"
+          android:alpha="0.3"
+                android:adjustViewBounds="true"
+                    android:layout_height="wrap_content"
+                android:layout_gravity="left"/>
     </LinearLayout>
 </FrameLayout>

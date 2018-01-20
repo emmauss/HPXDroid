@@ -49,7 +49,7 @@ namespace HappyPandaXDroid
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.HPXStage);
-
+            AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
             // Create your application here
             director = Director.Hire(this, savedInstanceState);
             director.SetCurtainSuppler(this);

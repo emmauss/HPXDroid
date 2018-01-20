@@ -82,6 +82,7 @@ namespace HappyPandaXDroid
             FilterSlider.ProgressChanged += FilterSlider_ProgressChanged;
             FilterSlider.Click += FilterSlider_Click;
             SetSupportActionBar(toolbar);
+            ImageView op = FindViewById<ImageView>(Resource.Id.options);
             lay = FindViewById<FrameLayout>(Resource.Id.frame);
             galleryPager = FindViewById<RecyclerViewPager>(Resource.Id.galleryViewPager);
             var layout = new ExtraLayoutManager(this, LinearLayoutManager.Horizontal, false);    
@@ -104,7 +105,7 @@ namespace HappyPandaXDroid
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
             countDown.Start();
-            ScreenFilter.SetOnTouchListener(new ScreenTouchListener(this));
+            op.SetOnTouchListener(new ScreenTouchListener(this));
             SupportActionBar.Title = PageList[pageno].name;
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 
@@ -206,6 +207,13 @@ namespace HappyPandaXDroid
             Java.Lang.JavaSystem.Gc();
             logger.Info("Closing Gallery Viewer");
             base.OnDestroy();
+        }
+
+        protected override void OnPause()
+        {
+            gallery.LastPageRead = galleryPager.CurrentPosition;
+            Core.Media.Recents.SaveRecents();
+            base.OnPause();
         }
 
         public override bool OnTouchEvent(MotionEvent e)
