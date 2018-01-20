@@ -182,7 +182,7 @@ namespace HappyPandaXDroid.Scenes
             if (query.Trim() != string.Empty)
             {
                 
-                toolbar.Title = title;
+                toolbar.Title = title.Replace("__namespace__:","misc:");
             }
             else
                 toolbar.Title = "Library";
@@ -634,10 +634,6 @@ namespace HappyPandaXDroid.Scenes
             adapter.Dispose();
             mRefreshLayout.SetOnScrollChangeListener(null);
             adapter = null;
-            mJumpFab.SetImageDrawable(null);
-            mJumpFab.SetOnClickListener(null);
-            mRefreshFab.SetImageDrawable(null);
-            mRefreshFab.SetOnClickListener(null);
             mLayoutManager.Dispose();
             mpageSelector = null;
             dialogeventlistener = null;

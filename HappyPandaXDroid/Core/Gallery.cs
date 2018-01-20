@@ -153,6 +153,8 @@ namespace HappyPandaXDroid.Core
         public class TagList
         {
             public List<TagItem> Artist { get; set; }
+            public List<TagItem> Character { get; set; }
+            public List<TagItem> Group { get; set; }
             public List<TagItem> Male { get; set; }
             public List<TagItem> Female { get; set; }
             public List<TagItem> Language { get; set; }

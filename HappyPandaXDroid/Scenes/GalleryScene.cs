@@ -557,6 +557,10 @@ namespace HappyPandaXDroid.Scenes
                 count += taglist.__namespace__.Count;
             if (taglist.Parody != null)
                 count += taglist.Parody.Count;
+            if (taglist.Group != null)
+                count += taglist.Group.Count;
+            if (taglist.Character != null)
+                count += taglist.Character.Count;
 
             if (count == 0)
                 return false;
