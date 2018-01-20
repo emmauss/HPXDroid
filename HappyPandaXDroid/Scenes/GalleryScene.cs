@@ -27,7 +27,7 @@ namespace HappyPandaXDroid.Scenes
     {
         private TextView mErrorText;
         public TextView title, category, read_action,
-            language, pages, time_posted, no_tags;
+            language, pages, time_posted, no_tags, last_read_page;
         public LinearLayout TagLayout;
         CardView ActionCard, ContinueCard;
         public string thumb_path, gallerydata;
@@ -267,6 +267,7 @@ namespace HappyPandaXDroid.Scenes
             language = MainView.FindViewById<TextView>(Resource.Id.language);
             pages = MainView.FindViewById<TextView>(Resource.Id.pages);
             time_posted = MainView.FindViewById<TextView>(Resource.Id.posted);
+            last_read_page = MainView.FindViewById<TextView>(Resource.Id.lastReadPage);
             no_tags = MainView.FindViewById<TextView>(Resource.Id.no_tags);
             scrollview = MainView.FindViewById<ScrollView>(Resource.Id.scroll_view);
             grid_layout = MainView.FindViewById<RecyclerView>(Resource.Id.grid_layout);
@@ -398,6 +399,7 @@ namespace HappyPandaXDroid.Scenes
         public void ParseMeta()
         {
             title.Text = gallery.titles[0].name;
+
             category.Text = "place_holder";
 
         }
@@ -427,6 +429,7 @@ namespace HappyPandaXDroid.Scenes
                         if (pagelist.Count < 10)
                             number = pagelist.Count;
                         var mdata = new List<Core.Gallery.Page>();
+                        last_read_page.Text = (gallery.LastPageRead + 1).ToString();
                         for (int i = 0; i < number; i++)
                         {
                             mdata.Add(pagelist[i]);
