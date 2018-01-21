@@ -13,8 +13,10 @@
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:orientation ="horizontal"
-            android:layout_height="260dp">
+            android:orientation ="horizontal"            
+          android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"
+            android:minHeight="260dp">
 
       <ImageView
           android:id="@+id/thumb"

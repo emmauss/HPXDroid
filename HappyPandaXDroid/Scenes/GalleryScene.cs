@@ -110,6 +110,7 @@ namespace HappyPandaXDroid.Scenes
                         if (thumb_path.Contains("fail"))
                         {
                             GalleryStatus.Text = "Gallery Not Found";
+                            GalleryStatus.Visibility = ViewStates.Visible;
                             Glide.With(Context)
                             .Load(Resource.Drawable.image_failed)
                             .Into(ThumbView);
@@ -263,6 +264,7 @@ namespace HappyPandaXDroid.Scenes
             TagLayout = MainView.FindViewById<LinearLayout>(Resource.Id.tags);
             ActionCard = MainView.FindViewById<CardView>(Resource.Id.action_card);
             GalleryStatus = MainView.FindViewById<TextView>(Resource.Id.status);
+            GalleryStatus.Visibility = ViewStates.Gone;
             ThumbView = MainView.FindViewById<ImageView>(Resource.Id.thumb);
             ContinueCard = MainView.FindViewById<CardView>(Resource.Id.continue_card);
             ContinueCard.Click += ContinueCard_Click;

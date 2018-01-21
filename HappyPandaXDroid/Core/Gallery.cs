@@ -352,7 +352,7 @@ namespace HappyPandaXDroid.Core
             var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
             if (obj == null)
             {
-                return await GetPage(page, search_query, limit);
+                return new List<GalleryItem>();
             }
             var array = obj.data as Newtonsoft.Json.Linq.JArray;
             List<GalleryItem> list = new List<GalleryItem>();
