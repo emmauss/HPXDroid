@@ -222,7 +222,7 @@ namespace HappyPandaXDroid.Core
                         return "fail: server error";
                     if(state.Contains("failed"))
                         return "fail: command error";
-                    if (!state.Contains("finished"))
+                    if (!state.Contains("finish"))
                         Thread.Sleep(App.Settings.Loop_Delay);
                     else
                         break;
@@ -386,10 +386,11 @@ namespace HappyPandaXDroid.Core
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
             string countstring = Net.SendPost(response);
-            string countdata = JSON.API.GetData(countstring, 2);
-            countdata = countdata.Substring(countdata.IndexOf(":") + 1, countdata.IndexOf("}") - countdata.IndexOf(":") - 1);
-            int.TryParse(countdata, out int count);
-            return count;
+            var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
+            var countdata = JSON.API.GetData(serverobj.data,0) as JSON.ServerObjects.IntegerObject;
+            if (countdata != null)
+                return countdata.count;
+            else return 0;
         }
 
         public static async Task<TagList> GetTags(int item_id, string type)

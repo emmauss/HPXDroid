@@ -22,15 +22,25 @@ namespace HappyPandaXDroid.Core
         {
             public string session;
             public string name;
-            public object data;
+            public Newtonsoft.Json.Linq.JArray data;
         }
 
-        public class DataObject
+        public class DataObject : Object
         {
             public string fname;
             public object data;
             public App.Server.ErrorObject error;
         }
+
+        public class ServerObjects
+        {
+            public class IntegerObject
+            {
+                public int count = 0;
+            }
+        }
+
+
 
         public  class Serializer
         {
@@ -58,27 +68,28 @@ namespace HappyPandaXDroid.Core
 
             public List<T> DeserializeToList<T>(string serialized_string)
             {
-
-                var array = JArray.Parse(serialized_string);
-
                 List<T> objectsList = new List<T>();
-                
-                foreach (var item in array)
 
+                try
                 {
-                    try
+                    var array = JArray.Parse(serialized_string);
+
+
+
+                    foreach (var item in array)
 
                     {
                         // CorrectElements
                         objectsList.Add(item.ToObject<T>());
                     }
-
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex, "\n Exception Caught In JSON.Serializer.DeserializeToString. string ={0}",serialized_string);
-
-                    }
                 }
+
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In JSON.Serializer.DeserializeToString. string ={0}", serialized_string);
+
+                }
+                
                 return objectsList;
             }
         }
@@ -118,31 +129,19 @@ namespace HappyPandaXDroid.Core
                 return jsonstring;
             }
 
-            public static string GetData(string jsonstring, int level = 1)
+            public static object GetData(JArray objlist, int index)
             {
-                //recursive get data segment
-                string data = jsonstring;
-                int startindex = 0,length = 0;
-                string temp = data;
+                object temp;
                 try
                 {
-                    for (int i = 0; i < level; i++)
-                    {
-
-                        startindex = temp.IndexOf("data");
-                        temp = temp.Substring(startindex);
-                        startindex = temp.IndexOf(':') + 1;
-                        length = temp.LastIndexOf("}") - (startindex);
-                        temp = temp.Substring(startindex, length);
-                    }
+                    temp = objlist[index];
                 }catch(Exception ex)
                 {
-
+                    temp = null;
                 }
                 return temp;
                 
             }
-            
         }
     }
 }

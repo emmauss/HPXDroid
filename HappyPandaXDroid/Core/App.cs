@@ -616,7 +616,11 @@ namespace HappyPandaXDroid.Core
                 if (GetError(response) == "none")
                 {
 
-                    state = JSON.API.GetData(response, 2);
+                    var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+                    var dataobj = JSON.API.GetData(serverobj.data, 0);
+                    var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
+                        .ToString();
+                    state =data;
                     if (state.Contains("started"))
                         return "started";
                     else
@@ -637,7 +641,11 @@ namespace HappyPandaXDroid.Core
                 string state = string.Empty;
                 if (GetError(response) == "none")
                 {
-                    state = JSON.API.GetData(response, 2);
+                    var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+                    var dataobj = JSON.API.GetData(serverobj.data, 0);
+                    var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
+                        .ToString();
+                    state = data;
                     if (state.Contains("stopped"))
                         return "stopped";
                     else
@@ -658,7 +666,11 @@ namespace HappyPandaXDroid.Core
                 string state = string.Empty;
                 if (GetError(response) == "none")
                 {
-                    state = JSON.API.GetData(response, 2);
+                    var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+                    var dataobj = JSON.API.GetData(serverobj.data, 0);
+                    var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
+                        .ToString();
+                    state = data;
                     if (state.Contains("s"))
                         return state;
                     else
@@ -688,11 +700,11 @@ namespace HappyPandaXDroid.Core
             {
                 if (command_response.Contains("\"" + item_id + "\""))
                 {
-                    string command = JSON.API.GetData(command_response, 2);
-                    string id = command.Substring(command.IndexOf(":"));
-                    id = id.Substring(id.IndexOf(":") + 1, id.IndexOf("}") - 1);
-                    id = id.Trim('\"');
-                    id = id.Trim(' ');
+                    var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(command_response);
+                    var dataobj = JSON.API.GetData(serverobj.data, 0);
+                    var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[item_id.ToString()]
+                        .ToString();
+                    string id =data;
                     return int.Parse(id);
                 }
                 else return -1;
@@ -712,16 +724,17 @@ namespace HappyPandaXDroid.Core
                     command_id, type, return_url.ToString(), item_id.ToString());
                 string response = CreateCommand("get_command_value", command_id);
                 response = Net.SendPost(response);
-                string filename = string.Empty, data = string.Empty;
-                
+                string filename = string.Empty;
+                Gallery.Profile data = new Gallery.Profile();
                 try
                 {
                     if (GetError(response) == "none")
                     {
-
-                        data = JSON.API.GetData(response, 2);
-                        data = data.Substring(data.IndexOf(":") + 1);
-                        data = data.Remove(data.LastIndexOf("}"));
+                        var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+                        var dataobj = JSON.API.GetData(serverobj.data, 0);
+                        data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
+                            .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
+                        
                         string dir = Settings.cache;
                         switch (type)
                         {
@@ -737,10 +750,9 @@ namespace HappyPandaXDroid.Core
 
                         }
                         if (!Directory.Exists(dir))
-                            Directory.CreateDirectory(dir);
-                        var profiledata = JSON.Serializer.SimpleSerializer.Deserialize<Gallery.Profile>(data);
+                            Directory.CreateDirectory(dir);                        
                         filename = dir + name + ".jpg";
-                        string url = profiledata.data;
+                        string url = data.data;
                         url = "http://" + App.Settings.Server_IP + ":"+ App.Settings.WebClient_Port + url;
                         if (return_url)
                             return url;
@@ -772,7 +784,11 @@ namespace HappyPandaXDroid.Core
                 string error = GetError(response);
                 if (error == "none")
                 {
-                    state = JSON.API.GetData(response, 2);
+                    var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+                    var dataobj = JSON.API.GetData(serverobj.data, 0);
+                    var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
+                        .ToString();
+                    state = data;
                     logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, state);
                     return state;
                 }
@@ -858,10 +874,11 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
                 string countstring = Net.SendPost(response);
-                string countdata = JSON.API.GetData(countstring, 2);
-                countdata = countdata.Substring(countdata.IndexOf(":") + 1, countdata.IndexOf("}") - countdata.IndexOf(":") - 1);
-                int.TryParse(countdata, out int count);
-                return count;
+                var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
+                var countdata = JSON.API.GetData(serverobj.data, 0) as JSON.ServerObjects.IntegerObject;
+                if (countdata != null)
+                    return countdata.count;
+                else return 0;
             }
 
             public static string ParseItem(string json)
