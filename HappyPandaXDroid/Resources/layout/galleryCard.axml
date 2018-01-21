@@ -8,22 +8,22 @@
         gallerycard:cardElevation="4dp"
         android:id="@+id/gallercard"
        android:focusable="true"
-       android:layout_marginLeft="10dp"
+       android:layout_marginLeft="5dp"
        android:padding="10dp"
         android:foreground="?android:attr/selectableItemBackground"
         gallerycard:cardCornerRadius="5dp"
         gallerycard:cardPreventCornerOverlap="false"
+       gallerycard:contentPadding="10dp"
         gallerycard:cardUseCompatPadding="true">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
           <ImageView
-                android:layout_width="205dp"
+                android:layout_width="180dp"
                 android:scaleType="fitCenter"
-                android:minHeight="250dp"
                 android:adjustViewBounds="true"
-                    android:layout_height="wrap_content"
+                    android:layout_height="225dp"
                 android:id="@+id/imageView"
                 android:layout_gravity="center"
                 android:layout_marginBottom="5dp"/>
@@ -34,8 +34,7 @@
                     android:maxLines = "3"
                     android:minLines = "1"
                     android:id="@+id/textViewholder"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="5dp" />
+                    android:layout_gravity="center_horizontal"/>
             
             <LinearLayout
                 android:orientation="vertical"
@@ -49,8 +48,6 @@
                     android:minLines = "1"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text=""
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginBottom="15dp"
                     android:id="@+id/textViewholder2" />
             </LinearLayout>
         </LinearLayout>

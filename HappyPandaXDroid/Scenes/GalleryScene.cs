@@ -55,9 +55,12 @@ namespace HappyPandaXDroid.Scenes
             InitializeViews();
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(gallerydata);
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
-            
+            if (thumb_path != string.Empty)
+            {
+                Glide.With(Context).Load(thumb_path).Into(ThumbView); 
+            }
             ParseMeta();
-            var h = new Handler(Looper.MainLooper);
+            
                 ThreadStart start = new ThreadStart(() =>
             {
                 try
@@ -71,7 +74,7 @@ namespace HappyPandaXDroid.Scenes
 
                 if (!loaded)
                 {
-
+                    var h = new Handler(Looper.MainLooper);
                     h.Post(() =>
                     {
                         mErrorText.Text = "Error";
@@ -121,6 +124,7 @@ namespace HappyPandaXDroid.Scenes
                         logger.Error(ex, "\n Exception Caught In GalleryActivity.Oncreate.");
                     }
                 });
+                
                 gallery.tags = Core.Gallery.GetTags(gallery.id, "Gallery").Result;
                 pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
                 ParseData();
@@ -139,24 +143,24 @@ namespace HappyPandaXDroid.Scenes
             }
         }
 
-        protected override void OnSaveInstanceState(Bundle p0)
+        protected override void OnSaveViewState(View p0, Bundle p1)
         {
-            base.OnSaveInstanceState(p0);
-            var bundle = p0;
+            var bundle = p1;
             bundle.PutString("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
             bundle.PutString("thumb", thumb_path);
+            base.OnSaveViewState(p0, p1);
         }
+        
 
-        protected override void OnRestoreInstanceState(Bundle p0)
+        protected override void OnRestoreViewState(View p0, Bundle p1)
         {
-            var bundle = p0;
+            base.OnRestoreViewState(p0, p1);
+            var bundle = p1;
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize
                 <Core.Gallery.GalleryItem>(bundle.GetString("gallery"));
             thumb_path = bundle.GetString("thumb");
-            base.OnRestoreInstanceState(p0);
-
         }
-
+        
         protected override void OnDestroyView(View p0)
         {
             IsRunning = false;
@@ -199,30 +203,7 @@ namespace HappyPandaXDroid.Scenes
         protected override void OnResume()
         {
             base.OnResume();
-            /*if (loaded)
-            {
-                try
-                {
-                    if (thumb_path.Contains("fail"))
-                    {
-                        GalleryStatus.Text = "Gallery Not Found";
-                        Glide.With(Context)
-                        .Load(Resource.Drawable.image_failed)
-                        .Into(ThumbView);
-                    }
-                    else
-                        Glide.With(Context)
-                            .Load(thumb_path)
-                            .Into(ThumbView);
-                }
-                catch (Exception ex)
-                {
-
-                }
-                pagelist.AddRange(cachedlist);
-                cachedlist.Clear();
-                adapter.NotifyDataSetChanged();
-            }*/
+          
             Task.Run(async () =>
             {
 
@@ -245,6 +226,14 @@ namespace HappyPandaXDroid.Scenes
             });
         }
 
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+            if(thumb_path!=string.Empty)
+            Glide.With(Context).Load(thumb_path).Into(ThumbView);
+        }
+
         void InitializeViews()
         {
 
@@ -262,7 +251,7 @@ namespace HappyPandaXDroid.Scenes
 
 
             title = MainView.FindViewById<TextView>(Resource.Id.title);
-            category = MainView.FindViewById<TextView>(Resource.Id.category);
+           // category = MainView.FindViewById<TextView>(Resource.Id.category);
             read_action = MainView.FindViewById<TextView>(Resource.Id.read);
             language = MainView.FindViewById<TextView>(Resource.Id.language);
             pages = MainView.FindViewById<TextView>(Resource.Id.pages);
@@ -400,7 +389,7 @@ namespace HappyPandaXDroid.Scenes
         {
             title.Text = gallery.titles[0].name;
 
-            category.Text = "place_holder";
+            //category.Text = "place_holder";
 
         }
 
@@ -414,22 +403,24 @@ namespace HappyPandaXDroid.Scenes
                 {
                     try
                     {
+                        if (language == null)
+                            language = MainView.FindViewById<TextView>(Resource.Id.language);
+                        language.Text = "Language: ";
                         if (gallery.tags.Language.Count > 0)
                         {
-                            if (language == null)
-                                language = MainView.FindViewById<TextView>(Resource.Id.language);
+                            
                             string lan = gallery.tags.Language[0].name;
-                            language.Text = System.Globalization.CultureInfo.CurrentCulture
+                            language.Text += System.Globalization.CultureInfo.CurrentCulture
                                 .TextInfo.ToTitleCase(lan.ToLower());
                         }
                         else
-                            language.Text = "eng";
+                            language.Text += "English";
                         pages.Text = pagelist.Count.ToString() + " Pages";
                         int number = 10;
                         if (pagelist.Count < 10)
                             number = pagelist.Count;
                         var mdata = new List<Core.Gallery.Page>();
-                        last_read_page.Text = (gallery.LastPageRead + 1).ToString();
+                        last_read_page.Text = "Last Read Page: "+(gallery.LastPageRead + 1).ToString();
                         for (int i = 0; i < number; i++)
                         {
                             mdata.Add(pagelist[i]);

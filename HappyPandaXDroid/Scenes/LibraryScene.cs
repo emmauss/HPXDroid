@@ -242,22 +242,21 @@ namespace HappyPandaXDroid.Scenes
             e.Handled = true;
         }
 
-        protected override void OnSaveInstanceState(Bundle p0)
+        protected override void OnSaveViewState(View p0, Bundle p1)
         {
-            base.OnSaveInstanceState(p0);
-            var bundle = p0;
+            var bundle = p1;
             bundle.PutString("query", Current_Query);
+            base.OnSaveViewState(p0, p1);
         }
 
-        protected override void OnRestoreInstanceState(Bundle p0)
+        protected override void OnRestoreViewState(View p0, Bundle p1)
         {
-            var bundle = p0;
+            var bundle = p1;
             query = bundle.GetString("query");
-            base.OnRestoreInstanceState(p0);
-
+            base.OnRestoreViewState(p0, p1);
         }
-        
 
+       
         void SetColumns()
         {
             var windo = Context.GetSystemService(Context.WindowService);
@@ -632,7 +631,6 @@ namespace HappyPandaXDroid.Scenes
             mRecyclerView.ClearOnScrollListeners();
             mRecyclerView.SetAdapter(null);
             adapter.Dispose();
-            mRefreshLayout.SetOnScrollChangeListener(null);
             adapter = null;
             mLayoutManager.Dispose();
             mpageSelector = null;

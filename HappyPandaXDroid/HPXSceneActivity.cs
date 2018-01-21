@@ -109,6 +109,15 @@ namespace HappyPandaXDroid
 
         }
 
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            base.OnSaveInstanceState(outState);
+        }
+
+        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        {
+            base.OnRestoreInstanceState(savedInstanceState);
+        }
 
         private void NavView_NavigationItemSelected(object sender, NavigationView.NavigationItemSelectedEventArgs e)
         {

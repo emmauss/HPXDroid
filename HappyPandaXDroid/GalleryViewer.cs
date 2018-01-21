@@ -164,8 +164,9 @@ namespace HappyPandaXDroid
 
         protected override void OnResume()
         {
-            seekbar.Progress = galleryPager.CurrentPosition + 1;
+            
             base.OnResume();
+            seekbar.Progress = galleryPager.CurrentPosition + 1;
         }
 
         protected override void OnStart()

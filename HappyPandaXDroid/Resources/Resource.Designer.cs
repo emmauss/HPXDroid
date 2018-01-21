@@ -5537,8 +5537,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0060
 			public const int action_bar_title = 2131427424;
 			
-			// aapt resource value: 0x7f0b00ab
-			public const int action_card = 2131427499;
+			// aapt resource value: 0x7f0b00a9
+			public const int action_card = 2131427497;
 			
 			// aapt resource value: 0x7f0b00d4
 			public const int action_container = 2131427540;
@@ -5663,11 +5663,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00cf
 			public const int content_view = 2131427535;
 			
-			// aapt resource value: 0x7f0b00ad
-			public const int continue_card = 2131427501;
+			// aapt resource value: 0x7f0b00ab
+			public const int continue_card = 2131427499;
 			
-			// aapt resource value: 0x7f0b00ae
-			public const int continue_read = 2131427502;
+			// aapt resource value: 0x7f0b00ac
+			public const int continue_read = 2131427500;
 			
 			// aapt resource value: 0x7f0b0094
 			public const int coordinator = 2131427476;
@@ -5762,8 +5762,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00cb
 			public const int fam = 2131427531;
 			
-			// aapt resource value: 0x7f0b00a8
-			public const int favoredTimes = 2131427496;
+			// aapt resource value: 0x7f0b00af
+			public const int favoredTimes = 2131427503;
 			
 			// aapt resource value: 0x7f0b00c6
 			public const int ffimage = 2131427526;
@@ -5840,8 +5840,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00b5
 			public const int imageView = 2131427509;
 			
-			// aapt resource value: 0x7f0b00af
-			public const int info = 2131427503;
+			// aapt resource value: 0x7f0b00ad
+			public const int info = 2131427501;
 			
 			// aapt resource value: 0x7f0b00f9
 			public const int ippref = 2131427577;
@@ -5861,8 +5861,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0092
 			public const int largeLabel = 2131427474;
 			
-			// aapt resource value: 0x7f0b00aa
-			public const int lastReadPage = 2131427498;
+			// aapt resource value: 0x7f0b00a8
+			public const int lastReadPage = 2131427496;
 			
 			// aapt resource value: 0x7f0b00d0
 			public const int layout_main = 2131427536;
@@ -5969,8 +5969,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00fa
 			public const int portpref = 2131427578;
 			
-			// aapt resource value: 0x7f0b00a9
-			public const int posted = 2131427497;
+			// aapt resource value: 0x7f0b00a7
+			public const int posted = 2131427495;
 			
 			// aapt resource value: 0x7f0b00ef
 			public const int preview = 2131427567;
@@ -5993,8 +5993,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b007b
 			public const int radio = 2131427451;
 			
-			// aapt resource value: 0x7f0b00ac
-			public const int read = 2131427500;
+			// aapt resource value: 0x7f0b00aa
+			public const int read = 2131427498;
 			
 			// aapt resource value: 0x7f0b00c1
 			public const int recyclerView = 2131427521;
@@ -6113,8 +6113,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b002d
 			public const int showTitle = 2131427373;
 			
-			// aapt resource value: 0x7f0b00a7
-			public const int size = 2131427495;
+			// aapt resource value: 0x7f0b00ae
+			public const int size = 2131427502;
 			
 			// aapt resource value: 0x7f0b0091
 			public const int smallLabel = 2131427473;
