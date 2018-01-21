@@ -52,9 +52,7 @@ namespace HappyPandaXDroid
         public UICountdown countDown;
         GestureDetector gestureDetector;
         Core.Gallery.GalleryItem gallery;
-
-        Custom_Views.ImageViewHolder imageView;
-        bool doubl_click = false;
+        
         public int activityID;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -583,7 +581,7 @@ namespace HappyPandaXDroid
                     {
                         var lay = (LinearLayoutManager)galleryPager.GetLayoutManager();
                         int pos = lay.FindFirstCompletelyVisibleItemPosition();
-                        if(pos!=null & pos > -1)
+                        if(pos > -1)
                         {
                             var holder = (ImageViewHolder)galleryPager.FindViewHolderForLayoutPosition(pos);
                             holder.imageView.Loaded = false;
@@ -591,7 +589,6 @@ namespace HappyPandaXDroid
                         }
                     }
                     return true;
-                    break;
                 default:
                     return base.OnOptionsItemSelected(item);
             }
@@ -627,8 +624,7 @@ namespace HappyPandaXDroid
 
             public override void OnViewRecycled(Java.Lang.Object holder)
             {
-                var hold = holder as ImageViewHolder;
-                if (hold != null)
+                if (holder is ImageViewHolder hold)
                 {
                     hold.imageView.Release();
                 }

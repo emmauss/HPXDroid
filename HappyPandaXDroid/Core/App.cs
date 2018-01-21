@@ -875,8 +875,7 @@ namespace HappyPandaXDroid.Core
                 response = JSON.API.ParseToString(main);
                 string countstring = Net.SendPost(response);
                 var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
-                var countdata = JSON.API.GetData(serverobj.data, 0) as JSON.ServerObjects.IntegerObject;
-                if (countdata != null)
+                if (JSON.API.GetData(serverobj.data, 0) is JSON.ServerObjects.IntegerObject countdata)
                     return countdata.count;
                 else return 0;
             }

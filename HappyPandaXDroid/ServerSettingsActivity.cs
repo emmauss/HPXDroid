@@ -51,8 +51,6 @@ namespace HappyPandaXDroid
             private static Logger logger = LogManager.GetCurrentClassLogger();
             //Core.App.Settings set = new Core.App.Settings();
             ISharedPreferences sharedPreferences;
-            ISharedPreferencesOnSharedPreferenceChangeListener listener;
-            Preference pref;
             Stopwatch watch = new Stopwatch();
             public override void OnCreate(Bundle savedInstanceState)
             {

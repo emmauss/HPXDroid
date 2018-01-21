@@ -350,6 +350,10 @@ namespace HappyPandaXDroid.Core
             response = JSON.API.ParseToString(main);
             string countstring = Net.SendPost(response);
             var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
+            if (obj == null)
+            {
+                return await GetPage(page, search_query, limit);
+            }
             var array = obj.data as Newtonsoft.Json.Linq.JArray;
             List<GalleryItem> list = new List<GalleryItem>();
             try
@@ -387,8 +391,7 @@ namespace HappyPandaXDroid.Core
             response = JSON.API.ParseToString(main);
             string countstring = Net.SendPost(response);
             var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
-            var countdata = JSON.API.GetData(serverobj.data,0) as JSON.ServerObjects.IntegerObject;
-            if (countdata != null)
+            if (JSON.API.GetData(serverobj.data, 0) is JSON.ServerObjects.IntegerObject countdata)
                 return countdata.count;
             else return 0;
         }

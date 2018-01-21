@@ -21,15 +21,12 @@ namespace HappyPandaXDroid.Scenes
     {
 
         Toolbar toolbar;
-        DrawerLayout navDrawer;
         Clans.Fab.FloatingActionMenu fam;
         EasyRecyclerView.EasyRecyclerView mRecyclerView;
         RecyclerView.LayoutManager mLayoutManager;
         int columns = 1;
         GalleryCardAdapter adapter;
         AppBarLayout appBarLayout;
-        public int activityId;
-        public string activityName;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         Clans.Fab.FloatingActionButton mClearFAB;
         View MainView;
@@ -47,7 +44,6 @@ namespace HappyPandaXDroid.Scenes
             toolbar = MainView.FindViewById<Toolbar>(Resource.Id.toolbar);
             toolbar.Title = "Recents";
             
-            activityName = "LibraryActivity " + activityId;
             appBarLayout = MainView.FindViewById<AppBarLayout>(Resource.Id.appbar);
             appBarLayout.Drag += AppBarLayout_Drag;
             

@@ -427,9 +427,11 @@ namespace HappyPandaXDroid.Scenes
                         }
                         if (pagelist.Count > number)
                         {
-                            Core.Gallery.Page loadMore = new Core.Gallery.Page();
-                            loadMore.isPlaceholder = true;
-                            loadMore.name = "Show More...";
+                            Core.Gallery.Page loadMore = new Core.Gallery.Page
+                            {
+                                isPlaceholder = true,
+                                name = "Show More..."
+                            };
                             mdata.Add(loadMore);
                         }
                         adapter.SetList(mdata);

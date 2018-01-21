@@ -166,7 +166,6 @@ namespace HappyPandaXDroid.Custom_Views
                     {
                         try
                         {
-                            bool isLandscape = false;
                             img.SetImage(ImageSource.InvokeUri(page_path));
 
                             

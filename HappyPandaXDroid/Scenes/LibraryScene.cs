@@ -1001,8 +1001,7 @@ namespace HappyPandaXDroid.Scenes
             public override void OnViewRecycled(Java.Lang.Object holder)
             {
                 base.OnViewRecycled(holder);
-                var hold = holder as GalleryCardHolder;
-                if (hold != null)
+                if (holder is GalleryCardHolder hold)
                 {
                     hold.gcard.Reset();
                     hold.gcard.Recycle();
@@ -1078,7 +1077,9 @@ namespace HappyPandaXDroid.Scenes
             {
                 if (child is Clans.Fab.FloatingActionMenu c)
                 {
+#pragma warning disable CS0618 // Type or member is obsolete
                     base.OnNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+#pragma warning restore CS0618 // Type or member is obsolete
                     if (dyConsumed > 0)
                     {
                         c.HideMenuButton(true);
@@ -1090,10 +1091,9 @@ namespace HappyPandaXDroid.Scenes
                 }
             }
 
-            public override bool OnStartNestedScroll(CoordinatorLayout coordinatorLayout, Java.Lang.Object child, View directTargetChild, View target, int nestedScrollAxes)
-            {
-                return nestedScrollAxes == ViewCompat.ScrollAxisVertical;
-            }
+            public override bool OnStartNestedScroll(CoordinatorLayout coordinatorLayout, Java.Lang.Object child, 
+                View directTargetChild, View target, int nestedScrollAxes) 
+                => nestedScrollAxes == ViewCompat.ScrollAxisVertical;
         }
 
 

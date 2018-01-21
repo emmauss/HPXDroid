@@ -56,8 +56,7 @@ namespace HappyPandaXDroid
             //Core.App.Settings set = new Core.App.Settings();
             ISharedPreferences sharedPreferences;
             
-            ISharedPreferencesOnSharedPreferenceChangeListener listener;
-            Preference pref, server;
+            Preference server;
 
             AppCompatActivity parent;
 

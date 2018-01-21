@@ -81,11 +81,6 @@ namespace HappyPandaXDroid.Custom_Views
 
         public void SetAlignment(Alignment baseLine)
         {
-            if (baseLine == null)
-            {
-                return;
-            }
-
             if (mAlignment != baseLine)
             {
                 mAlignment = baseLine;
