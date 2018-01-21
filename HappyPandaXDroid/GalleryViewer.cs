@@ -80,7 +80,7 @@ namespace HappyPandaXDroid
             FilterSlider.ProgressChanged += FilterSlider_ProgressChanged;
             FilterSlider.Click += FilterSlider_Click;
             SetSupportActionBar(toolbar);
-            ImageView op = FindViewById<ImageView>(Resource.Id.options);
+            
             lay = FindViewById<FrameLayout>(Resource.Id.frame);
             galleryPager = FindViewById<RecyclerViewPager>(Resource.Id.galleryViewPager);
             var layout = new ExtraLayoutManager(this, LinearLayoutManager.Horizontal, false);    
@@ -102,8 +102,14 @@ namespace HappyPandaXDroid
             galleryPager.AddOnPageChangedListener(new PageChangeListener(this));
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
+
+            View toptrigger = FindViewById<View>(Resource.Id.topTrigger);
+            View bottomtrigger = FindViewById<View>(Resource.Id.bottomTrigger);
+            toptrigger.SetOnTouchListener(new ScreenTouchListener(this));
+            bottomtrigger.SetOnTouchListener(new ScreenTouchListener(this));
+
             countDown.Start();
-            op.SetOnTouchListener(new ScreenTouchListener(this));
+            //op.SetOnTouchListener(new ScreenTouchListener(this));
             SupportActionBar.Title = PageList[pageno].name;
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 

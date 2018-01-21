@@ -19,13 +19,14 @@ namespace HappyPandaXDroid.Custom_Views
         public int PageCount = 0;
         public int PageSelected = 0;
         public EditText PageInput;
+        AlertDialog.Builder builder;
         public Android.Support.Design.Widget.TextInputLayout FloatingTextLayout;
         Scenes.LibraryScene mscene;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public override Dialog OnCreateDialog(Bundle savedInstanceState)
         {
-            AlertDialog.Builder builder = new AlertDialog.Builder(Activity);
-
+            builder = new AlertDialog.Builder(Activity);
+            mDialogListener = mscene.dialogeventlistener;
             builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));
             builder.SetNegativeButton("Cancel", new ClickListener(mDialogListener, this));
 
@@ -103,6 +104,8 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 // Instantiate the NoticeDialogListener so we can send events to the host
                 mDialogListener = mscene.dialogeventlistener;
+                builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));
+                builder.SetNegativeButton("Cancel", new ClickListener(mDialogListener, this));
             }
             catch (Java.Lang.ClassCastException e)
             {

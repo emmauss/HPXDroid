@@ -391,9 +391,10 @@ namespace HappyPandaXDroid.Core
             response = JSON.API.ParseToString(main);
             string countstring = Net.SendPost(response);
             var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
-            if (JSON.API.GetData(serverobj.data, 0) is JSON.ServerObjects.IntegerObject countdata)
-                return countdata.count;
-            else return 0;
+            var dataobj = JSON.API.GetData(serverobj.data, 0);
+            var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])["count"]
+                .ToString();
+            return int.Parse(data);
         }
 
         public static async Task<TagList> GetTags(int item_id, string type)

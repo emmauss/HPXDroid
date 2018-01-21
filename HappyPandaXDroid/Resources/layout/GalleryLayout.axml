@@ -32,21 +32,28 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:background="#a0101010"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:minWidth="25px"
         android:minHeight="25px">
-        
+      <View
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/bottomTrigger"
+        />
         <SeekBar
             android:layout_width="match_parent"
             android:paddingBottom="?attr/actionBarSize"
+            
+        android:background="#a0101010"
             android:layout_height="wrap_content"
             android:id="@+id/progress_seekbar" />
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
+            
+        android:background="#a0101010"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#333333"
             android:text=""
@@ -67,14 +74,10 @@
             android:visibility="gone"
             android:layout_height="wrap_content"
             android:id="@+id/filterSlider" />
-  <ImageView
-          android:id="@+id/options"
-          android:layout_width="wrap_content"
-                android:scaleType="fitCenter"
-          android:src="@drawable/ic_arrow_downward"
-          android:alpha="0.5"
-                android:adjustViewBounds="true"
-                    android:layout_height="wrap_content"
-                android:layout_gravity="left"/>
+    <View
+          android:layout_width="match_parent"
+          android:layout_height="40dp"
+          android:id="@+id/topTrigger"
+        />
     </LinearLayout>
 </FrameLayout>

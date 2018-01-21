@@ -174,7 +174,7 @@ namespace HappyPandaXDroid.Scenes
 
 
             SetMainLoading(true);
-            mpageSelector = new Custom_Views.PageSelector(this);
+            
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");
@@ -596,6 +596,7 @@ namespace HappyPandaXDroid.Scenes
                             mRecyclerView.ScrollToPosition(0);
                     });
                     GetTotalCount();
+                    mpageSelector = new Custom_Views.PageSelector(this);
                     logger.Info("HPContent Refresh Successful");
                 });
             }
