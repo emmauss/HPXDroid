@@ -204,7 +204,17 @@ namespace HappyPandaXDroid.Scenes
         protected override void OnResume()
         {
             base.OnResume();
-          
+            if (cachedlist != null)
+            {
+                if(cachedlist.Count > 0)
+                {
+                    pagelist.Clear();
+                    pagelist.AddRange(cachedlist);
+                    adapter.NotifyDataSetChanged();
+                }
+            }
+
+
             Task.Run(async () =>
             {
 

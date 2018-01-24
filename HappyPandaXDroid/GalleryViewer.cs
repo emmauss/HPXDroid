@@ -108,12 +108,39 @@ namespace HappyPandaXDroid
             toptrigger.SetOnTouchListener(new ScreenTouchListener(this));
             bottomtrigger.SetOnTouchListener(new ScreenTouchListener(this));
 
+
+            galleryPager.AddOnItemTouchListener(new ItemTouchListener(this));
             countDown.Start();
             //op.SetOnTouchListener(new ScreenTouchListener(this));
             SupportActionBar.Title = PageList[pageno].name;
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 
          }
+
+        public class ItemTouchListener : Java.Lang.Object, RecyclerView.IOnItemTouchListener
+        {
+            GalleryViewer GalleryViewer;
+            public ItemTouchListener(GalleryViewer viewer)
+            {
+                GalleryViewer = viewer;
+            }
+
+            public bool OnInterceptTouchEvent(RecyclerView rv, MotionEvent e)
+            {
+                return true;
+            }
+
+            public void OnRequestDisallowInterceptTouchEvent(bool disallowIntercept)
+            {
+                
+            }
+
+            public void OnTouchEvent(RecyclerView rv, MotionEvent e)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
 
         public class ScreenTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
@@ -180,6 +207,7 @@ namespace HappyPandaXDroid
 
         protected override void OnStop()
         {
+            countDown.Cancel();
             gallery.LastPageRead = galleryPager.CurrentPosition;
             base.OnStop();
 
@@ -263,17 +291,6 @@ namespace HappyPandaXDroid
         }
         
 
-        public class PhotoImageVIew: PhotoView.PhotoView
-        {
-            GalleryViewer mactivity;
-            public PhotoImageVIew(Context context) : base(context)
-            {
-                if (context is GalleryViewer)
-                    mactivity = (GalleryViewer)context;
-            }
-            
-        }
-        
         public class TapsDetector : GestureDetector.SimpleOnGestureListener
         {
             GalleryViewer galleryViewer;
@@ -463,43 +480,6 @@ namespace HappyPandaXDroid
                 galleryPager.SmoothScrollToPosition(pos - 1);
         }
 
-        /*1public override bool DispatchKeyEvent(KeyEvent e)
-        {
-           
-                int pos = galleryPager.CurrentPosition;
-                var keyCode = e.KeyCode;
-                if(e.Action == KeyEventActions.Up)
-                switch (keyCode)
-                {
-                    case Keycode.VolumeUp:
-                        if (e.Action == KeyEventActions.Up)
-                        {
-                            PreviousPage();
-                        }
-                        return true;
-                    case Keycode.DpadLeft:
-                        if (e.Action == KeyEventActions.Up)
-                        {
-                            PreviousPage();
-                        }
-                        return true;
-                    //break;
-                    case Keycode.VolumeDown:
-                        if (e.Action == KeyEventActions.Up)
-                        {
-                            NextPage();
-                        }
-                        return true;
-                    case Keycode.DpadRight:
-                        if (e.Action == KeyEventActions.Up)
-                        {
-                            NextPage();
-                        }
-                        return true;
-                        //break;
-                }
-            return base.DispatchKeyEvent(e);
-        }*/
 
         public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
         {
