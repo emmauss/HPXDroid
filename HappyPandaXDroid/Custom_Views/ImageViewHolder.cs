@@ -166,8 +166,9 @@ namespace HappyPandaXDroid.Custom_Views
                     {
                         try
                         {
+                            
                             img.SetImage(ImageSource.InvokeUri(page_path));
-
+                            img.ImageLoaded += Img_ImageLoaded;
                             
                         }
                         catch (IllegalArgumentException iex)
@@ -192,6 +193,10 @@ namespace HappyPandaXDroid.Custom_Views
                 }
 
             
+        }
+
+        private void Img_ImageLoaded(object sender, EventArgs e)
+        {
         }
 
         public void OnLoadEnd()

@@ -126,8 +126,7 @@ namespace HappyPandaXDroid.Scenes
                     }
                 });
                 
-                gallery.tags = Core.Gallery.GetTags(gallery.id, "Gallery").Result;
-                pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
+                gallery.tags = Core.Gallery.GetTags(gallery.id, "Gallery").Result;                
                 ParseData();
                 if (!IsDestroyed)
                     h.Post(() =>
@@ -135,7 +134,8 @@ namespace HappyPandaXDroid.Scenes
                         mProgressView.Visibility = ViewStates.Invisible;
                         MainLayout.Visibility = ViewStates.Visible;
                         errorFrame.Visibility = ViewStates.Gone;
-                    });
+                    });                
+                LoadPreviews();
                 loaded = true;
             }
             else
@@ -300,7 +300,7 @@ namespace HappyPandaXDroid.Scenes
                 return;
             var page = adapter.mdata[pos];
             
-            if (page.isPlaceholder)
+            if (page.IsPlaceholder && page.MoreExists)
             {
                 PreviewScene previewScene = new PreviewScene(pagelist, gallery);
                 Stage.PushScene(previewScene);
@@ -427,32 +427,65 @@ namespace HappyPandaXDroid.Scenes
                         }
                         else
                             language.Text += "English";
-                        pages.Text = pagelist.Count.ToString() + " Pages";
-                        int number = 10;
-                        if (pagelist.Count < 10)
-                            number = pagelist.Count;
-                        var mdata = new List<Core.Gallery.Page>();
-                        last_read_page.Text = "Last Read Page: "+(gallery.LastPageRead + 1).ToString();
-                        for (int i = 0; i < number; i++)
-                        {
-                            mdata.Add(pagelist[i]);
-                        }
-                        if (pagelist.Count > number)
-                        {
-                            Core.Gallery.Page loadMore = new Core.Gallery.Page
-                            {
-                                isPlaceholder = true,
-                                name = "Show More..."
-                            };
-                            mdata.Add(loadMore);
-                        }
-                        adapter.SetList(mdata);
+                        
                         ParseTags();
                     }
                     catch (Exception ex)
                     {
 
                     }
+                });
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        void LoadPreviews()
+        {
+            var h = new Handler(Looper.MainLooper);
+            try
+            {
+                var mdata = new List<Core.Gallery.Page>();
+                h.Post(() =>
+                {
+                    
+                    Core.Gallery.Page loading = new Core.Gallery.Page
+                    {
+                        IsPlaceholder = true,
+                        name = "Loading..."
+                    };
+                    mdata.Add(loading);
+                    adapter.SetList(mdata);
+                });
+                    pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
+                h.Post(() =>
+                {
+                    pages.Text = pagelist.Count.ToString() + " Pages";
+                    int number = 10;
+                    if (pagelist.Count < 10)
+                        number = pagelist.Count;
+                    
+                    last_read_page.Text = "Last Read Page: " + (gallery.LastPageRead + 1).ToString();
+                    mdata.Clear();
+                    for (int i = 0; i < number; i++)
+                    {
+                        mdata.Add(pagelist[i]);
+                    }
+                    if (pagelist.Count > number)
+                    {
+                        Core.Gallery.Page loadMore = new Core.Gallery.Page
+                        {
+                            IsPlaceholder = true,
+                            MoreExists = true,
+                            name = "Show More..."
+                        };
+                        mdata.Add(loadMore);
+                    }
+                    adapter.SetList(mdata);
+                    //adapter.NotifyDataSetChanged();
+                    
                 });
             }
             catch (Exception ex)
@@ -470,7 +503,7 @@ namespace HappyPandaXDroid.Scenes
                 cachedlist = new List<Core.Gallery.Page>(pagelist);
                 pagelist.Clear();
             }
-            adapter.NotifyDataSetChanged();
+            adapter.SetList(pagelist);
         }
 
 

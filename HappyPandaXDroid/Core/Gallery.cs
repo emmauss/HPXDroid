@@ -118,7 +118,8 @@ namespace HappyPandaXDroid.Core
             public string image_url;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int command_id;
-            public bool isPlaceholder = false;
+            public bool IsPlaceholder = false;
+            public bool MoreExists = false;
         }
 
         public class Artist

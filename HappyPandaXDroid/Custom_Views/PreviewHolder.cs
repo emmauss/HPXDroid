@@ -83,15 +83,16 @@ namespace HappyPandaXDroid.Custom_Views
             var h = new Handler(Looper.MainLooper);
             try
             {
-                if (page.isPlaceholder)
+                if (page.IsPlaceholder)
                 {
                     h.Post(() =>
                     {
                         try
                         {
+                            if(page.MoreExists)
                             Glide.With(preview.Context)
                                     .Load(Resource.Drawable.ic_add_white)
-                                    .Into(img);
+                                    .Into(img);                            
                             txt.Text = page.name;
                         }
                         catch (Exception ex)

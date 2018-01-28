@@ -102,12 +102,7 @@ namespace HappyPandaXDroid
             galleryPager.AddOnPageChangedListener(new PageChangeListener(this));
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
-
-            View toptrigger = FindViewById<View>(Resource.Id.topTrigger);
-            View bottomtrigger = FindViewById<View>(Resource.Id.bottomTrigger);
-            toptrigger.SetOnTouchListener(new ScreenTouchListener(this));
-            bottomtrigger.SetOnTouchListener(new ScreenTouchListener(this));
-
+            
 
             galleryPager.AddOnItemTouchListener(new ItemTouchListener(this));
             countDown.Start();
@@ -117,45 +112,72 @@ namespace HappyPandaXDroid
 
          }
 
-        public class ItemTouchListener : Java.Lang.Object, RecyclerView.IOnItemTouchListener
+        public class ItemTouchListener : RecyclerView.SimpleOnItemTouchListener
         {
             GalleryViewer GalleryViewer;
+            Timer timer;
             public ItemTouchListener(GalleryViewer viewer)
             {
                 GalleryViewer = viewer;
+                timer = new Timer(1000, 10);
+                timer.Finish += Timer_Finish;
+
             }
 
-            public bool OnInterceptTouchEvent(RecyclerView rv, MotionEvent e)
+            private void Timer_Finish(object sender, EventArgs e)
             {
-                return true;
+                GalleryViewer.ToggleOverlay();
             }
 
-            public void OnRequestDisallowInterceptTouchEvent(bool disallowIntercept)
+            public override bool OnInterceptTouchEvent(RecyclerView rv, MotionEvent e)
             {
-                
+                if (e.Action == MotionEventActions.Down)
+                {
+                    if (timer.IsRunning)
+                        timer.CancelTimer();
+                    else
+                        timer.StartTimer();
+                }
+                return base.OnInterceptTouchEvent(rv, e);
             }
 
-            public void OnTouchEvent(RecyclerView rv, MotionEvent e)
+            internal class Timer : CountDownTimer
             {
-                throw new NotImplementedException();
+                public event EventHandler Finish;
+                public bool IsRunning = false;
+
+                public Timer(long ms, long interval) : base(ms, interval)
+                {
+
+                }
+
+                public void StartTimer()
+                {
+                    IsRunning = true;
+                    Start();
+                }
+
+                public void CancelTimer()
+                {
+                    Cancel();
+                    IsRunning = false;
+                }
+
+                public override void OnFinish()
+                {
+                    IsRunning = false;
+                    Finish.Invoke(null, null);
+                }
+
+                public override void OnTick(long millisUntilFinished)
+                {
+
+                }
             }
         }
 
 
-        public class ScreenTouchListener : Java.Lang.Object, View.IOnTouchListener
-        {
-            GalleryViewer galleryViewer;
-            public ScreenTouchListener(GalleryViewer viewer)
-            {
-                galleryViewer = viewer;
-            }
-
-            public bool OnTouch(View v, MotionEvent e)
-            {
-                return galleryViewer.gestureDetector.OnTouchEvent(e);
-            }
-        }
-
+      
 
         private void FilterSlider_Click(object sender, EventArgs e)
         {
@@ -445,6 +467,7 @@ namespace HappyPandaXDroid
                         overlayVisible = false;
                         toolbar.Visibility = ViewStates.Gone;
                         seekbar.Visibility = ViewStates.Gone;
+                        page_number.Visibility = ViewStates.Gone;
                         FilterSlider.Visibility = ViewStates.Gone;
                         countDown.Cancel();
                     }
@@ -453,6 +476,7 @@ namespace HappyPandaXDroid
                         overlayVisible = true;
                         toolbar.Visibility = ViewStates.Visible;
                         seekbar.Visibility = ViewStates.Visible;
+                        page_number.Visibility = ViewStates.Visible;
                         countDown.Start();
 
                     }
