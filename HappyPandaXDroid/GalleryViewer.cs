@@ -383,6 +383,8 @@ namespace HappyPandaXDroid
                 mactivity.seekbar.Progress = newPosition + 1;
                 mactivity.page_number.Text = (newPosition + 1).ToString() ;
                 mactivity.toolbar.Title = mactivity.adapter.PageList[newPosition].name;
+                mactivity.gallery.LastPageRead = mactivity.galleryPager.CurrentPosition;
+                Core.Media.Recents.SaveRecents();
             }
         }
 

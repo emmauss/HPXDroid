@@ -59,7 +59,7 @@ namespace HappyPandaXDroid.Scenes
 
         public PreviewScene(List<Core.Gallery.Page> list, Core.Gallery.GalleryItem galleryItem)
         {
-            pagelist = list;
+            pagelist = new List<Core.Gallery.Page>(list);
             gallery = galleryItem;
         }
 
@@ -79,7 +79,7 @@ namespace HappyPandaXDroid.Scenes
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize
                 <Core.Gallery.GalleryItem>(bundle.GetString("gallery"));
             pagelist = Core.JSON.Serializer.SimpleSerializer.DeserializeToList
-                <Core.Gallery.Page>(bundle.GetString("gallery"));
+                <Core.Gallery.Page>(bundle.GetString("list"));
         }
         
         void Init()
@@ -103,7 +103,7 @@ namespace HappyPandaXDroid.Scenes
 
             if (pagelist == null)
                 return;
-            if (pagelist == null & pagelist.Count < 1)
+            if ( pagelist.Count < 1)
                 return;
 
             Intent intent = new Android.Content.Intent(this.Context, typeof(GalleryViewer));

@@ -203,16 +203,7 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnResume()
         {
-            base.OnResume();
-            if (cachedlist != null)
-            {
-                if(cachedlist.Count > 0)
-                {
-                    pagelist.Clear();
-                    pagelist.AddRange(cachedlist);
-                    adapter.NotifyDataSetChanged();
-                }
-            }
+            base.OnResume();        
 
 
             Task.Run(async () =>
@@ -243,6 +234,12 @@ namespace HappyPandaXDroid.Scenes
             base.OnStart();
             if(thumb_path!=string.Empty)
             Glide.With(Context).Load(thumb_path).Into(ThumbView);
+            if(cachedlist!=null)
+                if(cachedlist.Count>0)
+                {
+                    pagelist = new List<Core.Gallery.Page>(cachedlist);
+                    adapter.SetList(pagelist);
+                }
         }
 
         void InitializeViews()
@@ -484,7 +481,6 @@ namespace HappyPandaXDroid.Scenes
                         mdata.Add(loadMore);
                     }
                     adapter.SetList(mdata);
-                    //adapter.NotifyDataSetChanged();
                     
                 });
             }
