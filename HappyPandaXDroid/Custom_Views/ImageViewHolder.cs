@@ -88,7 +88,7 @@ namespace HappyPandaXDroid.Custom_Views
                             
                 this.Page = page;
                 var h = new Handler(Looper.MainLooper);
-                bool exists = await Core.Gallery.IsSourceExist("page", page.id);
+            bool exists = true;// await Core.Gallery.IsSourceExist("page", page.id);
                 if (!exists)
                 {
                     h.Post(() =>
@@ -118,8 +118,8 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     while (!IsCached())
                     {
-                    
-                    bool exists = await Core.Gallery.IsSourceExist("page", Page.id);
+
+                    bool exists = true;// await Core.Gallery.IsSourceExist("page", Page.id);
                     if (!exists)
                     {
                         h.Post(() =>

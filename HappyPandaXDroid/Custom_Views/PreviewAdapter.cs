@@ -35,8 +35,11 @@ namespace HappyPandaXDroid.Custom_Views
         public void SetList(List<Core.Gallery.Page> UrlList)
         {
             mdata = new List<Core.Gallery.Page>();
-            mdata.AddRange(UrlList);
-            NotifyDataSetChanged();
+            if (UrlList != null)
+            {
+                mdata.AddRange(UrlList);
+                NotifyDataSetChanged();
+            }
         }
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
