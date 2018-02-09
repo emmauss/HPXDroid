@@ -14,5 +14,13 @@
       android:layout_gravity="center_horizontal"
       android:textColor="?attr/colorAccent"
       android:text="@string/no_tags"/>
+  <android.support.v7.widget.RecyclerView
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:id="@+id/tagLayout"
+      android:scrollbars="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      />
+
 
 </LinearLayout>

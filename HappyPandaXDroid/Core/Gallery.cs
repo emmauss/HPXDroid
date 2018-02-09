@@ -166,7 +166,8 @@ namespace HappyPandaXDroid.Core
 
         public class TagNamespace
         {
-
+            public List<TagItem> tags;
+            public string name;
         }
 
         public class TagItem

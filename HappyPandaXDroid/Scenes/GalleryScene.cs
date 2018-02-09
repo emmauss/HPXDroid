@@ -33,11 +33,13 @@ namespace HappyPandaXDroid.Scenes
         public string thumb_path, gallerydata;
         public ImageView ThumbView;
         FrameLayout errorFrame;
+        Custom_Views.TagsAdapter tagsAdapter;
         Core.Gallery.GalleryItem gallery;
         RecyclerView grid_layout;
         ProgressView.MaterialProgressBar mProgressView;
         LinearLayout MainLayout;
         TextView GalleryStatus;
+        RecyclerView tagRecyclerView;
         Custom_Views.PreviewAdapter adapter;
         bool loaded = false;
         ScrollView scrollview;
@@ -257,7 +259,11 @@ namespace HappyPandaXDroid.Scenes
             mErrorImage.SetImageResource(Resource.Drawable.big_weird_face);
             mErrorText = MainView.FindViewById<TextView>(Resource.Id.error_text);
 
-
+            tagRecyclerView = MainView.FindViewById<RecyclerView>(Resource.Id.tagLayout);
+            var tlayout = new LinearLayoutManager(Context);
+            tagRecyclerView.SetLayoutManager(tlayout);
+            tagsAdapter = new Custom_Views.TagsAdapter(this);
+            tagRecyclerView.SetAdapter(tagsAdapter);
             title = MainView.FindViewById<TextView>(Resource.Id.title);
            // category = MainView.FindViewById<TextView>(Resource.Id.category);
             read_action = MainView.FindViewById<TextView>(Resource.Id.read);
@@ -333,14 +339,14 @@ namespace HappyPandaXDroid.Scenes
 
         private void ErrorFrame_Click(object sender, EventArgs e)
         {
-
+            errorFrame.Visibility = ViewStates.Gone;
+            mProgressView.Visibility = ViewStates.Visible;
             var h = new Handler(Looper.MainLooper);
             ThreadStart start = new ThreadStart(() =>
             {
                 try
                 {
-                    errorFrame.Visibility = ViewStates.Gone;
-                    mProgressView.Visibility = ViewStates.Visible;
+                    
                     Load();
                 }
                 catch (Exception ex)
@@ -567,11 +573,44 @@ namespace HappyPandaXDroid.Scenes
         {
             if (!IsTagAvailable())
                 return;
-            TagLayout.RemoveAllViews();
+            no_tags.Visibility = ViewStates.Gone;
+            ((Custom_Views.TagsAdapter)tagRecyclerView.GetAdapter()).SetList(new List<Core.Gallery.TagNamespace>());
+
+            {
+                List<Core.Gallery.TagNamespace> taglists = new List<Core.Gallery.TagNamespace>();
+                Type t = gallery.tags.GetType();
+                PropertyInfo[] namespaces = t.GetProperties();
+                foreach (var _namespace in namespaces)
+                {
+                    object value = _namespace.GetValue(gallery.tags);
+                    string namespaceName = _namespace.Name;
+                    if (namespaceName.Contains("__"))
+                        namespaceName = "misc";
+                    if (value != null)
+                    {
+                        var tags = (List<Core.Gallery.TagItem>)value;
+                        if (tags.Count > 0)
+                        {
+                            var tagnamespace = new Core.Gallery.TagNamespace()
+                            {
+                                name = namespaceName,
+                                tags = tags
+                            };
+                            taglists.Add(tagnamespace);
+                            
+                        }
+                    }
+                }
+
+                if(taglists.Count>0)
+                {
+                    tagsAdapter.SetList(taglists);
+                }
+
+            }
 
 
-
-            SetTagLayout();
+            //SetTagLayout();
             TagLayout.Visibility = ViewStates.Visible;
 
         }
