@@ -509,65 +509,7 @@ namespace HappyPandaXDroid.Scenes
         }
 
 
-#pragma warning disable 618
-        public void SetTagLayout()
-        {
 
-            var inflater =(LayoutInflater)Context.GetSystemService(Context.LayoutInflaterService);
-            //reclass
-
-
-            int color_header = Context.Resources.GetColor(Resource.Color.colorPrimary);
-            int color_tag = Context.Resources.GetColor(Resource.Color.purple_a700);
-            Type t = gallery.tags.GetType();
-            PropertyInfo[] namespaces = t.GetProperties();
-            foreach (var _namespace in namespaces)
-            {
-                object value = _namespace.GetValue(gallery.tags);
-                string name = _namespace.Name;
-                if (name.Contains("__"))
-                    name = "misc";
-                if (value != null)
-                {
-                    var tags = (List<Core.Gallery.TagItem>)value;
-                    if (tags.Count > 0)
-                    {
-
-                        var rtg = (LinearLayout)inflater.Inflate(Resource.Layout.tag_group_template, TagLayout, false);
-                        rtg.Orientation = Android.Widget.Orientation.Horizontal;
-                        TagLayout.AddView(rtg);
-                        TextView tag_header = (TextView)inflater.Inflate(Resource.Layout.tag_template, rtg, false);
-                        tag_header.Text = name.ToLower();
-                        tag_header.SetBackgroundDrawable(new Custom_Views.RoundSideRectDrawable(color_header));
-                        rtg.AddView(tag_header);
-                        Custom_Views.AutoWrapLayout awl = new Custom_Views.AutoWrapLayout(this.Context);
-                        rtg.AddView(awl, ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
-                        tags.Sort((a, b) => a.name.CompareTo(b.name));
-                        foreach (var tag in tags)
-                        {
-                            TextView tag_item = (TextView)inflater.Inflate(Resource.Layout.tag_template, awl, false);
-                            tag_item.Text = tag.name;
-                            tag_item.SetBackgroundDrawable(new Custom_Views.RoundSideRectDrawable(color_tag));
-                            tag_item.Click += Tag_item_Click;
-                            string fullTagName = _namespace.Name + ":" + "\"" + tag.name + "\"";
-                            tag_item.Tag = fullTagName;
-                            tag_item.Clickable = true;
-                            awl.AddView(tag_item);
-                        }
-                    }
-                }
-            }
-
-        }
-
-        private void Tag_item_Click(object sender, EventArgs e)
-        {
-            TextView tag_item = sender as TextView;
-            if (tag_item == null)
-                return;
-            Stage.PushScene(new LibraryScene((string)tag_item.Tag, (string)tag_item.Tag));
-
-        }
 
         void ParseTags()
         {
@@ -609,8 +551,7 @@ namespace HappyPandaXDroid.Scenes
 
             }
 
-
-            //SetTagLayout();
+            
             TagLayout.Visibility = ViewStates.Visible;
 
         }
