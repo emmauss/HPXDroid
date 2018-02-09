@@ -259,19 +259,16 @@ namespace HappyPandaXDroid.Scenes
        
         void SetColumns()
         {
-            var windo = Context.GetSystemService(Context.WindowService);
-            var window = windo.JavaCast<IWindowManager>();
-            var display = window.DefaultDisplay;
-            int gridFactor = 0;
-            float w = display.Width;
-            gridFactor = (int)(Math.Ceiling(w / 300d));
-            if (Context.Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
-            {
-                gridFactor = (int)(Math.Ceiling(w / 600d));
-                columns = gridFactor * 2;
-            }
-            else
-                columns = gridFactor;
+                var windo = Context.GetSystemService(Context.WindowService);
+                var window = windo.JavaCast<IWindowManager>();
+                var display = window.DefaultDisplay;
+                var metrics = new DisplayMetrics();
+                display.GetMetrics(metrics);
+
+                float dpwidth = metrics.WidthPixels / metrics.Density;
+                columns = (int)dpwidth / 200; ;
+
+            
         }
 
 

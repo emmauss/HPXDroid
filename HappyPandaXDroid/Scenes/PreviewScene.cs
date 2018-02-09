@@ -3,6 +3,7 @@ using Android.OS;
 using Android.Content;
 using Android.Support.V7.App;
 using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using System.Threading;
@@ -118,16 +119,12 @@ namespace HappyPandaXDroid.Scenes
             var windo = Context.GetSystemService(Context.WindowService);
             var window = windo.JavaCast<IWindowManager>();
             var display = window.DefaultDisplay;
-            int gridFactor = 0;
-            float w = display.Width;
-            gridFactor = (int)(Math.Ceiling(w / (160 * 2)));
-            if (Context.Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
-            {
-                gridFactor = (int)(Math.Ceiling(w / (160 * 3)));
-                PreviewColumns = gridFactor * 2;
-            }
-            else
-                PreviewColumns = gridFactor;
+            var metrics = new DisplayMetrics();
+            display.GetMetrics(metrics);
+            
+                float dpwidth = metrics.WidthPixels / metrics.Density;
+                PreviewColumns = (int)dpwidth / 160; ;
+            
         }
 
         public override void OnConfigurationChanged(Configuration newConfig)

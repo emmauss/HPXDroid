@@ -79,6 +79,12 @@ namespace HappyPandaXDroid.Custom_Views
         public async Task<bool> LoadPreview(Core.Gallery.Page page)
         {
             this.page = page;
+            var windo = preview.Context.GetSystemService(Context.WindowService);
+            var window = windo.JavaCast<IWindowManager>();
+            var display = window.DefaultDisplay;
+            var metrics = new DisplayMetrics();
+            display.GetMetrics(metrics);
+            
             int tries = 0;
             var h = new Handler(Looper.MainLooper);
             try
@@ -89,6 +95,7 @@ namespace HappyPandaXDroid.Custom_Views
                     {
                         try
                         {
+                            
                             if(page.MoreExists)
                             Glide.With(preview.Context)
                                     .Load(Resource.Drawable.ic_add_white)
