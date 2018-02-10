@@ -109,6 +109,19 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
+            public static bool IsGrid
+            {
+                get
+                {
+                    var set = AppSettings.GetValueOrDefault("grid_layout", false);
+                    return set;
+                }
+                set
+                {
+                    AppSettings.AddOrUpdateValue("grid_layout", value);
+                }
+            }
+
 
             public static string Server_Port
             {

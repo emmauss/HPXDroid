@@ -74,7 +74,7 @@ namespace HappyPandaXDroid.Custom_Views
                 img = value;
             }
         }
-        public TextView Label
+        public TextView Artist
         {
             get
             {
@@ -113,14 +113,17 @@ namespace HappyPandaXDroid.Custom_Views
 
         private void Initialize()
         {
-
-            galleryCard = Inflate(this.Context, Resource.Layout.galleryCard, this);
+            if(Core.App.Settings.IsGrid)
+            galleryCard = Inflate(this.Context, Resource.Layout.galleryCardGrid, this);
+            else
+            
+                galleryCard = Inflate(this.Context, Resource.Layout.galleryCardList, this);
+            
             Name = FindViewById<TextView>(Resource.Id.textViewholder);
-            Label = FindViewById<TextView>(Resource.Id.textViewholder2);
-            Label.Text = string.Empty;
+            Artist = FindViewById<TextView>(Resource.Id.textViewholder2);
+            Artist.Text = string.Empty;
             img = FindViewById<ImageView>(Resource.Id.imageView);
             
-                Label.Visibility = ViewStates.Gone;
             
             Clickable = true;
         }
@@ -160,6 +163,8 @@ namespace HappyPandaXDroid.Custom_Views
             h.Post(() => {
 
                 Name.Text = Gallery.titles[0].name;
+                if (gallery.artists != null)
+                    Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
             });
 
             await Task.Run( async () =>
@@ -179,6 +184,8 @@ namespace HappyPandaXDroid.Custom_Views
                     try
                     {
                         Name.Text = Gallery.titles[0].name;
+                        if(gallery.artists!=null)
+                        Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
                         img.SetImageResource(Resource.Drawable.image_failed);
                     }
                     catch (Exception ex)
@@ -197,6 +204,8 @@ namespace HappyPandaXDroid.Custom_Views
                     try
                     {
                         Name.Text = Gallery.titles[0].name;
+                        if (gallery.artists != null)
+                            Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
                         img.SetImageResource(Resource.Drawable.image_failed);
                     }
                     catch (Exception ex)
@@ -216,7 +225,9 @@ namespace HappyPandaXDroid.Custom_Views
                     h.Post(() =>
                     {
                         Name.Text = Gallery.titles[0].name;
-                        
+                        if (gallery.artists != null)
+                            Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
+
                     });
                     thumb_path = await Core.Gallery.GetImage(gallery, false);
 

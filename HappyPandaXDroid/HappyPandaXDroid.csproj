@@ -186,6 +186,7 @@
     <Compile Include="Custom_Views\SafeCoordinatorLayout.cs" />
     <Compile Include="Custom_Views\TagsAdapter.cs" />
     <Compile Include="GalleryViewer.cs" />
+    <Compile Include="Helpers\Layouts.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="HPXSceneActivity.cs" />
     <Compile Include="Scenes\GalleryScene.cs" />
@@ -246,7 +247,7 @@
     <AndroidResource Include="Resources\layout\toolbar.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\galleryCard.axml">
+    <AndroidResource Include="Resources\layout\galleryCardGrid.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\nav_drawer.axml">
@@ -298,6 +299,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\RecentsScene.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\galleryCardList.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

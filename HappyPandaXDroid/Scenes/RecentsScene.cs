@@ -21,6 +21,7 @@ namespace HappyPandaXDroid.Scenes
     {
 
         Toolbar toolbar;
+        bool isGrid;
         Clans.Fab.FloatingActionMenu fam;
         EasyRecyclerView.EasyRecyclerView mRecyclerView;
         RecyclerView.LayoutManager mLayoutManager;
@@ -58,10 +59,10 @@ namespace HappyPandaXDroid.Scenes
             mRecyclerView = MainView.FindViewById<EasyRecyclerView.EasyRecyclerView>(Resource.Id.recyclerView);
             adapter = new GalleryCardAdapter(this.Context,this);
             mRecyclerView.SetOnItemClickListener(new RecyclerViewClickListener());
-
+            isGrid = Core.App.Settings.IsGrid;
             SetColumns();
 
-            mLayoutManager = new ExtraLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
+            mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
 
 
             mRecyclerView.SetAdapter(adapter);
@@ -74,11 +75,33 @@ namespace HappyPandaXDroid.Scenes
             var windo = Context.GetSystemService(Context.WindowService);
             var window = windo.JavaCast<IWindowManager>();
             var display = window.DefaultDisplay;
-            var metrics = new DisplayMetrics();
-            display.GetMetrics(metrics);
+            if (isGrid)
+            {
 
-            float dpwidth = metrics.WidthPixels / metrics.Density;
-            columns = (int)dpwidth / 160; ;
+
+                var metrics = new DisplayMetrics();
+                display.GetMetrics(metrics);
+
+                float dpwidth = metrics.WidthPixels / metrics.Density;
+                columns = (int)dpwidth / 200; ;
+            }
+            else
+            {
+                var rotation = display.Rotation;
+                switch (rotation)
+                {
+                    case SurfaceOrientation.Rotation0:
+                    case SurfaceOrientation.Rotation270:
+                        columns = 1;
+                        break;
+                    default:
+                        columns = 2;
+                        break;
+
+                }
+
+            }
+
 
         }
 
@@ -89,8 +112,9 @@ namespace HappyPandaXDroid.Scenes
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
+            isGrid = Core.App.Settings.IsGrid;
             SetColumns();
-            mLayoutManager = new GridLayoutManager(this.Context, columns);
+            mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
             mRecyclerView.SetLayoutManager(mLayoutManager);
         }
 
@@ -117,47 +141,7 @@ namespace HappyPandaXDroid.Scenes
             }
         }
 
-        public class ExtraLayoutManager : GridLayoutManager
-        {
-            private static readonly int DEFAULT_EXTRA_LAYOUT_SPACE = 800;
-            private int extraLayoutSpace = -1;
-            private Context context;
-
-
-            public ExtraLayoutManager(Context context, int columns) : base(context, columns)
-            {
-                this.context = context;
-            }
-
-            public ExtraLayoutManager(Context context, int columns, int extraLayoutSpace) : base(context, columns)
-            {
-                this.context = context;
-                this.extraLayoutSpace = extraLayoutSpace;
-            }
-
-
-
-            public ExtraLayoutManager(Context context, int columns, int orientation, bool reverseLayout)
-                : base(context, columns, orientation, reverseLayout)
-            {
-                this.context = context;
-            }
-
-            public void SetExtraLayoutSpace(int extraLayoutSpace)
-            {
-                this.extraLayoutSpace = extraLayoutSpace;
-            }
-
-            protected override int GetExtraLayoutSpace(RecyclerView.State state)
-            {
-                if (extraLayoutSpace > 0)
-                {
-                    return extraLayoutSpace;
-                }
-                else
-                    return DEFAULT_EXTRA_LAYOUT_SPACE;
-            }
-        }
+        
 
         public class AutoFitGridLayout : GridLayoutManager
         {

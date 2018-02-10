@@ -38,6 +38,7 @@ namespace HappyPandaXDroid.Scenes
         Clans.Fab.FloatingActionMenu fam;
         string title, query;
         AppBarLayout appBarLayout;
+        bool isGrid = false;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         Clans.Fab.FloatingActionButton mRefreshFab;
         Clans.Fab.FloatingActionButton mJumpFab;
@@ -148,10 +149,10 @@ namespace HappyPandaXDroid.Scenes
             mErrorImage.Click += MErrorFrame_Click;
             SetBottomLoading(false);
 
-
+            isGrid = Core.App.Settings.IsGrid;
             mRecyclerView.AddOnScrollListener(listener);
             SetColumns();
-            mLayoutManager = new ExtraLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
+            mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
 
 
             mRecyclerView.SetAdapter(adapter);
@@ -259,125 +260,41 @@ namespace HappyPandaXDroid.Scenes
        
         void SetColumns()
         {
-                var windo = Context.GetSystemService(Context.WindowService);
-                var window = windo.JavaCast<IWindowManager>();
-                var display = window.DefaultDisplay;
+            var windo = Context.GetSystemService(Context.WindowService);
+            var window = windo.JavaCast<IWindowManager>();
+            var display = window.DefaultDisplay;
+            if (isGrid)
+            {
+
+                
                 var metrics = new DisplayMetrics();
                 display.GetMetrics(metrics);
 
                 float dpwidth = metrics.WidthPixels / metrics.Density;
                 columns = (int)dpwidth / 200; ;
+            }
+            else
+            {
+                var rotation = display.Rotation;
+                switch (rotation)
+                {
+                    case SurfaceOrientation.Rotation0:
+                    case SurfaceOrientation.Rotation270:
+                        columns = 1;
+                        break;
+                    default:
+                        columns = 2;
+                        break;
+                            
+                }
+
+            }
 
             
         }
 
 
-        public class ExtraLayoutManager : GridLayoutManager
-        {
-            private static readonly int DEFAULT_EXTRA_LAYOUT_SPACE = 800;
-            private int extraLayoutSpace = -1;
-            private Context context;
-
-
-            public ExtraLayoutManager(Context context, int columns) : base(context, columns)
-            {
-                this.context = context;
-            }
-
-            public ExtraLayoutManager(Context context, int columns, int extraLayoutSpace) : base(context, columns)
-            {
-                this.context = context;
-                this.extraLayoutSpace = extraLayoutSpace;
-            }
-
-
-
-            public ExtraLayoutManager(Context context, int columns, int orientation, bool reverseLayout)
-                : base(context, columns, orientation, reverseLayout)
-            {
-                this.context = context;
-            }
-
-            public void SetExtraLayoutSpace(int extraLayoutSpace)
-            {
-                this.extraLayoutSpace = extraLayoutSpace;
-            }
-
-            protected override int GetExtraLayoutSpace(RecyclerView.State state)
-            {
-                if (extraLayoutSpace > 0)
-                {
-                    return extraLayoutSpace;
-                }
-                else
-                    return DEFAULT_EXTRA_LAYOUT_SPACE;
-            }
-        }
-
-        public class AutoFitGridLayout : GridLayoutManager
-        {
-            private int mColumnWidth;
-            private bool mColumnWidthChanged = true;
-
-            public AutoFitGridLayout(Context context, int columnWidth) : base(context, 1)
-            {
-                /* Initially set spanCount to 1, will be changed automatically later. */
-                SetColumnWidth(CheckedColumnWidth(context, columnWidth));
-            }
-
-            public AutoFitGridLayout(Context context, int columnWidth, int orientation, bool reverseLayout) : base(context, 1, orientation, reverseLayout)
-            {
-                /* Initially set spanCount to 1, will be changed automatically later. */
-
-                SetColumnWidth(CheckedColumnWidth(context, columnWidth));
-            }
-
-            private int CheckedColumnWidth(Context context, int columnWidth)
-            {
-                if (columnWidth <= 0)
-                {
-                    /* Set default columnWidth value (48dp here). It is better to move this constant
-                    to static constant on top, but we need context to convert it to dp, so can't really
-                    do so. */
-                    columnWidth = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 48,
-                            context.Resources.DisplayMetrics);
-                }
-                return columnWidth;
-            }
-
-            public void SetColumnWidth(int newColumnWidth)
-            {
-                if (newColumnWidth > 0 && newColumnWidth != mColumnWidth)
-                {
-                    mColumnWidth = newColumnWidth;
-                    mColumnWidthChanged = true;
-                }
-            }
-
-            public override void OnLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state)
-            {
-                int width = Width;
-                int height = Height;
-                if (mColumnWidthChanged && mColumnWidth > 0 && width > 0 && height > 0)
-                {
-                    int totalSpace;
-                    if (Orientation == Vertical)
-                    {
-                        totalSpace = width - PaddingRight - PaddingLeft;
-                    }
-                    else
-                    {
-                        totalSpace = height - PaddingTop - PaddingBottom;
-                    }
-                    int spanCount = Math.Max(1, totalSpace / mColumnWidth);
-                    SpanCount = spanCount;
-                    mColumnWidthChanged = false;
-                }
-                base.OnLayoutChildren(recycler, state);
-            }
-        }
-
-
+       
         public void InitLibrary()
         {
             int tries = 0;
@@ -1140,10 +1057,16 @@ namespace HappyPandaXDroid.Scenes
             base.OnDestroy();
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            SetColumns();
+        }
         public override void OnConfigurationChanged(Configuration newConfig)
         {
+            isGrid = Core.App.Settings.IsGrid;
             SetColumns();
-            mLayoutManager = new GridLayoutManager(this.Context, columns);
+            mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
             mRecyclerView.SetLayoutManager(mLayoutManager);
         }
 
