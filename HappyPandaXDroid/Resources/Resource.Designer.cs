@@ -5549,8 +5549,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00db
 			public const int action_divider = 2131427547;
 			
-			// aapt resource value: 0x7f0b00ff
-			public const int action_home = 2131427583;
+			// aapt resource value: 0x7f0b0100
+			public const int action_home = 2131427584;
 			
 			// aapt resource value: 0x7f0b00d5
 			public const int action_image = 2131427541;
@@ -5570,11 +5570,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0062
 			public const int action_mode_close_button = 2131427426;
 			
-			// aapt resource value: 0x7f0b0100
-			public const int action_recent = 2131427584;
-			
 			// aapt resource value: 0x7f0b0101
-			public const int action_setting = 2131427585;
+			public const int action_recent = 2131427585;
+			
+			// aapt resource value: 0x7f0b0102
+			public const int action_setting = 2131427586;
 			
 			// aapt resource value: 0x7f0b00d6
 			public const int action_text = 2131427542;
@@ -5777,8 +5777,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b004a
 			public const int fill_vertical = 2131427402;
 			
-			// aapt resource value: 0x7f0b0103
-			public const int filter = 2131427587;
+			// aapt resource value: 0x7f0b0104
+			public const int filter = 2131427588;
 			
 			// aapt resource value: 0x7f0b00bf
 			public const int filterSlider = 2131427519;
@@ -5809,6 +5809,9 @@ namespace HappyPandaXDroid
 			
 			// aapt resource value: 0x7f0b00b1
 			public const int grid_layout = 2131427505;
+			
+			// aapt resource value: 0x7f0b00f9
+			public const int gridlayout = 2131427577;
 			
 			// aapt resource value: 0x7f0b00a2
 			public const int header = 2131427490;
@@ -5843,8 +5846,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00ad
 			public const int info = 2131427501;
 			
-			// aapt resource value: 0x7f0b00f9
-			public const int ippref = 2131427577;
+			// aapt resource value: 0x7f0b00fa
+			public const int ippref = 2131427578;
 			
 			// aapt resource value: 0x7f0b005b
 			public const int italic = 2131427419;
@@ -5891,14 +5894,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b005c
 			public const int marquee = 2131427420;
 			
-			// aapt resource value: 0x7f0b00fd
-			public const int masked = 2131427581;
+			// aapt resource value: 0x7f0b00fe
+			public const int masked = 2131427582;
 			
 			// aapt resource value: 0x7f0b00da
 			public const int media_actions = 2131427546;
 			
-			// aapt resource value: 0x7f0b0102
-			public const int menu_preferences = 2131427586;
+			// aapt resource value: 0x7f0b0103
+			public const int menu_preferences = 2131427587;
 			
 			// aapt resource value: 0x7f0b00f6
 			public const int message = 2131427574;
@@ -5963,8 +5966,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b004f
 			public const int pin = 2131427407;
 			
-			// aapt resource value: 0x7f0b00fa
-			public const int portpref = 2131427578;
+			// aapt resource value: 0x7f0b00fb
+			public const int portpref = 2131427579;
 			
 			// aapt resource value: 0x7f0b00a7
 			public const int posted = 2131427495;
@@ -5996,8 +5999,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00c1
 			public const int recyclerView = 2131427521;
 			
-			// aapt resource value: 0x7f0b0104
-			public const int refresh = 2131427588;
+			// aapt resource value: 0x7f0b0105
+			public const int refresh = 2131427589;
 			
 			// aapt resource value: 0x7f0b00c0
 			public const int refresh_layout = 2131427520;
@@ -6050,8 +6053,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0057
 			public const int scrollable = 2131427415;
 			
-			// aapt resource value: 0x7f0b00fe
-			public const int search = 2131427582;
+			// aapt resource value: 0x7f0b00ff
+			public const int search = 2131427583;
 			
 			// aapt resource value: 0x7f0b0086
 			public const int search_badge = 2131427462;
@@ -6263,11 +6266,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0016
 			public const int view_offset_helper = 2131427350;
 			
-			// aapt resource value: 0x7f0b00fc
-			public const int visible = 2131427580;
+			// aapt resource value: 0x7f0b00fd
+			public const int visible = 2131427581;
 			
-			// aapt resource value: 0x7f0b00fb
-			public const int webclientportpref = 2131427579;
+			// aapt resource value: 0x7f0b00fc
+			public const int webclientportpref = 2131427580;
 			
 			// aapt resource value: 0x7f0b003e
 			public const int withText = 2131427390;
@@ -6820,11 +6823,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0c0023
 			public const int appbar_scrolling_view_behavior = 2131492899;
 			
-			// aapt resource value: 0x7f0c0079
-			public const int artist_cg = 2131492985;
+			// aapt resource value: 0x7f0c007a
+			public const int artist_cg = 2131492986;
 			
-			// aapt resource value: 0x7f0c007f
-			public const int asian_porn = 2131492991;
+			// aapt resource value: 0x7f0c0080
+			public const int asian_porn = 2131492992;
 			
 			// aapt resource value: 0x7f0c0070
 			public const int back_thread_title = 2131492976;
@@ -6835,11 +6838,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0c0025
 			public const int character_counter_pattern = 2131492901;
 			
-			// aapt resource value: 0x7f0c0074
-			public const int client_config_summary = 2131492980;
-			
 			// aapt resource value: 0x7f0c0075
-			public const int client_config_title = 2131492981;
+			public const int client_config_summary = 2131492981;
+			
+			// aapt resource value: 0x7f0c0076
+			public const int client_config_title = 2131492982;
 			
 			// aapt resource value: 0x7f0c0068
 			public const int close_drawer = 2131492968;
@@ -6847,35 +6850,38 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0c006b
 			public const int continue_read = 2131492971;
 			
-			// aapt resource value: 0x7f0c007e
-			public const int cosplay = 2131492990;
+			// aapt resource value: 0x7f0c007f
+			public const int cosplay = 2131492991;
 			
-			// aapt resource value: 0x7f0c0077
-			public const int doujinshi = 2131492983;
+			// aapt resource value: 0x7f0c0078
+			public const int doujinshi = 2131492984;
 			
 			// aapt resource value: 0x7f0c006f
 			public const int enable_debug = 2131492975;
 			
-			// aapt resource value: 0x7f0c007a
-			public const int game_cg = 2131492986;
+			// aapt resource value: 0x7f0c007b
+			public const int game_cg = 2131492987;
 			
-			// aapt resource value: 0x7f0c007d
-			public const int image_set = 2131492989;
+			// aapt resource value: 0x7f0c0074
+			public const int grid_layout = 2131492980;
+			
+			// aapt resource value: 0x7f0c007e
+			public const int image_set = 2131492990;
 			
 			// aapt resource value: 0x7f0c0071
 			public const int loop_delay_title = 2131492977;
 			
-			// aapt resource value: 0x7f0c0078
-			public const int manga = 2131492984;
+			// aapt resource value: 0x7f0c0079
+			public const int manga = 2131492985;
 			
-			// aapt resource value: 0x7f0c0080
-			public const int misc = 2131492992;
+			// aapt resource value: 0x7f0c0081
+			public const int misc = 2131492993;
 			
 			// aapt resource value: 0x7f0c0069
 			public const int no_tags = 2131492969;
 			
-			// aapt resource value: 0x7f0c007c
-			public const int non_h = 2131492988;
+			// aapt resource value: 0x7f0c007d
+			public const int non_h = 2131492989;
 			
 			// aapt resource value: 0x7f0c0067
 			public const int open_drawer = 2131492967;
@@ -7075,8 +7081,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0c0015
 			public const int search_menu_title = 2131492885;
 			
-			// aapt resource value: 0x7f0c0076
-			public const int server_config_summary = 2131492982;
+			// aapt resource value: 0x7f0c0077
+			public const int server_config_summary = 2131492983;
 			
 			// aapt resource value: 0x7f0c0072
 			public const int server_config_title = 2131492978;
@@ -7102,8 +7108,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0c006e
 			public const int webclient_port = 2131492974;
 			
-			// aapt resource value: 0x7f0c007b
-			public const int western = 2131492987;
+			// aapt resource value: 0x7f0c007c
+			public const int western = 2131492988;
 			
 			static String()
 			{

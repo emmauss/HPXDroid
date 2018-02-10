@@ -121,7 +121,6 @@ namespace HappyPandaXDroid.Custom_Views
             
             Name = FindViewById<TextView>(Resource.Id.textViewholder);
             Artist = FindViewById<TextView>(Resource.Id.textViewholder2);
-            Artist.Text = string.Empty;
             img = FindViewById<ImageView>(Resource.Id.imageView);
             
             

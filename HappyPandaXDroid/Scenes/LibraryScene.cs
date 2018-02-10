@@ -149,7 +149,7 @@ namespace HappyPandaXDroid.Scenes
             mErrorImage.Click += MErrorFrame_Click;
             SetBottomLoading(false);
 
-            isGrid = Core.App.Settings.IsGrid;
+            
             mRecyclerView.AddOnScrollListener(listener);
             SetColumns();
             mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
@@ -260,6 +260,7 @@ namespace HappyPandaXDroid.Scenes
        
         void SetColumns()
         {
+            isGrid = Core.App.Settings.IsGrid;
             var windo = Context.GetSystemService(Context.WindowService);
             var window = windo.JavaCast<IWindowManager>();
             var display = window.DefaultDisplay;
@@ -271,7 +272,7 @@ namespace HappyPandaXDroid.Scenes
                 display.GetMetrics(metrics);
 
                 float dpwidth = metrics.WidthPixels / metrics.Density;
-                columns = (int)dpwidth / 200; ;
+                columns = (int)dpwidth / 180; ;
             }
             else
             {
@@ -1060,7 +1061,13 @@ namespace HappyPandaXDroid.Scenes
         protected override void OnResume()
         {
             base.OnResume();
-            SetColumns();
+            if (isGrid != Core.App.Settings.IsGrid)
+            {
+                SetColumns();
+                mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
+                mRecyclerView.SetLayoutManager(mLayoutManager);
+                mRecyclerView.GetRecycledViewPool().Clear();
+            }
         }
         public override void OnConfigurationChanged(Configuration newConfig)
         {

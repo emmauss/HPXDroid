@@ -72,6 +72,7 @@ namespace HappyPandaXDroid.Scenes
 
         void SetColumns()
         {
+            isGrid = Core.App.Settings.IsGrid;
             var windo = Context.GetSystemService(Context.WindowService);
             var window = windo.JavaCast<IWindowManager>();
             var display = window.DefaultDisplay;
@@ -83,7 +84,7 @@ namespace HappyPandaXDroid.Scenes
                 display.GetMetrics(metrics);
 
                 float dpwidth = metrics.WidthPixels / metrics.Density;
-                columns = (int)dpwidth / 200; ;
+                columns = (int)dpwidth / 180; ;
             }
             else
             {
@@ -103,6 +104,18 @@ namespace HappyPandaXDroid.Scenes
             }
 
 
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            if (isGrid != Core.App.Settings.IsGrid)
+            {
+                SetColumns();
+                mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
+                mRecyclerView.SetLayoutManager(mLayoutManager);
+                mRecyclerView.GetRecycledViewPool().Clear();
+            }
         }
 
         private void AppBarLayout_Drag(object sender, View.DragEventArgs e)

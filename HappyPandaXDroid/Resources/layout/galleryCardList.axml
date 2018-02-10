@@ -42,8 +42,7 @@
                     android:maxLines = "2"
                     android:minLines = "1"
                     android:layout_gravity="bottom"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="placeholder2"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:layout_marginLeft="5dp"
                     android:id="@+id/textViewholder2" />
             </LinearLayout>
