@@ -156,7 +156,7 @@ namespace HappyPandaXDroid.Custom_Views
             bool exists = false;
             if (Gallery == null)
             {
-
+                return;
             }
                 var h = new Handler(Looper.MainLooper);
             h.Post(() => {

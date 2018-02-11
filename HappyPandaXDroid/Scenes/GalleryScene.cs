@@ -97,11 +97,11 @@ namespace HappyPandaXDroid.Scenes
             thumb_path = thumb;
         }
 
-        public void Load()
+        public async void Load()
         {
             if (Core.Net.Connect())
             {
-                thumb_path = string.Empty;
+                if(thumb_path==string.Empty)
                 thumb_path = Core.Gallery.GetThumb(gallery).Result;
 
                 var h = new Handler(Looper.MainLooper);
@@ -128,7 +128,7 @@ namespace HappyPandaXDroid.Scenes
                     }
                 });
                 
-                gallery.tags = Core.Gallery.GetTags(gallery.id, "Gallery").Result;                
+                gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery");                
                 ParseData();
                 if (!IsDestroyed)
                     h.Post(() =>
@@ -410,7 +410,7 @@ namespace HappyPandaXDroid.Scenes
 
         async void ParseData()
         {
-
+            await Task.Delay(10);
             var h = new Handler(Looper.MainLooper);
             try
             {
@@ -451,15 +451,14 @@ namespace HappyPandaXDroid.Scenes
             try
             {
                 var mdata = new List<Core.Gallery.Page>();
-                h.Post(() =>
+                Core.Gallery.Page loading = new Core.Gallery.Page
                 {
-                    
-                    Core.Gallery.Page loading = new Core.Gallery.Page
-                    {
-                        IsPlaceholder = true,
-                        name = "Loading..."
-                    };
-                    mdata.Add(loading);
+                    IsPlaceholder = true,
+                    name = "Loading..."
+                };
+                mdata.Add(loading);
+                h.Post(() =>
+                {    
                     adapter.SetList(mdata);
                 });
                     pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);

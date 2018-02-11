@@ -931,7 +931,8 @@ namespace HappyPandaXDroid.Scenes
                 GalleryCardHolder vh = holder as GalleryCardHolder;
                 try
                 {
-                    vh.Bind(mdata[position]);
+                    Task.Run(() =>
+                    vh.Bind(mdata[position]));
                 }
                 catch (Exception ex)
                 {
