@@ -8,6 +8,7 @@
   <string name="read">START READING</string>
   <string name="continue_read">CONTINUE READING</string>
   <string name="server_ip">HappyPandaX Server IP Address</string>
+  <string name="loop_delay_summary">Lower values may put more load on server</string>
   <string name="server_port">HappyPandaX Server Port</string>
   <string name="webclient_port">HappyPandaX WebClient Port</string>
   <string name="enable_debug">Enable Logging</string>
@@ -15,7 +16,7 @@
   <string name="loop_delay_title">Delay(in ms) between looping requests</string>
   <string name="server_config_title">Server Configuration</string>
   <string name="server_settings">Server Settings...</string>
-  <string name="grid_layout">Use Grid in Library...</string>
+  <string name="grid_layout">Use Grid Layout in Library</string>
   <string name="client_config_summary">Settings used in connecting to server</string>
   <string name="client_config_title">Client Configuration</string>
   <string name="server_config_summary">Settings used in within the client</string>

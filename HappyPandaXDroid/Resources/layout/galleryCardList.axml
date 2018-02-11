@@ -17,7 +17,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
             <ImageView
                 android:layout_width="72dp"
                 android:layout_height="100dp"
@@ -31,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:maxLines = "2"
+                    android:maxLines = "4"
                     android:minLines = "1"
                     android:id="@+id/textViewholder"
                     android:layout_gravity="center_horizontal"

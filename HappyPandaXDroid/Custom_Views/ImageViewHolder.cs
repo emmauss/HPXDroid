@@ -119,7 +119,7 @@ namespace HappyPandaXDroid.Custom_Views
                     while (!IsCached())
                     {
 
-                    bool exists = true;// await Core.Gallery.IsSourceExist("page", Page.id);
+                    bool exists =   await Core.Gallery.IsSourceExist("page", Page.id);
                     if (!exists)
                     {
                         h.Post(() =>
@@ -203,14 +203,7 @@ namespace HappyPandaXDroid.Custom_Views
         {
 
             Loaded = true;
-            try { 
-                img.Visibility = ViewStates.Visible;
-            }
-            catch (System.Exception ex)
-            {
-
-            }
-
+            
         }
 
         bool IsCached()

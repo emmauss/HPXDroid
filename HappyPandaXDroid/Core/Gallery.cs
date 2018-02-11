@@ -189,13 +189,10 @@ namespace HappyPandaXDroid.Core
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
             string reply = Net.SendPost(response);
-            string exist = reply.Substring(reply.IndexOf("exists"));
-            bool exists = false;
-            if (exist.Contains("true"))
-            {
-                exists = true;
-            }
-            return exists;
+            if (reply.Contains("exist") && reply.Contains("true"))
+                return true;
+            else
+                return false;
         }
         
         public static async Task<string> GetImage(GalleryItem gallery, bool return_url, string size = "medium")
@@ -303,7 +300,7 @@ namespace HappyPandaXDroid.Core
                     if (state.Contains("failed"))
                         return "fail: command error";
                     if (!state.Contains("finished"))
-                        Thread.Sleep(3000);
+                        Thread.Sleep(App.Settings.Loop_Delay);
                     else
                         break;
                 }

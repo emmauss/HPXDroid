@@ -21,6 +21,14 @@
         android:title="@string/enable_debug"
       android:defaultValue="false"
         android:id="@+id/debugpref"/>
+    <EditTextPreference
+        android:key="loop_delay"
+        android:title="@string/loop_delay_title"
+        android:summary="@string/loop_delay_summary"
+        android:id="@+id/loopdelay"
+        android:inputType="number"
+        android:digits="0123456789"
+      />
     <CheckBoxPreference
       android:key="grid_layout"
         android:title="@string/grid_layout"
