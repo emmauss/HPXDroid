@@ -55,6 +55,7 @@ namespace HappyPandaXDroid.Custom_Views
             img = FindViewById<SubsamplingScaleImageView>(Resource.Id.image);
             img.Visibility = ViewStates.Visible;
             img.ImageLoadError += Img_ImageLoadError;
+            img.SetMinimumDpi(240);
         }
 
         private void Img_ImageLoadError(object sender, SubsamplingScaleImageView.ImageLoadErrorEventArgs e)
