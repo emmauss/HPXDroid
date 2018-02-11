@@ -83,7 +83,7 @@ namespace HappyPandaXDroid
             
             lay = FindViewById<FrameLayout>(Resource.Id.frame);
             galleryPager = FindViewById<RecyclerViewPager>(Resource.Id.galleryViewPager);
-            var layout = new ExtraLayoutManager(this, LinearLayoutManager.Horizontal, false);    
+            var layout = new Helpers.Layouts.ExtraLayoutManager(this, LinearLayoutManager.Horizontal, false);    
             galleryPager.SetLayoutManager(layout);
             gestureDetector = new GestureDetector(this, new TapsDetector(this));
             adapter = new ImageAdapter(PageList,this);
@@ -388,47 +388,7 @@ namespace HappyPandaXDroid
             }
         }
 
-        public class ExtraLayoutManager : LinearLayoutManager
-        {
-            private static readonly int DEFAULT_EXTRA_LAYOUT_SPACE = 600;
-            private int extraLayoutSpace = -1;
-            private Context context;
-            
-
-            public ExtraLayoutManager(Context context) : base(context)
-            {
-                this.context = context;
-            }
-
-            public ExtraLayoutManager(Context context, int extraLayoutSpace) : base(context)
-            {
-                this.context = context;
-                this.extraLayoutSpace = extraLayoutSpace;
-            }
-
-            
-
-            public ExtraLayoutManager(Context context, int orientation, bool reverseLayout) 
-                : base(context,orientation,reverseLayout)
-            {
-                this.context = context;
-            }
-
-            public void SetExtraLayoutSpace(int extraLayoutSpace)
-            {
-                this.extraLayoutSpace = extraLayoutSpace;
-            }
-
-            protected override int GetExtraLayoutSpace(RecyclerView.State state)
-            {
-                if (extraLayoutSpace > 0)
-                {
-                    return extraLayoutSpace;
-                }
-                else
-                return DEFAULT_EXTRA_LAYOUT_SPACE;
-            }
-        }
+        
 
         public List<string> GetPictureList(string imagefile)
         {

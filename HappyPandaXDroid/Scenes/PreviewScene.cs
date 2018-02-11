@@ -86,7 +86,7 @@ namespace HappyPandaXDroid.Scenes
         void Init()
         {
             toolbar = MainView.FindViewById<Toolbar>(Resource.Id.toolbar);
-            grid_layout = MainView.FindViewById<RecyclerView>(Resource.Id.grid_layout);
+            grid_layout = MainView.FindViewById<RecyclerView>(Resource.Id.previews);
             adapter = new Custom_Views.PreviewAdapter(this.Context,this);
             adapter.ItemClick += Adapter_ItemClick;
             grid_layout.SetAdapter(adapter);

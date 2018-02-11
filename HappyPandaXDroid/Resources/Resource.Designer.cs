@@ -5807,9 +5807,6 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b000a
 			public const int ghost_view = 2131427338;
 			
-			// aapt resource value: 0x7f0b00b1
-			public const int grid_layout = 2131427505;
-			
 			// aapt resource value: 0x7f0b00f9
 			public const int gridlayout = 2131427577;
 			
@@ -5974,6 +5971,9 @@ namespace HappyPandaXDroid
 			
 			// aapt resource value: 0x7f0b00ef
 			public const int preview = 2131427567;
+			
+			// aapt resource value: 0x7f0b00b1
+			public const int previewpager = 2131427505;
 			
 			// aapt resource value: 0x7f0b00b0
 			public const int previews = 2131427504;

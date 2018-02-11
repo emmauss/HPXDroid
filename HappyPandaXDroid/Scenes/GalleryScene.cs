@@ -34,19 +34,18 @@ namespace HappyPandaXDroid.Scenes
         public ImageView ThumbView;
         FrameLayout errorFrame;
         Custom_Views.TagsAdapter tagsAdapter;
-        Core.Gallery.GalleryItem gallery;
-        RecyclerView grid_layout;
+        public Core.Gallery.GalleryItem gallery;
+        Emmaus.Widget.RecyclerViewPager previewpager;
         ProgressView.MaterialProgressBar mProgressView;
         LinearLayout MainLayout;
         TextView GalleryStatus;
         RecyclerView tagRecyclerView;
-        Custom_Views.PreviewAdapter adapter;
+        Custom_Views.PreviewPagerAdapter adapter;
         bool loaded = false;
         ScrollView scrollview;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
-        GridLayoutManager layout;
-        public int PreviewColumns;
+        Helpers.Layouts.ExtraLayoutManager layout;
         List<Core.Gallery.Page> pagelist, cachedlist;
         private ImageView mErrorImage;
         View MainView;
@@ -185,7 +184,7 @@ namespace HappyPandaXDroid.Scenes
                 adapter.NotifyDataSetChanged();
             }
             adapter = null;
-            grid_layout = null;
+            previewpager = null;
             TagLayout = null;
             ActionCard.Click -= ActionCard_Click;
             ActionCard = null;
@@ -215,7 +214,7 @@ namespace HappyPandaXDroid.Scenes
                 await Task.Delay(3000);
                 var item = Core.Media.Recents.GetRecentGallery(gallery.id);
                 if (item != null)
-                    if (gallery.titles[0].name == item.titles[0].name)
+                    if (gallery.id == item.id)
                     {
                         gallery.LastPageRead = item.LastPageRead;
                     }
@@ -227,6 +226,7 @@ namespace HappyPandaXDroid.Scenes
                     else
                         ContinueCard.Enabled = true;
                 });
+                
             });
         }
 
@@ -240,8 +240,26 @@ namespace HappyPandaXDroid.Scenes
                 if(cachedlist.Count>0)
                 {
                     pagelist = new List<Core.Gallery.Page>(cachedlist);
-                    adapter.SetList(pagelist);
+                    var lists = SplitPageList();
+                    adapter.SetList(lists);
                 }
+        }
+
+        List<List<Core.Gallery.Page>> SplitPageList()
+        {
+            List<List<Core.Gallery.Page>> pages = new List<List<Core.Gallery.Page>>();
+            List<Core.Gallery.Page> current = new List<Core.Gallery.Page>();
+            if (pagelist.Count > 0) 
+            for (int i = 0; i < pagelist.Count; i++)
+            {
+                    if (i % 10 == 0)
+                        current = new List<Core.Gallery.Page>();
+                    current.Add(pagelist[i]);
+                    if (i % 10 == 9 || i == pagelist.Count - 1)
+                        pages.Add(current);
+            }
+
+            return pages;
         }
 
         void InitializeViews()
@@ -273,7 +291,7 @@ namespace HappyPandaXDroid.Scenes
             last_read_page = MainView.FindViewById<TextView>(Resource.Id.lastReadPage);
             no_tags = MainView.FindViewById<TextView>(Resource.Id.no_tags);
             scrollview = MainView.FindViewById<ScrollView>(Resource.Id.scroll_view);
-            grid_layout = MainView.FindViewById<RecyclerView>(Resource.Id.grid_layout);
+            previewpager = MainView.FindViewById<Emmaus.Widget.RecyclerViewPager>(Resource.Id.previewpager);
             TagLayout = MainView.FindViewById<LinearLayout>(Resource.Id.tags);
             ActionCard = MainView.FindViewById<CardView>(Resource.Id.action_card);
             GalleryStatus = MainView.FindViewById<TextView>(Resource.Id.status);
@@ -283,59 +301,16 @@ namespace HappyPandaXDroid.Scenes
             ContinueCard.Click += ContinueCard_Click;
             ActionCard.Clickable = true;
             ActionCard.Click += ActionCard_Click;
-            adapter = new Custom_Views.PreviewAdapter(Context,this);
-            adapter.ItemClick += Adapter_ItemClick;
+            adapter = new Custom_Views.PreviewPagerAdapter(Context,this);
             mProgressView.Visibility = ViewStates.Visible;
-            grid_layout.SetAdapter(adapter);
-            SetColumns();
-            layout = new GridLayoutManager(Context, PreviewColumns);
-            grid_layout.SetLayoutManager(layout);
-        }
-
-        private void Adapter_ItemClick(object sender, Custom_Views.PreviewAdapterClickEventArgs e)
-        {
-            int pos = e.Position;
-            List<int> pages_ids = new List<int>();
-
-            if (pagelist == null)
-                return;
-            if (pagelist == null & pagelist.Count < 1)
-                return;
-            var page = adapter.mdata[pos];
+            previewpager.SetAdapter(new Emmaus.Widget.RecyclerViewPagerAdapter(previewpager,adapter));
             
-            if (page.IsPlaceholder && page.MoreExists)
-            {
-                PreviewScene previewScene = new PreviewScene(pagelist, gallery);
-                Stage.PushScene(previewScene);
-            }
-            else
-            {
-
-                Intent intent = new Intent(Context, typeof(GalleryViewer));
-                intent.PutExtra("no", pos);
-                intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
-                intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
-                StartActivity(intent);
-            }
-            
+            layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
+            layout.SetExtraLayoutSpace(300);
+            previewpager.SetLayoutManager(layout);
         }
-
-        void SetColumns()
-        {
-            var windo = Context.GetSystemService(Context.WindowService);
-            var window = windo.JavaCast<IWindowManager>();
-            var display = window.DefaultDisplay;
-            int gridFactor = 0;
-            float w = display.Width;
-            gridFactor = (int)(Math.Ceiling(w / (160 * 2)));
-            if (Context.Resources.Configuration.Orientation == Android.Content.Res.Orientation.Landscape)
-            {
-                gridFactor = (int)(Math.Ceiling(w / (160 * 3)));
-                PreviewColumns = gridFactor * 2;
-            }
-            else
-                PreviewColumns = gridFactor;
-        }
+        
+        
 
         private void ErrorFrame_Click(object sender, EventArgs e)
         {
@@ -451,41 +426,15 @@ namespace HappyPandaXDroid.Scenes
             try
             {
                 var mdata = new List<Core.Gallery.Page>();
-                Core.Gallery.Page loading = new Core.Gallery.Page
-                {
-                    IsPlaceholder = true,
-                    name = "Loading..."
-                };
-                mdata.Add(loading);
-                h.Post(() =>
-                {    
-                    adapter.SetList(mdata);
-                });
+               
                     pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
                 h.Post(() =>
                 {
                     pages.Text = pagelist.Count.ToString() + " Pages";
-                    int number = 10;
-                    if (pagelist.Count < 10)
-                        number = pagelist.Count;
                     
                     last_read_page.Text = "Last Read Page: " + (gallery.LastPageRead + 1).ToString();
-                    mdata.Clear();
-                    for (int i = 0; i < number; i++)
-                    {
-                        mdata.Add(pagelist[i]);
-                    }
-                    if (pagelist.Count > number)
-                    {
-                        Core.Gallery.Page loadMore = new Core.Gallery.Page
-                        {
-                            IsPlaceholder = true,
-                            MoreExists = true,
-                            name = "Show More..."
-                        };
-                        mdata.Add(loadMore);
-                    }
-                    adapter.SetList(mdata);
+                    var lists = SplitPageList();
+                    adapter.SetList(lists);
                     
                 });
             }
@@ -504,7 +453,8 @@ namespace HappyPandaXDroid.Scenes
                 cachedlist = new List<Core.Gallery.Page>(pagelist);
                 pagelist.Clear();
             }
-            adapter.SetList(pagelist);
+            var lists = SplitPageList();
+            adapter.SetList(lists);
         }
 
 
@@ -586,9 +536,10 @@ namespace HappyPandaXDroid.Scenes
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
-            SetColumns();
-            layout = new GridLayoutManager(this.Context, PreviewColumns);
-            grid_layout.SetLayoutManager(layout);
+            layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
+            layout.SetExtraLayoutSpace(300);
+            previewpager.SetLayoutManager(layout);
+            previewpager.GetRecycledViewPool().Clear();
         }
     }
 }
