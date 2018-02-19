@@ -334,7 +334,7 @@ namespace HappyPandaXDroid.Core
         }
         
         
-        public async static Task<List<GalleryItem>> GetPage(int page, string search_query =  "", int limit = 25)
+        public async static Task<List<GalleryItem>> GetPage(int page, string search_query =  "", int limit = 50)
         {
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
@@ -371,6 +371,18 @@ namespace HappyPandaXDroid.Core
             }
             foreach (var g in list)
                 g.page = page;
+            if (list.Count > 0)
+            {
+                int[] ids = new int[list.Count];
+                for (int i = 0; i < ids.Length; i++)
+                {
+                    ids[i] = list[i].id;
+                }
+                Task.Run(() =>
+                {
+                    InitiateImageGeneration(ids, "gallery", "medium");
+                });
+            }
             return list;
         }
         
