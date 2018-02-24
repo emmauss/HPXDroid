@@ -98,7 +98,6 @@ namespace HappyPandaXDroid.Scenes
             {
                 current_query = value;
                 SetMainLoading(true);
-                current_query = current_query.Replace("\\", "");
                 if (search != null)
                     search.ActionView.ClearFocus();
                 searchView.SetQuery(current_query, false);
@@ -188,6 +187,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 
                 toolbar.Title = title.Replace("__namespace__:","misc:");
+                toolbar.Title = title.Replace("\\", "");
             }
             else
                 toolbar.Title = "Library";

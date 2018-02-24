@@ -353,7 +353,7 @@ namespace HappyPandaXDroid.Scenes
                         {
                             if (!parent.isDownloading)
                                 break;
-                            while (downloadList.Count >= 5)
+                            while (downloadList.Count >= 3)
                             {
                                 Thread.Sleep(1000);
                                 if (!parent.isDownloading)
