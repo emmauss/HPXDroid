@@ -98,6 +98,10 @@ namespace HappyPandaXDroid.Scenes
             {
                 current_query = value;
                 SetMainLoading(true);
+                current_query = current_query.Replace("\\", "");
+                if (search != null)
+                    search.ActionView.ClearFocus();
+                searchView.SetQuery(current_query, false);
                 Refresh();
             }
         }
@@ -1125,6 +1129,9 @@ namespace HappyPandaXDroid.Scenes
             searchView = (Android.Support.V7.Widget.SearchView)search.ActionView;
             searchView.SetOnQueryTextListener(this);
             searchView.SetQuery(Current_Query, false);
+            var layoutParams = new Android.Support.V7.Widget.ActionMenuView.LayoutParams
+                (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
+            searchView.LayoutParameters = layoutParams;
         }
         
 

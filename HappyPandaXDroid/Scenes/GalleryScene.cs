@@ -33,20 +33,22 @@ namespace HappyPandaXDroid.Scenes
         public string thumb_path, gallerydata;
         public ImageView ThumbView;
         FrameLayout errorFrame;
+        public bool isDownloading = false;
         Custom_Views.TagsAdapter tagsAdapter;
         public Core.Gallery.GalleryItem gallery;
         Emmaus.Widget.RecyclerViewPager previewpager;
         ProgressView.MaterialProgressBar mProgressView;
         LinearLayout MainLayout;
+        AppBarLayout AppBarLayout;
+        Android.Support.V7.Widget.Toolbar toolbar;
         TextView GalleryStatus;
         RecyclerView tagRecyclerView;
         Custom_Views.PreviewPagerAdapter adapter;
         bool loaded = false;
-        ScrollView scrollview;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
         Helpers.Layouts.ExtraLayoutManager layout;
-        List<Core.Gallery.Page> pagelist, cachedlist;
+        public List<Core.Gallery.Page> pagelist, cachedlist;
         private ImageView mErrorImage;
         View MainView;
 
@@ -175,7 +177,6 @@ namespace HappyPandaXDroid.Scenes
             pages = null;
             time_posted = null;
             no_tags = null;
-            scrollview = null;
             errorFrame.Dispose();
             errorFrame = null;
             if (adapter.mdata != null)
@@ -273,10 +274,11 @@ namespace HappyPandaXDroid.Scenes
             errorFrame.Click += ErrorFrame_Click;
             MainLayout.Visibility = ViewStates.Gone;
 
+            toolbar = MainView.FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             mErrorImage = MainView.FindViewById<ImageView>(Resource.Id.error_image);
             mErrorImage.SetImageResource(Resource.Drawable.big_weird_face);
             mErrorText = MainView.FindViewById<TextView>(Resource.Id.error_text);
-
+            OnCreateOptionsMenu();
             tagRecyclerView = MainView.FindViewById<RecyclerView>(Resource.Id.tagLayout);
             var tlayout = new LinearLayoutManager(Context);
             tagRecyclerView.SetLayoutManager(tlayout);
@@ -290,7 +292,6 @@ namespace HappyPandaXDroid.Scenes
             time_posted = MainView.FindViewById<TextView>(Resource.Id.posted);
             last_read_page = MainView.FindViewById<TextView>(Resource.Id.lastReadPage);
             no_tags = MainView.FindViewById<TextView>(Resource.Id.no_tags);
-            scrollview = MainView.FindViewById<ScrollView>(Resource.Id.scroll_view);
             previewpager = MainView.FindViewById<Emmaus.Widget.RecyclerViewPager>(Resource.Id.previewpager);
             TagLayout = MainView.FindViewById<LinearLayout>(Resource.Id.tags);
             ActionCard = MainView.FindViewById<CardView>(Resource.Id.action_card);
@@ -309,8 +310,102 @@ namespace HappyPandaXDroid.Scenes
             layout.SetExtraLayoutSpace(300);
             previewpager.SetLayoutManager(layout);
         }
-        
-        
+
+        public void OnCreateOptionsMenu()
+        {
+            toolbar.InflateMenu(Resource.Menu.galleryTopMenu);
+
+            var menuItem = toolbar.Menu.FindItem(Resource.Id.download);
+            menuItem.SetOnMenuItemClickListener(new DownloadMenuItemClickListener(this));
+        }
+
+        class DownloadMenuItemClickListener : Java.Lang.Object,IMenuItemOnMenuItemClickListener
+        {
+            GalleryScene parent;
+            List<Core.Gallery.Page> downloadList = new List<Core.Gallery.Page>();
+            
+            public DownloadMenuItemClickListener(GalleryScene scene)
+            {
+                parent = scene;
+            }
+
+            public bool OnMenuItemClick(IMenuItem item)
+            {
+                if (parent.isDownloading)
+                    Toast.MakeText(parent.Context, "Started Precaching gallery", ToastLength.Short);
+                else
+                    Toast.MakeText(parent.Context, "Stopped Precaching gallery", ToastLength.Short);
+                ThreadStart threadStart = new ThreadStart(StartDownload);
+                Thread thread = new Thread(threadStart);
+                thread.Start();
+                return true;
+            }
+
+            void StartDownload()
+            {
+                Thread.Sleep(100);
+                parent.isDownloading = !parent.isDownloading;
+                var h = new Handler(Looper.MainLooper);
+                if (parent.pagelist != null)
+                    if (parent.pagelist.Count > 0)
+                    {
+                        for (int i = 0; i < parent.pagelist.Count; i++)
+                        {
+                            if (!parent.isDownloading)
+                                break;
+                            while (downloadList.Count >= 5)
+                            {
+                                Thread.Sleep(1000);
+                                if (!parent.isDownloading)
+                                    break;
+                            }
+                            downloadList.Add(parent.pagelist[i]);
+                            Task.Run(() =>
+                            {
+                                StartPageDownload(parent.pagelist[i]);
+
+                            });
+                            Thread.Sleep(1000);
+                        }
+                            
+                    }
+                parent.isDownloading = false;
+                h.Post(() =>
+                {
+                        Toast.MakeText(parent.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short);
+                });
+            }
+
+            async void StartPageDownload(Core.Gallery.Page page)
+            {
+                if(!IsCached(page))
+                await Core.Gallery.GetImage(page, false, "original");
+
+                downloadList.Remove(page);
+
+            }
+
+            bool IsCached(Core.Gallery.Page Page)
+            {
+                int item_id = Page.id;
+                try
+                {
+
+                    string page_path = Core.App.Settings.cache + "pages/" + Core.App.Server.HashGenerator("original", "page", item_id) + ".jpg";
+                    bool check = Core.Media.Cache.IsCached(page_path);
+
+                    return check;
+                }
+                catch (System.Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
+
+                    return false;
+                }
+
+
+            }
+        }
 
         private void ErrorFrame_Click(object sender, EventArgs e)
         {
@@ -442,6 +537,12 @@ namespace HappyPandaXDroid.Scenes
             {
 
             }
+        }
+
+        protected override void OnDestroy()
+        {
+            isDownloading = false;
+            base.OnDestroy();
         }
 
         protected override void OnStop()

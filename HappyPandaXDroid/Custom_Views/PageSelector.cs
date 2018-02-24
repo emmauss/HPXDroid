@@ -93,7 +93,7 @@ namespace HappyPandaXDroid.Custom_Views
         public override void OnResume()
         {
             base.OnResume();
-            PageCount = (int)Math.Round((double)mscene.count / 25);
+            PageCount = (int)Math.Round((double)mscene.count / 50);
             FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
         }
 

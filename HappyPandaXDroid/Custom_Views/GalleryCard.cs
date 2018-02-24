@@ -113,17 +113,16 @@ namespace HappyPandaXDroid.Custom_Views
 
         private void Initialize()
         {
-            if(Core.App.Settings.IsGrid)
-            galleryCard = Inflate(this.Context, Resource.Layout.galleryCardGrid, this);
+            if (Core.App.Settings.IsGrid)
+                galleryCard = Inflate(this.Context, Resource.Layout.galleryCardGrid, this);
             else
-            
                 galleryCard = Inflate(this.Context, Resource.Layout.galleryCardList, this);
-            
+
             Name = FindViewById<TextView>(Resource.Id.textViewholder);
             Artist = FindViewById<TextView>(Resource.Id.textViewholder2);
             img = FindViewById<ImageView>(Resource.Id.imageView);
-            
-            
+
+
             Clickable = true;
         }
 

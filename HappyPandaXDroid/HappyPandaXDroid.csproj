@@ -234,6 +234,10 @@
     <AndroidResource Include="Resources\drawable\v_plus_dark_x24.xml" />
     <AndroidResource Include="Resources\drawable\spacer_keyline.xml" />
     <AndroidResource Include="Resources\drawable\ic_arrow_downward.png" />
+    <AndroidResource Include="Resources\menu\galleryTopMenu.xml" />
+    <AndroidResource Include="Resources\layout\galleryToolbar.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <None Include="GettingStarted.Xamarin" />
     <AndroidResource Include="Resources\layout\nav_header.axml">
       <SubType>Designer</SubType>
