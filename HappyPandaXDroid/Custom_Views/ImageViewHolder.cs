@@ -138,7 +138,7 @@ namespace HappyPandaXDroid.Custom_Views
                         });
                         return;
                     }
-                    page_path = await Core.Gallery.GetImage(Page, false, "original", false);
+                    page_path = await Page.Download();
 
                         if (page_path.Contains("fail"))
                         {
@@ -213,10 +213,7 @@ namespace HappyPandaXDroid.Custom_Views
             try
             {
 
-                page_path = Core.App.Settings.cache + "pages/" + Core.App.Server.HashGenerator("original", "page", item_id) + ".jpg";
-                bool check = Core.Media.Cache.IsCached(page_path);
-
-                return check;
+                return Core.Gallery.IsPageCached(Page);
             }
             catch (System.Exception ex)
             {

@@ -148,6 +148,7 @@ namespace HappyPandaXDroid.Custom_Views
                             return;
                     }
                 });
+
                 while (!IsCached)
                 {
                     exists = await Core.Gallery.IsSourceExist("page", page.id);
@@ -170,7 +171,7 @@ namespace HappyPandaXDroid.Custom_Views
                         return false;
                     }
 
-                    page.thumb_url = await Core.Gallery.GetImage(page, false, "medium", true);
+                    page.thumb_url = await page.Download("medium");
                     if (page.thumb_url.Contains("fail"))
                     {
                         if (page.thumb_url.Contains("misc"))

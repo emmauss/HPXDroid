@@ -346,65 +346,14 @@ namespace HappyPandaXDroid.Scenes
                 Thread.Sleep(100);
                 parent.isDownloading = !parent.isDownloading;
                 var h = new Handler(Looper.MainLooper);
-                if (parent.pagelist != null)
-                    if (parent.pagelist.Count > 0)
-                    {
-                        for (int i = 0; i < parent.pagelist.Count; i++)
-                        {
-                            if (!parent.isDownloading)
-                                break;
-                            while (downloadList.Count >= 3)
-                            {
-                                Thread.Sleep(1000);
-                                if (!parent.isDownloading)
-                                    break;
-                            }
-                            downloadList.Add(parent.pagelist[i]);
-                            Task.Run(() =>
-                            {
-                                StartPageDownload(parent.pagelist[i]);
-
-                            });
-                            Thread.Sleep(1000);
-                        }
-                            
-                    }
-                parent.isDownloading = false;
+                Core.Gallery.QueueDownloads(parent.pagelist);
                 h.Post(() =>
                 {
                         Toast.MakeText(parent.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short);
                 });
             }
 
-            async void StartPageDownload(Core.Gallery.Page page)
-            {
-                if(!IsCached(page))
-                await Core.Gallery.GetImage(page, false, "original");
-
-                downloadList.Remove(page);
-
-            }
-
-            bool IsCached(Core.Gallery.Page Page)
-            {
-                int item_id = Page.id;
-                try
-                {
-
-                    string page_path = Core.App.Settings.cache + "pages/" + Core.App.Server.HashGenerator("original", "page", item_id) + ".jpg";
-                    bool check = Core.Media.Cache.IsCached(page_path);
-
-                    return check;
-                }
-                catch (System.Exception ex)
-                {
-                    logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
-
-                    return false;
-                }
-
-
-            }
+            
         }
 
         private void ErrorFrame_Click(object sender, EventArgs e)
@@ -549,13 +498,13 @@ namespace HappyPandaXDroid.Scenes
         {
             base.OnStop();
             Glide.With(Context).Clear(ThumbView);
-            if (pagelist != null)
+            /*if (pagelist != null)
             {
                 cachedlist = new List<Core.Gallery.Page>(pagelist);
                 pagelist.Clear();
             }
             var lists = SplitPageList();
-            adapter.SetList(lists);
+            adapter.SetList(lists);*/
         }
 
 

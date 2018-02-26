@@ -22,6 +22,9 @@ namespace HappyPandaXDroid.Core
     public class Gallery
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static List<Page> DownloadList = new List<Page>();
+        private static List<Page> CurrentlyDownloading = new List<Page>();
+        private static bool IsDownloading = false;
         public enum ImageSize
         {
             Big = 400,
@@ -101,7 +104,7 @@ namespace HappyPandaXDroid.Core
 
             public TagList tags;
         }
-
+        
         public class Page
         {
             public int number;
@@ -120,7 +123,29 @@ namespace HappyPandaXDroid.Core
             public int command_id;
             public bool IsPlaceholder = false;
             public bool MoreExists = false;
+
+            public async Task<string> Download(string size = "original")
+            {
+                return await GetImage(this, false, size);
+            }
+
+            public async void DownloadFromQueue()
+            {
+                await GetImage(this, false, "original");
+                RemoveFromQueue();
+            }
+
+            public void Queue()
+            {
+                DownloadList.Add(this);
+            }
+
+            public void RemoveFromQueue()
+            {
+                DownloadList.Remove(this);
+            }
         }
+
 
         public class Artist
         {
@@ -193,6 +218,48 @@ namespace HappyPandaXDroid.Core
                 return true;
             else
                 return false;
+        }
+
+        public static void QueueDownloads(List<Page> downloadList)
+        {
+            foreach (var page in downloadList)
+                if (DownloadList.Find((x) => x.id == page.id) == null)
+                {
+                    if (!IsPageCached(page, "original"))
+                    DownloadList.Add(page);
+                }
+            StartQueue();
+        }
+
+        public static void StartQueue()
+        {
+            IsDownloading = true;
+            if(DownloadList.Count>0)
+                for (int i = 0; i < DownloadList.Count; i++)
+                {
+                    if (!IsDownloading)
+                        break;
+                    while (DownloadList.Count >= 3)
+                    {
+                        Thread.Sleep(1000);
+                        if (!IsDownloading)
+                            break;
+                    }
+                    Gallery.Page page = DownloadList[i];
+                    CurrentlyDownloading.Add(page);
+                    Task.Run(() =>
+                    {
+                        page.DownloadFromQueue();
+
+                    });
+                    Thread.Sleep(1000);
+                }
+            IsDownloading = false;
+        }
+
+        public static void StopQueue()
+        {
+            IsDownloading = false;
         }
         
         public static async Task<string> GetImage(GalleryItem gallery, bool return_url, string size = "medium")
@@ -273,7 +340,7 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static async Task<string> GetImage(Page page, bool return_url, string size = "medium",bool IsPreview = false)
+        private static async Task<string> GetImage(Page page, bool return_url, string size = "medium",bool IsPreview = false)
         {
             try
             {
@@ -332,8 +399,27 @@ namespace HappyPandaXDroid.Core
                 return "fail: server error";
             }
         }
-        
-        
+
+        public static bool IsPageCached(Core.Gallery.Page Page, string size = "original", string type = "page")
+        {
+            int item_id = Page.id;
+            try
+            {
+
+                string page_path = Core.App.Settings.cache + type + "s/" + Core.App.Server.HashGenerator(size, type, item_id) + ".jpg";
+                bool check = Core.Media.Cache.IsCached(page_path);
+
+                return check;
+            }
+            catch (System.Exception ex)
+            {
+                logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
+
+                return false;
+            }
+        }
+
+
         public async static Task<List<GalleryItem>> GetPage(int page, string search_query =  "", int limit = 50)
         {
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
