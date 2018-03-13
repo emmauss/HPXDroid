@@ -26,6 +26,7 @@ namespace HappyPandaXDroid
     public class MainActivity : AppCompatActivity
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+
         //public List<string> lists = new List<string>();
         //ArrayAdapter<string> adapter;
         protected async override void OnCreate(Bundle bundle)
@@ -70,6 +71,9 @@ namespace HappyPandaXDroid
             if (!File.Exists(Core.App.Settings.basePath + ".nomedia"))
                 File.Create(Core.App.Settings.basePath + ".nomedia");
             Task.Run(() => Core.Media.Recents.LoadRecents());
+
+            Services.DownloadService downloadService = new Services.DownloadService();
+            
             return true;
         }
 

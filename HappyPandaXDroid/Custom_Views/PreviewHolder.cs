@@ -50,7 +50,7 @@ namespace HappyPandaXDroid.Custom_Views
                 int item_id = page.id;
                 try
                 {
-                    thumb_path = Core.App.Settings.cache + "preview/" + Core.App.Server.HashGenerator("medium", "preview", item_id) + ".jpg";
+                    thumb_path = Core.App.Settings.cache + "thumbs/" + Core.App.Server.HashGenerator("medium", "thumb", item_id) + ".jpg";
                     bool check = Core.Media.Cache.IsCached(thumb_path);
 
                     return check;
@@ -218,6 +218,11 @@ namespace HappyPandaXDroid.Custom_Views
                     {
                         break;
                     }
+                }
+
+                if (string.IsNullOrEmpty(thumb_path))
+                {
+                    thumb_path = Core.Gallery.GetCachedPagePath(page.id);
                 }
 
                 h = new Handler(Looper.MainLooper);

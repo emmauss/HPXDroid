@@ -195,6 +195,7 @@
     <Compile Include="Scenes\PreviewScene.cs" />
     <Compile Include="Scenes\RecentsScene.cs" />
     <Compile Include="ServerSettingsActivity.cs" />
+    <Compile Include="Services\DownloadService.cs" />
     <Compile Include="SettingsActivity.cs" />
     <Compile Include="Core\App.cs" />
     <Compile Include="Core\Gallery.cs" />

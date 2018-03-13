@@ -731,7 +731,7 @@ namespace HappyPandaXDroid.Core
 
 
 
-            public static string GetCommandValue(int command_id, int item_id, string name, string type, bool return_url,bool IsPreview = false)
+            public static string GetCommandValue(int command_id, int item_id, string name, string type, bool return_url)
             {
                 logger.Info("Get Command value. commandId={0}, type = {1}, url = {2}, itemID ={3}",
                     command_id, type, return_url.ToString(), item_id.ToString());
@@ -754,10 +754,7 @@ namespace HappyPandaXDroid.Core
                             case "thumb":
                                 dir += "thumbs/";
                                 break;
-                            case "page":
-                                if (IsPreview)
-                                    dir += "preview/";
-                                else
+                            case "page":                                
                                     dir += "pages/";
                                 break;
 
@@ -946,13 +943,6 @@ namespace HappyPandaXDroid.Core
 
                     return builder.ToString();
                 }
-            }
-
-
-            public struct KeyPair
-            {
-                public string Key;
-                public string Value;
             }
         }
     }

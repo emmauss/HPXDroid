@@ -22,7 +22,7 @@ namespace HappyPandaXDroid.Core
     public class Gallery
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        private static List<Page> DownloadList = new List<Page>();
+        public static List<Page> DownloadList = new List<Page>();
         private static List<Page> CurrentlyDownloading = new List<Page>();
         private static bool IsDownloading = false;
         public enum ImageSize
@@ -102,7 +102,14 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
+
             public TagList tags;
+
+            public async Task<string> Download(string size = "medium")
+            {
+                return await GetImage(this.id, "gallery", false, size);
+            }
+
         }
         
         public class Page
@@ -126,12 +133,12 @@ namespace HappyPandaXDroid.Core
 
             public async Task<string> Download(string size = "original")
             {
-                return await GetImage(this, false, size);
+                return await GetImage(this.id,"page", false, size);
             }
 
             public async void DownloadFromQueue()
             {
-                await GetImage(this, false, "original");
+                await GetImage(this.id, "page",false, "original");
                 RemoveFromQueue();
             }
 
@@ -228,11 +235,13 @@ namespace HappyPandaXDroid.Core
                     if (!IsPageCached(page, "original"))
                     DownloadList.Add(page);
                 }
-            StartQueue();
+            Services.DownloadService.DownloadingService.StartService(null);
         }
 
         public static void StartQueue()
         {
+            if (IsDownloading)
+                return;
             IsDownloading = true;
             if(DownloadList.Count>0)
                 for (int i = 0; i < DownloadList.Count; i++)
@@ -255,63 +264,12 @@ namespace HappyPandaXDroid.Core
                     Thread.Sleep(1000);
                 }
             IsDownloading = false;
+            Services.DownloadService.DownloadingService.StopSelf();
         }
 
         public static void StopQueue()
         {
             IsDownloading = false;
-        }
-        
-        public static async Task<string> GetImage(GalleryItem gallery, bool return_url, string size = "medium")
-        {
-            try
-            {
-                int item_id = gallery.id;
-                List<Tuple<string, string>> main = new List<Tuple<string, string>>();
-                List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                JSON.API.PushKey(ref main, "name", "test");
-                JSON.API.PushKey(ref main, "session", App.Server.Info.session);
-                JSON.API.PushKey(ref funct, "fname", "get_image");
-                JSON.API.PushKey(ref funct, "item_ids", "[" + item_id + "]");
-                JSON.API.PushKey(ref funct, "url", "<bool>true");
-                JSON.API.PushKey(ref funct, "size", size);
-                string response = JSON.API.ParseToString(funct);
-                JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
-                response = JSON.API.ParseToString(main);
-                string reply = Net.SendPost(response);
-                int command_id = App.Server.GetCommandId(item_id, reply);
-
-                while (true)
-                {
-                    string state = App.Server.GetCommandState(command_id);
-                    if (state.Contains("error"))
-                        return "fail: server error";
-                    if(state.Contains("failed"))
-                        return "fail: command error";
-                    if (!state.Contains("finish"))
-                        Thread.Sleep(App.Settings.Loop_Delay);
-                    else
-                        break;
-                }
-                string name = string.Empty;
-                //get value
-                gallery = App.Server.GetItem<GalleryItem>(gallery.id, "Gallery");
-                name = App.Server.HashGenerator(size, "thumb",gallery.id);
-
-                string path = App.Server.GetCommandValue(command_id, gallery.id, name, "thumb", return_url);
-                return path;
-            }
-            catch (System.Net.Sockets.SocketException sex)
-            {
-                logger.Error(sex, "\n Exception Caught In Gallery.GetImage.Message {0}\n {1}",sex.Message,sex.StackTrace);
-                return "fail: server not found or connection failed error";
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "\n Exception Caught In Gallery.GetImage. type = Gallery, itemId = {0}, size = {1},\n Message = {2}"
-                     + System.Environment.NewLine + ex.StackTrace , gallery.id, size,ex.Message);
-                return "fail: server error";
-            }
         }
 
         public static async void InitiateImageGeneration(int[] ids, string type,string size)
@@ -340,7 +298,7 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        private static async Task<string> GetImage(Page page, bool return_url, string size = "medium",bool IsPreview = false)
+        private static async Task<string> GetImage(int id, string type, bool return_url, string size = "medium")
         {
             try
             {
@@ -350,15 +308,15 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "name", "test");
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_image");
-                JSON.API.PushKey(ref funct, "item_ids", "[" + page.id + "]");
+                JSON.API.PushKey(ref funct, "item_ids", "[" + id + "]");
                 JSON.API.PushKey(ref funct, "url", "<bool>true");
                 JSON.API.PushKey(ref funct, "size", size);
-                JSON.API.PushKey(ref funct, "item_type", "page");
+                JSON.API.PushKey(ref funct, "item_type", type);
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
                 string reply = Net.SendPost(response);
-                int command_id = App.Server.GetCommandId(page.id, reply);
+                int command_id = App.Server.GetCommandId(id, reply);
                 while (true)
                 {
                     string state = App.Server.GetCommandState(command_id);
@@ -371,19 +329,19 @@ namespace HappyPandaXDroid.Core
                     else
                         break;
                 }
-                string type = "";
+
                 switch (size)
                 {
                     case "medium":
-                        type = "preview";
+                        type = "thumb";
                         break;
                     case "original":
                         type = "page";
                         break;
                 }
-                string name = App.Server.HashGenerator(size, type, page.id);
+                string name = App.Server.HashGenerator(size, type, id);
                 //get value
-                string path = App.Server.GetCommandValue(command_id, page.id, name, "page", return_url,IsPreview);
+                string path = App.Server.GetCommandValue(command_id, id, name, type, return_url);
                 return path;
 
             }
@@ -394,8 +352,8 @@ namespace HappyPandaXDroid.Core
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "\n Exception Caught In Gallery.GetImage. type = Page, itemId = {0}, size = {1},\n Message = {2}"
-                     + System.Environment.NewLine + ex.StackTrace, page.id, size, ex.Message);
+                logger.Error(ex, "\n Exception Caught In Gallery.GetImage. type = {3}, itemId = {0}, size = {1},\n Message = {2}"
+                     + System.Environment.NewLine + ex.StackTrace, id, size, ex.Message,type);
                 return "fail: server error";
             }
         }
@@ -416,6 +374,24 @@ namespace HappyPandaXDroid.Core
                 logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
 
                 return false;
+            }
+        }
+
+        public static string GetCachedPagePath(int id, string size = "original", string type = "page")
+        {
+            try
+            {
+
+                string page_path = Core.App.Settings.cache + type + "s/" + Core.App.Server.HashGenerator(size, type, id) + ".jpg";
+                bool check = Core.Media.Cache.IsCached(page_path);
+
+                return page_path;
+            }
+            catch (System.Exception ex)
+            {
+                logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
+
+                return string.Empty;
             }
         }
 
@@ -531,7 +507,7 @@ namespace HappyPandaXDroid.Core
                 {
                     await Task.Run(async () =>
                     {
-                        thumb_path = await Core.Gallery.GetImage(gallery, true);
+                        thumb_path = await gallery.Download();
                     });
 
                     gallery = Core.App.Server.GetItem<Core.Gallery.GalleryItem>(gallery.id, "Gallery");

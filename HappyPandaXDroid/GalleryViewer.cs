@@ -138,6 +138,10 @@ namespace HappyPandaXDroid
                     else
                         timer.StartTimer();
                 }
+                if(e.Action == MotionEventActions.Move)
+                {
+                    timer.CancelTimer();
+                }
                 return base.OnInterceptTouchEvent(rv, e);
             }
 
@@ -557,7 +561,7 @@ namespace HappyPandaXDroid
                         {
                             var holder = (ImageViewHolder)galleryPager.FindViewHolderForLayoutPosition(pos);
                             holder.imageView.Loaded = false;
-                            holder.imageView.Refresh();
+                            holder.imageView.Refresh(true);
                         }
                     }
                     return true;

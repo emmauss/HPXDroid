@@ -227,7 +227,7 @@ namespace HappyPandaXDroid.Custom_Views
                             Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
 
                     });
-                    thumb_path = await Core.Gallery.GetImage(gallery, false);
+                    thumb_path = await gallery.Download();
 
                 }
             });

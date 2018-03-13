@@ -76,10 +76,17 @@ namespace HappyPandaXDroid.Custom_Views
             System.GC.Collect();
             Java.Lang.JavaSystem.Gc();
         }
-        public void Refresh()
+        public void Refresh(bool delete = false)
         {
+            
             if (Page != null)
             {
+                if (delete)
+                {
+                    if (File.Exists(page_path))
+                        File.Delete(page_path);
+                    page_path = "";
+                }
                 OnLoadStart(Page);
             }
         }
@@ -138,6 +145,7 @@ namespace HappyPandaXDroid.Custom_Views
                         });
                         return;
                     }
+                    
                     page_path = await Page.Download();
 
                         if (page_path.Contains("fail"))
@@ -162,7 +170,10 @@ namespace HappyPandaXDroid.Custom_Views
                         }
                     }
 
-                    
+                   if(string.IsNullOrEmpty(page_path))
+                {
+                    page_path = Core.Gallery.GetCachedPagePath(Page.id);
+                }
                 h.Post(async () =>
                     {
                         try
