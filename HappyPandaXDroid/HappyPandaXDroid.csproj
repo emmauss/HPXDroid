@@ -176,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\IO.cs" />
+    <Compile Include="Custom_Views\ListDialog.cs" />
     <Compile Include="Custom_Views\AutoWrapLayout.cs" />
     <Compile Include="Custom_Views\ImageViewHolder.cs" />
     <Compile Include="Custom_Views\OptionDialogPreference.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="GalleryViewer.cs" />
     <Compile Include="Helpers\Layouts.cs" />
     <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="HPXSceneActivity.cs" />
     <Compile Include="Scenes\GalleryScene.cs" />
     <Compile Include="Scenes\HPXScene.cs" />
@@ -239,6 +241,15 @@
     <AndroidResource Include="Resources\layout\galleryToolbar.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\drawable\ic_filter_list_black_24dp.xml" />
+    <AndroidResource Include="Resources\drawable\ic_sort_black_24dp.xml" />
+    <AndroidResource Include="Resources\drawable\ic_filter_list_white_24dp.png" />
+    <AndroidResource Include="Resources\drawable\ic_sort_white_24dp.png" />
+    <AndroidResource Include="Resources\layout\DialogList.xml" />
+    <TransformFile Include="Resources\menu\sortDirectionMenu.xml">
+      <SubType>Designer</SubType>
+    </TransformFile>
+    <TransformFile Include="Resources\menu\sortMenu.xml" />
     <None Include="GettingStarted.Xamarin" />
     <AndroidResource Include="Resources\layout\nav_header.axml">
       <SubType>Designer</SubType>
@@ -421,7 +432,9 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\menu\gallerySearch.xml" />
+    <AndroidResource Include="Resources\menu\gallerySearch.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_search.png" />

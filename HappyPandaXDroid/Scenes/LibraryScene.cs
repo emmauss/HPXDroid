@@ -28,7 +28,6 @@ using Android.Content.Res;
 using RefreshLayout = Com.Hippo.Refreshlayout;
 using Com.Hippo.Stage;
 
-
 namespace HappyPandaXDroid.Scenes
 {
     public class LibraryScene : HPXScene, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
@@ -67,7 +66,8 @@ namespace HappyPandaXDroid.Scenes
             set
             {
                 if (value == false)
-                    Task.Run(() => {
+                    Task.Run(() =>
+                    {
                         countDown.Start();
                     });
                 else
@@ -113,7 +113,7 @@ namespace HappyPandaXDroid.Scenes
 
         protected override View OnCreateView(LayoutInflater p0, ViewGroup p1)
         {
-            MainView = p0.Inflate(Resource.Layout.LibraryScene, p1,false);
+            MainView = p0.Inflate(Resource.Layout.LibraryScene, p1, false);
             Initialize();
 
             return MainView;
@@ -122,10 +122,10 @@ namespace HappyPandaXDroid.Scenes
         private void Initialize()
         {
             toolbar = MainView.FindViewById<Toolbar>(Resource.Id.toolbar);
-            
+
             appBarLayout = MainView.FindViewById<AppBarLayout>(Resource.Id.appbar);
             appBarLayout.Drag += AppBarLayout_Drag;
-            
+
             mRefreshFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabRefresh);
             mJumpFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabJumpTo);
             mJumpFab.SetImageResource(Resource.Drawable.v_go_to_dark_x24);
@@ -152,7 +152,7 @@ namespace HappyPandaXDroid.Scenes
             mErrorImage.Click += MErrorFrame_Click;
             SetBottomLoading(false);
 
-            
+
             mRecyclerView.AddOnScrollListener(listener);
             SetColumns();
             mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
@@ -178,15 +178,15 @@ namespace HappyPandaXDroid.Scenes
 
 
             SetMainLoading(true);
-            
+
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");
             OnCreateOptionsMenu();
             if (query.Trim() != string.Empty)
             {
-                
-                toolbar.Title = title.Replace("__namespace__:","misc:");
+
+                toolbar.Title = title.Replace("__namespace__:", "misc:");
                 toolbar.Title = title.Replace("\\", "");
             }
             else
@@ -201,8 +201,8 @@ namespace HappyPandaXDroid.Scenes
             ThreadStart load = new ThreadStart(NextPage);
             Thread thread = new Thread(load);
             thread.Start();
-       
-            
+
+
         }
 
         private void MRefreshLayout_HeaderRefresh(object sender, EventArgs e)
@@ -236,7 +236,7 @@ namespace HappyPandaXDroid.Scenes
                 });
         }
 
-        public LibraryScene(string title,string query) : base()
+        public LibraryScene(string title, string query) : base()
         {
             this.title = title;
             this.query = query;
@@ -261,7 +261,7 @@ namespace HappyPandaXDroid.Scenes
             base.OnRestoreViewState(p0, p1);
         }
 
-       
+
         void SetColumns()
         {
             isGrid = Core.App.Settings.IsGrid;
@@ -271,7 +271,7 @@ namespace HappyPandaXDroid.Scenes
             if (isGrid)
             {
 
-                
+
                 var metrics = new DisplayMetrics();
                 display.GetMetrics(metrics);
 
@@ -290,16 +290,16 @@ namespace HappyPandaXDroid.Scenes
                     default:
                         columns = 2;
                         break;
-                            
+
                 }
 
             }
 
-            
+
         }
 
 
-       
+
         public void InitLibrary()
         {
             int tries = 0;
@@ -495,7 +495,7 @@ namespace HappyPandaXDroid.Scenes
                 {
                     logger.Info("Refreshing HPContent");
                     CurrentList.Clear();
-                    CurrentList.AddRange(await Core.Gallery.GetPage(0, Current_Query));
+                    CurrentList.AddRange(await Core.Gallery.GetPage(0, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
                     if (CurrentList == null || CurrentList.Count < 1)
                     {
                         h.Post(() =>
@@ -546,7 +546,7 @@ namespace HappyPandaXDroid.Scenes
         public new void Dispose()
         {
             CurrentList.Clear();
-            
+
             adapter.NotifyDataSetChanged();
             mRecyclerView.ClearOnScrollListeners();
             mRecyclerView.SetAdapter(null);
@@ -641,7 +641,7 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             CurrentList.Clear();
-            CurrentList.AddRange(await Core.Gallery.GetPage(page - 1, Current_Query));
+            CurrentList.AddRange(await Core.Gallery.GetPage(page - 1, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
             if (CurrentList.Count > 0)
             {
                 h.Post(() =>
@@ -746,7 +746,7 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             int lastin = CurrentList.Count - 1;
-            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage + 1, Current_Query));
+            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage + 1, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
             if (CurrentList.Count > 0)
             {
                 h.Post(() =>
@@ -797,7 +797,7 @@ namespace HappyPandaXDroid.Scenes
             });
             var oldlist = new List<Core.Gallery.GalleryItem>(CurrentList);
             CurrentList.Clear();
-            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage - 1, Current_Query));
+            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage - 1, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
             int newitems = CurrentList.Count;
             CurrentList.AddRange(oldlist);
             if (newitems > 0)
@@ -1012,11 +1012,36 @@ namespace HappyPandaXDroid.Scenes
                 }
             }
 
-            public override bool OnStartNestedScroll(CoordinatorLayout coordinatorLayout, Java.Lang.Object child, 
-                View directTargetChild, View target, int nestedScrollAxes) 
+            public override bool OnStartNestedScroll(CoordinatorLayout coordinatorLayout, Java.Lang.Object child,
+                View directTargetChild, View target, int nestedScrollAxes)
                 => nestedScrollAxes == ViewCompat.ScrollAxisVertical;
         }
 
+
+        public class SortMenuClickListener : Java.Lang.Object, IMenuItemOnMenuItemClickListener
+        {
+            LibraryScene mparent;
+            public SortMenuClickListener(LibraryScene parent)
+            {
+                mparent = parent;
+            }
+            public bool OnMenuItemClick(IMenuItem item)
+            {
+                if (item.TitleFormatted.ToString() == "Sort by")
+                {
+                    Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(mparent, "sort");
+                    listDialog.Show(((HPXSceneActivity)mparent.MainView.Context).FragmentManager, "Sort By");
+                }
+                else
+                {
+                    Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(mparent, "order");
+                    listDialog.Show(((HPXSceneActivity)mparent.MainView.Context).FragmentManager, "Sort In");
+                }
+
+                return true;
+
+            }
+        }
 
 
         class FABClickListener : Java.Lang.Object, View.IOnClickListener
@@ -1048,7 +1073,7 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnDestroyView(View p0)
         {
-            
+
             base.OnDestroyView(p0);
         }
 
@@ -1119,11 +1144,10 @@ namespace HappyPandaXDroid.Scenes
 
         Android.Support.V7.Widget.SearchView searchView;
         IMenuItem search;
-        
         public void OnCreateOptionsMenu()
         {
             toolbar.InflateMenu(Resource.Menu.gallerySearch);
-            
+
             search = toolbar.Menu.FindItem(Resource.Id.search);
 
             searchView = (Android.Support.V7.Widget.SearchView)search.ActionView;
@@ -1132,8 +1156,19 @@ namespace HappyPandaXDroid.Scenes
             var layoutParams = new Android.Support.V7.Widget.ActionMenuView.LayoutParams
                 (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             searchView.LayoutParameters = layoutParams;
-        }
-        
 
+            var sortitem = toolbar.Menu.FindItem(Resource.Id.sort);
+            var sortdirection = toolbar.Menu.FindItem(Resource.Id.sort_direction);
+
+            sortdirection.SetIcon(Resource.Drawable.ic_filter_list_white_24dp);
+            sortitem.SetIcon(Resource.Drawable.ic_sort_white_24dp);    
+
+            List<string> sortlist = new List<string>(Enum.GetNames(typeof(Core.Gallery.Sort)));
+            
+            sortdirection.SetOnMenuItemClickListener(new SortMenuClickListener(this));
+            sortitem.SetOnMenuItemClickListener(new SortMenuClickListener(this));
+        }
     }
+
+
 }

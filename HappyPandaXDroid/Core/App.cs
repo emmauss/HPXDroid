@@ -96,6 +96,31 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
+            public static Gallery.Sort Default_Sort
+            {
+                get
+                {
+                    return (Gallery.Sort)Enum.Parse(typeof(Gallery.Sort),AppSettings.GetValueOrDefault("default_sort","None"));
+                }
+                set
+                {
+                    AppSettings.AddOrUpdateValue("default_sort", value.ToString());
+                }
+            }
+
+            public static bool Sort_Decending
+            {
+                get
+                {
+                    var set = AppSettings.GetValueOrDefault("sort_decending", false);
+                    return set;
+                }
+                set
+                {
+                    AppSettings.AddOrUpdateValue("sort_decending", value);
+                }
+            }
+
             public static bool Logging_Enabled
             {
                 get

@@ -5209,26 +5209,26 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f020053
 			public const int avd_hide_password = 2130837587;
 			
-			// aapt resource value: 0x7f0200a8
-			public const int avd_hide_password_1 = 2130837672;
+			// aapt resource value: 0x7f0200ac
+			public const int avd_hide_password_1 = 2130837676;
 			
-			// aapt resource value: 0x7f0200a9
-			public const int avd_hide_password_2 = 2130837673;
+			// aapt resource value: 0x7f0200ad
+			public const int avd_hide_password_2 = 2130837677;
 			
-			// aapt resource value: 0x7f0200aa
-			public const int avd_hide_password_3 = 2130837674;
+			// aapt resource value: 0x7f0200ae
+			public const int avd_hide_password_3 = 2130837678;
 			
 			// aapt resource value: 0x7f020054
 			public const int avd_show_password = 2130837588;
 			
-			// aapt resource value: 0x7f0200ab
-			public const int avd_show_password_1 = 2130837675;
+			// aapt resource value: 0x7f0200af
+			public const int avd_show_password_1 = 2130837679;
 			
-			// aapt resource value: 0x7f0200ac
-			public const int avd_show_password_2 = 2130837676;
+			// aapt resource value: 0x7f0200b0
+			public const int avd_show_password_2 = 2130837680;
 			
-			// aapt resource value: 0x7f0200ad
-			public const int avd_show_password_3 = 2130837677;
+			// aapt resource value: 0x7f0200b1
+			public const int avd_show_password_3 = 2130837681;
 			
 			// aapt resource value: 0x7f020055
 			public const int big_download = 2130837589;
@@ -5281,8 +5281,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f020065
 			public const int fab_add = 2130837605;
 			
-			// aapt resource value: 0x7f0200a5
-			public const int grey_200 = 2130837669;
+			// aapt resource value: 0x7f0200a9
+			public const int grey_200 = 2130837673;
 			
 			// aapt resource value: 0x7f020066
 			public const int hpx_logo = 2130837606;
@@ -5300,184 +5300,196 @@ namespace HappyPandaXDroid
 			public const int ic_arrow_downward = 2130837610;
 			
 			// aapt resource value: 0x7f02006b
-			public const int ic_home = 2130837611;
+			public const int ic_filter_list_black_24dp = 2130837611;
 			
 			// aapt resource value: 0x7f02006c
-			public const int ic_hpx_logo = 2130837612;
+			public const int ic_filter_list_white_24dp = 2130837612;
 			
 			// aapt resource value: 0x7f02006d
-			public const int ic_menu_copy_holo_dark = 2130837613;
+			public const int ic_home = 2130837613;
 			
 			// aapt resource value: 0x7f02006e
-			public const int ic_menu_cut_holo_dark = 2130837614;
+			public const int ic_hpx_logo = 2130837614;
 			
 			// aapt resource value: 0x7f02006f
-			public const int ic_menu_paste_holo_dark = 2130837615;
+			public const int ic_menu_copy_holo_dark = 2130837615;
 			
 			// aapt resource value: 0x7f020070
-			public const int ic_menu_search_holo_dark = 2130837616;
+			public const int ic_menu_cut_holo_dark = 2130837616;
 			
 			// aapt resource value: 0x7f020071
-			public const int ic_search = 2130837617;
+			public const int ic_menu_paste_holo_dark = 2130837617;
 			
 			// aapt resource value: 0x7f020072
-			public const int ic_settings = 2130837618;
+			public const int ic_menu_search_holo_dark = 2130837618;
 			
 			// aapt resource value: 0x7f020073
-			public const int ic_up = 2130837619;
+			public const int ic_search = 2130837619;
 			
 			// aapt resource value: 0x7f020074
-			public const int image_failed = 2130837620;
+			public const int ic_settings = 2130837620;
 			
 			// aapt resource value: 0x7f020075
-			public const int loading2 = 2130837621;
+			public const int ic_sort_black_24dp = 2130837621;
 			
 			// aapt resource value: 0x7f020076
-			public const int logo = 2130837622;
+			public const int ic_sort_white_24dp = 2130837622;
 			
 			// aapt resource value: 0x7f020077
-			public const int navigation_empty_icon = 2130837623;
+			public const int ic_up = 2130837623;
 			
 			// aapt resource value: 0x7f020078
-			public const int notification_action_background = 2130837624;
+			public const int image_failed = 2130837624;
 			
 			// aapt resource value: 0x7f020079
-			public const int notification_bg = 2130837625;
+			public const int loading2 = 2130837625;
 			
 			// aapt resource value: 0x7f02007a
-			public const int notification_bg_low = 2130837626;
+			public const int logo = 2130837626;
 			
 			// aapt resource value: 0x7f02007b
-			public const int notification_bg_low_normal = 2130837627;
+			public const int navigation_empty_icon = 2130837627;
 			
 			// aapt resource value: 0x7f02007c
-			public const int notification_bg_low_pressed = 2130837628;
+			public const int notification_action_background = 2130837628;
 			
 			// aapt resource value: 0x7f02007d
-			public const int notification_bg_normal = 2130837629;
+			public const int notification_bg = 2130837629;
 			
 			// aapt resource value: 0x7f02007e
-			public const int notification_bg_normal_pressed = 2130837630;
+			public const int notification_bg_low = 2130837630;
 			
 			// aapt resource value: 0x7f02007f
-			public const int notification_icon_background = 2130837631;
-			
-			// aapt resource value: 0x7f0200a3
-			public const int notification_template_icon_bg = 2130837667;
-			
-			// aapt resource value: 0x7f0200a4
-			public const int notification_template_icon_low_bg = 2130837668;
+			public const int notification_bg_low_normal = 2130837631;
 			
 			// aapt resource value: 0x7f020080
-			public const int notification_tile_bg = 2130837632;
+			public const int notification_bg_low_pressed = 2130837632;
 			
 			// aapt resource value: 0x7f020081
-			public const int notify_panel_notification_icon_bg = 2130837633;
+			public const int notification_bg_normal = 2130837633;
 			
 			// aapt resource value: 0x7f020082
-			public const int preference_list_divider_material = 2130837634;
+			public const int notification_bg_normal_pressed = 2130837634;
 			
 			// aapt resource value: 0x7f020083
-			public const int refresh = 2130837635;
-			
-			// aapt resource value: 0x7f020084
-			public const int spacer_keyline = 2130837636;
-			
-			// aapt resource value: 0x7f020085
-			public const int splash = 2130837637;
+			public const int notification_icon_background = 2130837635;
 			
 			// aapt resource value: 0x7f0200a7
-			public const int tile_background_activated = 2130837671;
+			public const int notification_template_icon_bg = 2130837671;
+			
+			// aapt resource value: 0x7f0200a8
+			public const int notification_template_icon_low_bg = 2130837672;
+			
+			// aapt resource value: 0x7f020084
+			public const int notification_tile_bg = 2130837636;
+			
+			// aapt resource value: 0x7f020085
+			public const int notify_panel_notification_icon_bg = 2130837637;
 			
 			// aapt resource value: 0x7f020086
-			public const int tooltip_frame_dark = 2130837638;
+			public const int preference_list_divider_material = 2130837638;
 			
 			// aapt resource value: 0x7f020087
-			public const int tooltip_frame_light = 2130837639;
-			
-			// aapt resource value: 0x7f0200a6
-			public const int transparent = 2130837670;
+			public const int refresh = 2130837639;
 			
 			// aapt resource value: 0x7f020088
-			public const int v_arrow_left_dark_x24 = 2130837640;
+			public const int spacer_keyline = 2130837640;
 			
 			// aapt resource value: 0x7f020089
-			public const int v_book_open_primary_x24 = 2130837641;
+			public const int splash = 2130837641;
+			
+			// aapt resource value: 0x7f0200ab
+			public const int tile_background_activated = 2130837675;
 			
 			// aapt resource value: 0x7f02008a
-			public const int v_bug_black_x48 = 2130837642;
+			public const int tooltip_frame_dark = 2130837642;
 			
 			// aapt resource value: 0x7f02008b
-			public const int v_check_all_dark_x24 = 2130837643;
+			public const int tooltip_frame_light = 2130837643;
+			
+			// aapt resource value: 0x7f0200aa
+			public const int transparent = 2130837674;
 			
 			// aapt resource value: 0x7f02008c
-			public const int v_clear_all_dark_x24 = 2130837644;
+			public const int v_arrow_left_dark_x24 = 2130837644;
 			
 			// aapt resource value: 0x7f02008d
-			public const int v_close_dark_x24 = 2130837645;
+			public const int v_book_open_primary_x24 = 2130837645;
 			
 			// aapt resource value: 0x7f02008e
-			public const int v_delete_dark_x24 = 2130837646;
+			public const int v_bug_black_x48 = 2130837646;
 			
 			// aapt resource value: 0x7f02008f
-			public const int v_delete_red_x24 = 2130837647;
+			public const int v_check_all_dark_x24 = 2130837647;
 			
 			// aapt resource value: 0x7f020090
-			public const int v_delete_x24 = 2130837648;
+			public const int v_clear_all_dark_x24 = 2130837648;
 			
 			// aapt resource value: 0x7f020091
-			public const int v_download_black_x24 = 2130837649;
+			public const int v_close_dark_x24 = 2130837649;
 			
 			// aapt resource value: 0x7f020092
-			public const int v_download_box_dark_x24 = 2130837650;
+			public const int v_delete_dark_x24 = 2130837650;
 			
 			// aapt resource value: 0x7f020093
-			public const int v_download_primary_x24 = 2130837651;
+			public const int v_delete_red_x24 = 2130837651;
 			
 			// aapt resource value: 0x7f020094
-			public const int v_folder_move_dark_x24 = 2130837652;
+			public const int v_delete_x24 = 2130837652;
 			
 			// aapt resource value: 0x7f020095
-			public const int v_go_to_dark_x24 = 2130837653;
+			public const int v_download_black_x24 = 2130837653;
 			
 			// aapt resource value: 0x7f020096
-			public const int v_heart_black_x24 = 2130837654;
+			public const int v_download_box_dark_x24 = 2130837654;
 			
 			// aapt resource value: 0x7f020097
-			public const int v_heart_box_dark_x24 = 2130837655;
+			public const int v_download_primary_x24 = 2130837655;
 			
 			// aapt resource value: 0x7f020098
-			public const int v_heart_outline_primary_x48 = 2130837656;
+			public const int v_folder_move_dark_x24 = 2130837656;
 			
 			// aapt resource value: 0x7f020099
-			public const int v_heart_primary_x48 = 2130837657;
+			public const int v_go_to_dark_x24 = 2130837657;
 			
 			// aapt resource value: 0x7f02009a
-			public const int v_help_circle_x24 = 2130837658;
+			public const int v_heart_black_x24 = 2130837658;
 			
 			// aapt resource value: 0x7f02009b
-			public const int v_history_black_x24 = 2130837659;
+			public const int v_heart_box_dark_x24 = 2130837659;
 			
 			// aapt resource value: 0x7f02009c
-			public const int v_plus_dark_x24 = 2130837660;
+			public const int v_heart_outline_primary_x48 = 2130837660;
 			
 			// aapt resource value: 0x7f02009d
-			public const int v_refresh_dark_x24 = 2130837661;
+			public const int v_heart_primary_x48 = 2130837661;
 			
 			// aapt resource value: 0x7f02009e
-			public const int v_settings_black_x24 = 2130837662;
+			public const int v_help_circle_x24 = 2130837662;
 			
 			// aapt resource value: 0x7f02009f
-			public const int v_settings_dark_x24 = 2130837663;
+			public const int v_history_black_x24 = 2130837663;
 			
 			// aapt resource value: 0x7f0200a0
-			public const int v_star_half_x16 = 2130837664;
+			public const int v_plus_dark_x24 = 2130837664;
 			
 			// aapt resource value: 0x7f0200a1
-			public const int v_star_outline_x16 = 2130837665;
+			public const int v_refresh_dark_x24 = 2130837665;
 			
 			// aapt resource value: 0x7f0200a2
-			public const int v_star_x16 = 2130837666;
+			public const int v_settings_black_x24 = 2130837666;
+			
+			// aapt resource value: 0x7f0200a3
+			public const int v_settings_dark_x24 = 2130837667;
+			
+			// aapt resource value: 0x7f0200a4
+			public const int v_star_half_x16 = 2130837668;
+			
+			// aapt resource value: 0x7f0200a5
+			public const int v_star_outline_x16 = 2130837669;
+			
+			// aapt resource value: 0x7f0200a6
+			public const int v_star_x16 = 2130837670;
 			
 			static Drawable()
 			{
@@ -5501,8 +5513,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0036
 			public const int FUNCTION = 2131427382;
 			
-			// aapt resource value: 0x7f0b00d2
-			public const int HomeFrameLayout = 2131427538;
+			// aapt resource value: 0x7f0b00d3
+			public const int HomeFrameLayout = 2131427539;
 			
 			// aapt resource value: 0x7f0b0037
 			public const int META = 2131427383;
@@ -5513,8 +5525,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0039
 			public const int SYM = 2131427385;
 			
-			// aapt resource value: 0x7f0b00d8
-			public const int action0 = 2131427544;
+			// aapt resource value: 0x7f0b00d9
+			public const int action0 = 2131427545;
 			
 			// aapt resource value: 0x7f0b0082
 			public const int action_bar = 2131427458;
@@ -5537,23 +5549,23 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0060
 			public const int action_bar_title = 2131427424;
 			
-			// aapt resource value: 0x7f0b00aa
-			public const int action_card = 2131427498;
+			// aapt resource value: 0x7f0b00ac
+			public const int action_card = 2131427500;
 			
-			// aapt resource value: 0x7f0b00d5
-			public const int action_container = 2131427541;
+			// aapt resource value: 0x7f0b00d6
+			public const int action_container = 2131427542;
 			
 			// aapt resource value: 0x7f0b0083
 			public const int action_context_bar = 2131427459;
 			
-			// aapt resource value: 0x7f0b00dc
-			public const int action_divider = 2131427548;
+			// aapt resource value: 0x7f0b00dd
+			public const int action_divider = 2131427549;
 			
-			// aapt resource value: 0x7f0b0103
-			public const int action_home = 2131427587;
+			// aapt resource value: 0x7f0b0105
+			public const int action_home = 2131427589;
 			
-			// aapt resource value: 0x7f0b00d6
-			public const int action_image = 2131427542;
+			// aapt resource value: 0x7f0b00d7
+			public const int action_image = 2131427543;
 			
 			// aapt resource value: 0x7f0b0003
 			public const int action_menu_divider = 2131427331;
@@ -5570,17 +5582,17 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0062
 			public const int action_mode_close_button = 2131427426;
 			
-			// aapt resource value: 0x7f0b0104
-			public const int action_recent = 2131427588;
+			// aapt resource value: 0x7f0b0106
+			public const int action_recent = 2131427590;
 			
-			// aapt resource value: 0x7f0b0105
-			public const int action_setting = 2131427589;
+			// aapt resource value: 0x7f0b0107
+			public const int action_setting = 2131427591;
 			
-			// aapt resource value: 0x7f0b00d7
-			public const int action_text = 2131427543;
+			// aapt resource value: 0x7f0b00d8
+			public const int action_text = 2131427544;
 			
-			// aapt resource value: 0x7f0b00e4
-			public const int actions = 2131427556;
+			// aapt resource value: 0x7f0b00e5
+			public const int actions = 2131427557;
 			
 			// aapt resource value: 0x7f0b0063
 			public const int activity_chooser_view_content = 2131427427;
@@ -5597,8 +5609,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b003a
 			public const int always = 2131427386;
 			
-			// aapt resource value: 0x7f0b009f
-			public const int app_bar_layout = 2131427487;
+			// aapt resource value: 0x7f0b00a1
+			public const int app_bar_layout = 2131427489;
 			
 			// aapt resource value: 0x7f0b00f6
 			public const int appbar = 2131427574;
@@ -5612,8 +5624,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0031
 			public const int beginning = 2131427377;
 			
-			// aapt resource value: 0x7f0b00a2
-			public const int below_header = 2131427490;
+			// aapt resource value: 0x7f0b00a4
+			public const int below_header = 2131427492;
 			
 			// aapt resource value: 0x7f0b0059
 			public const int blocking = 2131427417;
@@ -5624,8 +5636,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0069
 			public const int buttonPanel = 2131427433;
 			
-			// aapt resource value: 0x7f0b00d9
-			public const int cancel_action = 2131427545;
+			// aapt resource value: 0x7f0b00da
+			public const int cancel_action = 2131427546;
 			
 			// aapt resource value: 0x7f0b0047
 			public const int center = 2131427399;
@@ -5639,8 +5651,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0079
 			public const int checkbox = 2131427449;
 			
-			// aapt resource value: 0x7f0b00e1
-			public const int chronometer = 2131427553;
+			// aapt resource value: 0x7f0b00e2
+			public const int chronometer = 2131427554;
 			
 			// aapt resource value: 0x7f0b001d
 			public const int circular = 2131427357;
@@ -5663,14 +5675,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b006c
 			public const int contentPanel = 2131427436;
 			
-			// aapt resource value: 0x7f0b00d0
-			public const int content_view = 2131427536;
+			// aapt resource value: 0x7f0b00d1
+			public const int content_view = 2131427537;
 			
-			// aapt resource value: 0x7f0b00ac
-			public const int continue_card = 2131427500;
+			// aapt resource value: 0x7f0b00ae
+			public const int continue_card = 2131427502;
 			
-			// aapt resource value: 0x7f0b00ad
-			public const int continue_read = 2131427501;
+			// aapt resource value: 0x7f0b00af
+			public const int continue_read = 2131427503;
 			
 			// aapt resource value: 0x7f0b0094
 			public const int coordinator = 2131427476;
@@ -5705,8 +5717,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b009a
 			public const int design_navigation_view = 2131427482;
 			
-			// aapt resource value: 0x7f0b00e7
-			public const int dialogTitle1 = 2131427559;
+			// aapt resource value: 0x7f0b00e8
+			public const int dialogTitle1 = 2131427560;
 			
 			// aapt resource value: 0x7f0b0028
 			public const int disableHome = 2131427368;
@@ -5714,11 +5726,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b005d
 			public const int down = 2131427421;
 			
-			// aapt resource value: 0x7f0b0102
-			public const int download = 2131427586;
+			// aapt resource value: 0x7f0b0104
+			public const int download = 2131427588;
 			
-			// aapt resource value: 0x7f0b00c3
-			public const int drawer_layout = 2131427523;
+			// aapt resource value: 0x7f0b00c4
+			public const int drawer_layout = 2131427524;
 			
 			// aapt resource value: 0x7f0b0084
 			public const int edit_query = 2131427460;
@@ -5726,8 +5738,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0032
 			public const int end = 2131427378;
 			
-			// aapt resource value: 0x7f0b00e6
-			public const int end_padder = 2131427558;
+			// aapt resource value: 0x7f0b00e7
+			public const int end_padder = 2131427559;
 			
 			// aapt resource value: 0x7f0b0041
 			public const int enterAlways = 2131427393;
@@ -5735,14 +5747,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0042
 			public const int enterAlwaysCollapsed = 2131427394;
 			
-			// aapt resource value: 0x7f0b00c8
-			public const int error_frame = 2131427528;
-			
 			// aapt resource value: 0x7f0b00c9
-			public const int error_image = 2131427529;
+			public const int error_frame = 2131427529;
 			
 			// aapt resource value: 0x7f0b00ca
-			public const int error_text = 2131427530;
+			public const int error_image = 2131427530;
+			
+			// aapt resource value: 0x7f0b00cb
+			public const int error_text = 2131427531;
 			
 			// aapt resource value: 0x7f0b0043
 			public const int exitUntilCollapsed = 2131427395;
@@ -5756,23 +5768,23 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00f1
 			public const int fabClear = 2131427569;
 			
-			// aapt resource value: 0x7f0b00cd
-			public const int fabJumpTo = 2131427533;
-			
 			// aapt resource value: 0x7f0b00ce
-			public const int fabRefresh = 2131427534;
+			public const int fabJumpTo = 2131427534;
+			
+			// aapt resource value: 0x7f0b00cf
+			public const int fabRefresh = 2131427535;
 			
 			// aapt resource value: 0x7f0b001c
 			public const int fab_label = 2131427356;
 			
-			// aapt resource value: 0x7f0b00cc
-			public const int fam = 2131427532;
+			// aapt resource value: 0x7f0b00cd
+			public const int fam = 2131427533;
 			
-			// aapt resource value: 0x7f0b00b0
-			public const int favoredTimes = 2131427504;
+			// aapt resource value: 0x7f0b00b2
+			public const int favoredTimes = 2131427506;
 			
-			// aapt resource value: 0x7f0b00c7
-			public const int ffimage = 2131427527;
+			// aapt resource value: 0x7f0b00c8
+			public const int ffimage = 2131427528;
 			
 			// aapt resource value: 0x7f0b0052
 			public const int fill = 2131427410;
@@ -5783,11 +5795,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b004a
 			public const int fill_vertical = 2131427402;
 			
-			// aapt resource value: 0x7f0b0107
-			public const int filter = 2131427591;
+			// aapt resource value: 0x7f0b0109
+			public const int filter = 2131427593;
 			
-			// aapt resource value: 0x7f0b00c0
-			public const int filterSlider = 2131427520;
+			// aapt resource value: 0x7f0b00c1
+			public const int filterSlider = 2131427521;
 			
 			// aapt resource value: 0x7f0b0056
 			public const int @fixed = 2131427414;
@@ -5798,17 +5810,17 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00f3
 			public const int fragment_container = 2131427571;
 			
-			// aapt resource value: 0x7f0b00ba
-			public const int frame = 2131427514;
-			
-			// aapt resource value: 0x7f0b00c6
-			public const int frameLayout1 = 2131427526;
-			
-			// aapt resource value: 0x7f0b00b6
-			public const int gallercard = 2131427510;
-			
 			// aapt resource value: 0x7f0b00bb
-			public const int galleryViewPager = 2131427515;
+			public const int frame = 2131427515;
+			
+			// aapt resource value: 0x7f0b00c7
+			public const int frameLayout1 = 2131427527;
+			
+			// aapt resource value: 0x7f0b00b7
+			public const int gallercard = 2131427511;
+			
+			// aapt resource value: 0x7f0b00bc
+			public const int galleryViewPager = 2131427516;
 			
 			// aapt resource value: 0x7f0b000a
 			public const int ghost_view = 2131427338;
@@ -5816,8 +5828,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00fb
 			public const int gridlayout = 2131427579;
 			
-			// aapt resource value: 0x7f0b00a3
-			public const int header = 2131427491;
+			// aapt resource value: 0x7f0b00a5
+			public const int header = 2131427493;
 			
 			// aapt resource value: 0x7f0b0005
 			public const int home = 2131427333;
@@ -5831,11 +5843,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0068
 			public const int icon = 2131427432;
 			
-			// aapt resource value: 0x7f0b00ea
-			public const int icon_frame = 2131427562;
+			// aapt resource value: 0x7f0b00eb
+			public const int icon_frame = 2131427563;
 			
-			// aapt resource value: 0x7f0b00e5
-			public const int icon_group = 2131427557;
+			// aapt resource value: 0x7f0b00e6
+			public const int icon_group = 2131427558;
 			
 			// aapt resource value: 0x7f0b003c
 			public const int ifRoom = 2131427388;
@@ -5843,11 +5855,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0065
 			public const int image = 2131427429;
 			
-			// aapt resource value: 0x7f0b00b7
-			public const int imageView = 2131427511;
+			// aapt resource value: 0x7f0b00b8
+			public const int imageView = 2131427512;
 			
-			// aapt resource value: 0x7f0b00ae
-			public const int info = 2131427502;
+			// aapt resource value: 0x7f0b00b0
+			public const int info = 2131427504;
 			
 			// aapt resource value: 0x7f0b00fc
 			public const int ippref = 2131427580;
@@ -5861,17 +5873,17 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00f4
 			public const int key = 2131427572;
 			
-			// aapt resource value: 0x7f0b00a6
-			public const int language = 2131427494;
+			// aapt resource value: 0x7f0b00a8
+			public const int language = 2131427496;
 			
 			// aapt resource value: 0x7f0b0092
 			public const int largeLabel = 2131427474;
 			
-			// aapt resource value: 0x7f0b00a9
-			public const int lastReadPage = 2131427497;
+			// aapt resource value: 0x7f0b00ab
+			public const int lastReadPage = 2131427499;
 			
-			// aapt resource value: 0x7f0b00d1
-			public const int layout_main = 2131427537;
+			// aapt resource value: 0x7f0b00d2
+			public const int layout_main = 2131427538;
 			
 			// aapt resource value: 0x7f0b004b
 			public const int left = 2131427403;
@@ -5882,8 +5894,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0018
 			public const int line3 = 2131427352;
 			
-			// aapt resource value: 0x7f0b00ec
-			public const int list = 2131427564;
+			// aapt resource value: 0x7f0b00a0
+			public const int list = 2131427488;
 			
 			// aapt resource value: 0x7f0b0025
 			public const int listMode = 2131427365;
@@ -5903,11 +5915,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0100
 			public const int masked = 2131427584;
 			
-			// aapt resource value: 0x7f0b00db
-			public const int media_actions = 2131427547;
+			// aapt resource value: 0x7f0b00dc
+			public const int media_actions = 2131427548;
 			
-			// aapt resource value: 0x7f0b0106
-			public const int menu_preferences = 2131427590;
+			// aapt resource value: 0x7f0b0108
+			public const int menu_preferences = 2131427592;
 			
 			// aapt resource value: 0x7f0b00f7
 			public const int message = 2131427575;
@@ -5921,14 +5933,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0020
 			public const int multiply = 2131427360;
 			
-			// aapt resource value: 0x7f0b00d3
-			public const int nav_head = 2131427539;
-			
 			// aapt resource value: 0x7f0b00d4
-			public const int nav_title = 2131427540;
+			public const int nav_head = 2131427540;
 			
-			// aapt resource value: 0x7f0b00c5
-			public const int nav_view = 2131427525;
+			// aapt resource value: 0x7f0b00d5
+			public const int nav_title = 2131427541;
+			
+			// aapt resource value: 0x7f0b00c6
+			public const int nav_view = 2131427526;
 			
 			// aapt resource value: 0x7f0b0099
 			public const int navigation_header_container = 2131427481;
@@ -5936,8 +5948,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b003d
 			public const int never = 2131427389;
 			
-			// aapt resource value: 0x7f0b00b4
-			public const int no_tags = 2131427508;
+			// aapt resource value: 0x7f0b00b5
+			public const int no_tags = 2131427509;
 			
 			// aapt resource value: 0x7f0b002a
 			public const int none = 2131427370;
@@ -5945,20 +5957,20 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0026
 			public const int normal = 2131427366;
 			
-			// aapt resource value: 0x7f0b00e3
-			public const int notification_background = 2131427555;
+			// aapt resource value: 0x7f0b00e4
+			public const int notification_background = 2131427556;
+			
+			// aapt resource value: 0x7f0b00df
+			public const int notification_main_column = 2131427551;
 			
 			// aapt resource value: 0x7f0b00de
-			public const int notification_main_column = 2131427550;
+			public const int notification_main_column_container = 2131427550;
 			
-			// aapt resource value: 0x7f0b00dd
-			public const int notification_main_column_container = 2131427549;
+			// aapt resource value: 0x7f0b00bf
+			public const int page_number = 2131427519;
 			
-			// aapt resource value: 0x7f0b00be
-			public const int page_number = 2131427518;
-			
-			// aapt resource value: 0x7f0b00a7
-			public const int pages = 2131427495;
+			// aapt resource value: 0x7f0b00a9
+			public const int pages = 2131427497;
 			
 			// aapt resource value: 0x7f0b004e
 			public const int parallax = 2131427406;
@@ -5975,17 +5987,17 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00fd
 			public const int portpref = 2131427581;
 			
-			// aapt resource value: 0x7f0b00a8
-			public const int posted = 2131427496;
+			// aapt resource value: 0x7f0b00aa
+			public const int posted = 2131427498;
 			
 			// aapt resource value: 0x7f0b00f0
 			public const int preview = 2131427568;
 			
-			// aapt resource value: 0x7f0b00b2
-			public const int previewpager = 2131427506;
+			// aapt resource value: 0x7f0b00b4
+			public const int previewpager = 2131427508;
 			
-			// aapt resource value: 0x7f0b00b1
-			public const int previews = 2131427505;
+			// aapt resource value: 0x7f0b00b3
+			public const int previews = 2131427507;
 			
 			// aapt resource value: 0x7f0b0006
 			public const int progress_circular = 2131427334;
@@ -5993,41 +6005,41 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0007
 			public const int progress_horizontal = 2131427335;
 			
-			// aapt resource value: 0x7f0b00bd
-			public const int progress_seekbar = 2131427517;
+			// aapt resource value: 0x7f0b00be
+			public const int progress_seekbar = 2131427518;
 			
-			// aapt resource value: 0x7f0b00a1
-			public const int progress_view = 2131427489;
+			// aapt resource value: 0x7f0b00a3
+			public const int progress_view = 2131427491;
 			
 			// aapt resource value: 0x7f0b007b
 			public const int radio = 2131427451;
 			
-			// aapt resource value: 0x7f0b00ab
-			public const int read = 2131427499;
+			// aapt resource value: 0x7f0b00ad
+			public const int read = 2131427501;
+			
+			// aapt resource value: 0x7f0b00c3
+			public const int recyclerView = 2131427523;
+			
+			// aapt resource value: 0x7f0b010a
+			public const int refresh = 2131427594;
 			
 			// aapt resource value: 0x7f0b00c2
-			public const int recyclerView = 2131427522;
-			
-			// aapt resource value: 0x7f0b0108
-			public const int refresh = 2131427592;
-			
-			// aapt resource value: 0x7f0b00c1
-			public const int refresh_layout = 2131427521;
+			public const int refresh_layout = 2131427522;
 			
 			// aapt resource value: 0x7f0b004c
 			public const int right = 2131427404;
 			
-			// aapt resource value: 0x7f0b00e2
-			public const int right_icon = 2131427554;
+			// aapt resource value: 0x7f0b00e3
+			public const int right_icon = 2131427555;
 			
-			// aapt resource value: 0x7f0b00df
-			public const int right_side = 2131427551;
+			// aapt resource value: 0x7f0b00e0
+			public const int right_side = 2131427552;
 			
 			// aapt resource value: 0x7f0b00f2
 			public const int rvp_fragment_container = 2131427570;
 			
-			// aapt resource value: 0x7f0b00cb
-			public const int safeCoordinatorLayout1 = 2131427531;
+			// aapt resource value: 0x7f0b00cc
+			public const int safeCoordinatorLayout1 = 2131427532;
 			
 			// aapt resource value: 0x7f0b000c
 			public const int save_image_matrix = 2131427340;
@@ -6041,8 +6053,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0021
 			public const int screen = 2131427361;
 			
-			// aapt resource value: 0x7f0b00bc
-			public const int screenFilter = 2131427516;
+			// aapt resource value: 0x7f0b00bd
+			public const int screenFilter = 2131427517;
 			
 			// aapt resource value: 0x7f0b0044
 			public const int scroll = 2131427396;
@@ -6056,8 +6068,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b006e
 			public const int scrollView = 2131427438;
 			
-			// aapt resource value: 0x7f0b00a0
-			public const int scroll_view = 2131427488;
+			// aapt resource value: 0x7f0b00a2
+			public const int scroll_view = 2131427490;
 			
 			// aapt resource value: 0x7f0b0057
 			public const int scrollable = 2131427415;
@@ -6107,8 +6119,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b00f8
 			public const int server_settings = 2131427576;
 			
-			// aapt resource value: 0x7f0b00e9
-			public const int setpage = 2131427561;
+			// aapt resource value: 0x7f0b00ea
+			public const int setpage = 2131427562;
 			
 			// aapt resource value: 0x7f0b007a
 			public const int shortcut = 2131427450;
@@ -6122,8 +6134,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b002d
 			public const int showTitle = 2131427373;
 			
-			// aapt resource value: 0x7f0b00af
-			public const int size = 2131427503;
+			// aapt resource value: 0x7f0b00b1
+			public const int size = 2131427505;
 			
 			// aapt resource value: 0x7f0b0091
 			public const int smallLabel = 2131427473;
@@ -6137,11 +6149,17 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0045
 			public const int snap = 2131427397;
 			
+			// aapt resource value: 0x7f0b0102
+			public const int sort = 2131427586;
+			
+			// aapt resource value: 0x7f0b0103
+			public const int sort_direction = 2131427587;
+			
 			// aapt resource value: 0x7f0b006a
 			public const int spacer = 2131427434;
 			
-			// aapt resource value: 0x7f0b00eb
-			public const int spinner = 2131427563;
+			// aapt resource value: 0x7f0b00ec
+			public const int spinner = 2131427564;
 			
 			// aapt resource value: 0x7f0b0008
 			public const int split_action_bar = 2131427336;
@@ -6155,17 +6173,17 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0024
 			public const int src_over = 2131427364;
 			
-			// aapt resource value: 0x7f0b00c4
-			public const int stage_layout = 2131427524;
+			// aapt resource value: 0x7f0b00c5
+			public const int stage_layout = 2131427525;
 			
 			// aapt resource value: 0x7f0b004d
 			public const int start = 2131427405;
 			
-			// aapt resource value: 0x7f0b00a5
-			public const int status = 2131427493;
+			// aapt resource value: 0x7f0b00a7
+			public const int status = 2131427495;
 			
-			// aapt resource value: 0x7f0b00da
-			public const int status_bar_latest_event_content = 2131427546;
+			// aapt resource value: 0x7f0b00db
+			public const int status_bar_latest_event_content = 2131427547;
 			
 			// aapt resource value: 0x7f0b007c
 			public const int submenuarrow = 2131427452;
@@ -6179,11 +6197,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0027
 			public const int tabMode = 2131427367;
 			
-			// aapt resource value: 0x7f0b00b5
-			public const int tagLayout = 2131427509;
+			// aapt resource value: 0x7f0b00b6
+			public const int tagLayout = 2131427510;
 			
-			// aapt resource value: 0x7f0b00b3
-			public const int tags = 2131427507;
+			// aapt resource value: 0x7f0b009f
+			public const int tags = 2131427487;
 			
 			// aapt resource value: 0x7f0b0019
 			public const int text = 2131427353;
@@ -6191,8 +6209,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b001a
 			public const int text2 = 2131427354;
 			
-			// aapt resource value: 0x7f0b00e8
-			public const int textInputLayout1 = 2131427560;
+			// aapt resource value: 0x7f0b00e9
+			public const int textInputLayout1 = 2131427561;
 			
 			// aapt resource value: 0x7f0b0070
 			public const int textSpacerNoButtons = 2131427440;
@@ -6200,11 +6218,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b006f
 			public const int textSpacerNoTitle = 2131427439;
 			
-			// aapt resource value: 0x7f0b00b8
-			public const int textViewholder = 2131427512;
-			
 			// aapt resource value: 0x7f0b00b9
-			public const int textViewholder2 = 2131427513;
+			public const int textViewholder = 2131427513;
+			
+			// aapt resource value: 0x7f0b00ba
+			public const int textViewholder2 = 2131427514;
 			
 			// aapt resource value: 0x7f0b009e
 			public const int text_input_password_toggle = 2131427486;
@@ -6215,14 +6233,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0015
 			public const int textinput_error = 2131427349;
 			
-			// aapt resource value: 0x7f0b00cf
-			public const int textitem = 2131427535;
+			// aapt resource value: 0x7f0b00d0
+			public const int textitem = 2131427536;
 			
-			// aapt resource value: 0x7f0b00a4
-			public const int thumb = 2131427492;
+			// aapt resource value: 0x7f0b00a6
+			public const int thumb = 2131427494;
 			
-			// aapt resource value: 0x7f0b00e0
-			public const int time = 2131427552;
+			// aapt resource value: 0x7f0b00e1
+			public const int time = 2131427553;
 			
 			// aapt resource value: 0x7f0b001b
 			public const int title = 2131427355;
@@ -6233,8 +6251,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0b0075
 			public const int title_template = 2131427445;
 			
-			// aapt resource value: 0x7f0b00bf
-			public const int toolbar = 2131427519;
+			// aapt resource value: 0x7f0b00c0
+			public const int toolbar = 2131427520;
 			
 			// aapt resource value: 0x7f0b0040
 			public const int top = 2131427392;
@@ -6467,211 +6485,214 @@ namespace HappyPandaXDroid
 			public const int design_text_input_password_icon = 2130968616;
 			
 			// aapt resource value: 0x7f040029
-			public const int Gallery_Details_Layout = 2130968617;
+			public const int DialogList = 2130968617;
 			
 			// aapt resource value: 0x7f04002a
-			public const int gallery_header = 2130968618;
+			public const int Gallery_Details_Layout = 2130968618;
 			
 			// aapt resource value: 0x7f04002b
-			public const int gallery_meta = 2130968619;
+			public const int gallery_header = 2130968619;
 			
 			// aapt resource value: 0x7f04002c
-			public const int gallery_previews = 2130968620;
+			public const int gallery_meta = 2130968620;
 			
 			// aapt resource value: 0x7f04002d
-			public const int gallery_tags = 2130968621;
+			public const int gallery_previews = 2130968621;
 			
 			// aapt resource value: 0x7f04002e
-			public const int galleryCardGrid = 2130968622;
+			public const int gallery_tags = 2130968622;
 			
 			// aapt resource value: 0x7f04002f
-			public const int galleryCardList = 2130968623;
+			public const int galleryCardGrid = 2130968623;
 			
 			// aapt resource value: 0x7f040030
-			public const int GalleryFragment = 2130968624;
+			public const int galleryCardList = 2130968624;
 			
 			// aapt resource value: 0x7f040031
-			public const int GalleryLayout = 2130968625;
+			public const int GalleryFragment = 2130968625;
 			
 			// aapt resource value: 0x7f040032
-			public const int galleryToolbar = 2130968626;
+			public const int GalleryLayout = 2130968626;
 			
 			// aapt resource value: 0x7f040033
-			public const int HPContent = 2130968627;
+			public const int galleryToolbar = 2130968627;
 			
 			// aapt resource value: 0x7f040034
-			public const int HPXStage = 2130968628;
+			public const int HPContent = 2130968628;
 			
 			// aapt resource value: 0x7f040035
-			public const int ImageLayout = 2130968629;
+			public const int HPXStage = 2130968629;
 			
 			// aapt resource value: 0x7f040036
-			public const int ImageViewTemplate = 2130968630;
+			public const int ImageLayout = 2130968630;
 			
 			// aapt resource value: 0x7f040037
-			public const int layout_error = 2130968631;
+			public const int ImageViewTemplate = 2130968631;
 			
 			// aapt resource value: 0x7f040038
-			public const int LibraryScene = 2130968632;
+			public const int layout_error = 2130968632;
 			
 			// aapt resource value: 0x7f040039
-			public const int listviewtemplate = 2130968633;
+			public const int LibraryScene = 2130968633;
 			
 			// aapt resource value: 0x7f04003a
-			public const int Main = 2130968634;
+			public const int listviewtemplate = 2130968634;
 			
 			// aapt resource value: 0x7f04003b
-			public const int nav_drawer = 2130968635;
+			public const int Main = 2130968635;
 			
 			// aapt resource value: 0x7f04003c
-			public const int nav_header = 2130968636;
+			public const int nav_drawer = 2130968636;
 			
 			// aapt resource value: 0x7f04003d
-			public const int notification_action = 2130968637;
+			public const int nav_header = 2130968637;
 			
 			// aapt resource value: 0x7f04003e
-			public const int notification_action_tombstone = 2130968638;
+			public const int notification_action = 2130968638;
 			
 			// aapt resource value: 0x7f04003f
-			public const int notification_media_action = 2130968639;
+			public const int notification_action_tombstone = 2130968639;
 			
 			// aapt resource value: 0x7f040040
-			public const int notification_media_cancel_action = 2130968640;
+			public const int notification_media_action = 2130968640;
 			
 			// aapt resource value: 0x7f040041
-			public const int notification_template_big_media = 2130968641;
+			public const int notification_media_cancel_action = 2130968641;
 			
 			// aapt resource value: 0x7f040042
-			public const int notification_template_big_media_custom = 2130968642;
+			public const int notification_template_big_media = 2130968642;
 			
 			// aapt resource value: 0x7f040043
-			public const int notification_template_big_media_narrow = 2130968643;
+			public const int notification_template_big_media_custom = 2130968643;
 			
 			// aapt resource value: 0x7f040044
-			public const int notification_template_big_media_narrow_custom = 2130968644;
+			public const int notification_template_big_media_narrow = 2130968644;
 			
 			// aapt resource value: 0x7f040045
-			public const int notification_template_custom_big = 2130968645;
+			public const int notification_template_big_media_narrow_custom = 2130968645;
 			
 			// aapt resource value: 0x7f040046
-			public const int notification_template_icon_group = 2130968646;
+			public const int notification_template_custom_big = 2130968646;
 			
 			// aapt resource value: 0x7f040047
-			public const int notification_template_lines_media = 2130968647;
+			public const int notification_template_icon_group = 2130968647;
 			
 			// aapt resource value: 0x7f040048
-			public const int notification_template_media = 2130968648;
+			public const int notification_template_lines_media = 2130968648;
 			
 			// aapt resource value: 0x7f040049
-			public const int notification_template_media_custom = 2130968649;
+			public const int notification_template_media = 2130968649;
 			
 			// aapt resource value: 0x7f04004a
-			public const int notification_template_part_chronometer = 2130968650;
+			public const int notification_template_media_custom = 2130968650;
 			
 			// aapt resource value: 0x7f04004b
-			public const int notification_template_part_time = 2130968651;
+			public const int notification_template_part_chronometer = 2130968651;
 			
 			// aapt resource value: 0x7f04004c
-			public const int PageSelector = 2130968652;
+			public const int notification_template_part_time = 2130968652;
 			
 			// aapt resource value: 0x7f04004d
-			public const int PhotoViewHolder = 2130968653;
+			public const int PageSelector = 2130968653;
 			
 			// aapt resource value: 0x7f04004e
-			public const int preference = 2130968654;
+			public const int PhotoViewHolder = 2130968654;
 			
 			// aapt resource value: 0x7f04004f
-			public const int preference_category = 2130968655;
+			public const int preference = 2130968655;
 			
 			// aapt resource value: 0x7f040050
-			public const int preference_category_material = 2130968656;
+			public const int preference_category = 2130968656;
 			
 			// aapt resource value: 0x7f040051
-			public const int preference_dialog_edittext = 2130968657;
+			public const int preference_category_material = 2130968657;
 			
 			// aapt resource value: 0x7f040052
-			public const int preference_dropdown = 2130968658;
+			public const int preference_dialog_edittext = 2130968658;
 			
 			// aapt resource value: 0x7f040053
-			public const int preference_dropdown_material = 2130968659;
+			public const int preference_dropdown = 2130968659;
 			
 			// aapt resource value: 0x7f040054
-			public const int preference_information = 2130968660;
+			public const int preference_dropdown_material = 2130968660;
 			
 			// aapt resource value: 0x7f040055
-			public const int preference_information_material = 2130968661;
+			public const int preference_information = 2130968661;
 			
 			// aapt resource value: 0x7f040056
-			public const int preference_list_fragment = 2130968662;
+			public const int preference_information_material = 2130968662;
 			
 			// aapt resource value: 0x7f040057
-			public const int preference_material = 2130968663;
+			public const int preference_list_fragment = 2130968663;
 			
 			// aapt resource value: 0x7f040058
-			public const int preference_recyclerview = 2130968664;
+			public const int preference_material = 2130968664;
 			
 			// aapt resource value: 0x7f040059
-			public const int preference_widget_checkbox = 2130968665;
+			public const int preference_recyclerview = 2130968665;
 			
 			// aapt resource value: 0x7f04005a
-			public const int preference_widget_seekbar = 2130968666;
+			public const int preference_widget_checkbox = 2130968666;
 			
 			// aapt resource value: 0x7f04005b
-			public const int preference_widget_seekbar_material = 2130968667;
+			public const int preference_widget_seekbar = 2130968667;
 			
 			// aapt resource value: 0x7f04005c
-			public const int preference_widget_switch = 2130968668;
+			public const int preference_widget_seekbar_material = 2130968668;
 			
 			// aapt resource value: 0x7f04005d
-			public const int preference_widget_switch_compat = 2130968669;
+			public const int preference_widget_switch = 2130968669;
 			
 			// aapt resource value: 0x7f04005e
-			public const int preview_template = 2130968670;
+			public const int preference_widget_switch_compat = 2130968670;
 			
 			// aapt resource value: 0x7f04005f
-			public const int PreviewsLayout = 2130968671;
+			public const int preview_template = 2130968671;
 			
 			// aapt resource value: 0x7f040060
-			public const int RecentsScene = 2130968672;
+			public const int PreviewsLayout = 2130968672;
 			
 			// aapt resource value: 0x7f040061
-			public const int rvp_fragment_container = 2130968673;
+			public const int RecentsScene = 2130968673;
 			
 			// aapt resource value: 0x7f040062
-			public const int select_dialog_item_material = 2130968674;
+			public const int rvp_fragment_container = 2130968674;
 			
 			// aapt resource value: 0x7f040063
-			public const int select_dialog_multichoice_material = 2130968675;
+			public const int select_dialog_item_material = 2130968675;
 			
 			// aapt resource value: 0x7f040064
-			public const int select_dialog_singlechoice_material = 2130968676;
+			public const int select_dialog_multichoice_material = 2130968676;
 			
 			// aapt resource value: 0x7f040065
-			public const int server_settings = 2130968677;
+			public const int select_dialog_singlechoice_material = 2130968677;
 			
 			// aapt resource value: 0x7f040066
-			public const int settings = 2130968678;
+			public const int server_settings = 2130968678;
 			
 			// aapt resource value: 0x7f040067
-			public const int settingViewText = 2130968679;
+			public const int settings = 2130968679;
 			
 			// aapt resource value: 0x7f040068
-			public const int support_simple_spinner_dropdown_item = 2130968680;
+			public const int settingViewText = 2130968680;
 			
 			// aapt resource value: 0x7f040069
-			public const int tag_group_template = 2130968681;
+			public const int support_simple_spinner_dropdown_item = 2130968681;
 			
 			// aapt resource value: 0x7f04006a
-			public const int tag_template = 2130968682;
+			public const int tag_group_template = 2130968682;
 			
 			// aapt resource value: 0x7f04006b
-			public const int toolbar = 2130968683;
+			public const int tag_template = 2130968683;
 			
 			// aapt resource value: 0x7f04006c
-			public const int toolbar_alpha = 2130968684;
+			public const int toolbar = 2130968684;
 			
 			// aapt resource value: 0x7f04006d
-			public const int tooltip = 2130968685;
+			public const int toolbar_alpha = 2130968685;
+			
+			// aapt resource value: 0x7f04006e
+			public const int tooltip = 2130968686;
 			
 			static Layout()
 			{

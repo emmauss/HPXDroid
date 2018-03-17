@@ -49,6 +49,24 @@ namespace HappyPandaXDroid.Core
             Library = 0
         }
 
+        public enum Sort
+        {
+            None = 0,
+            ArtistName = 20,
+            GalleryArtist = 3,
+            GalleryDate = 4,
+            GalleryPageCount = 10,
+            GalleryPublished = 5,
+            GalleryRandom = 1,
+            GalleryRating = 8,
+            GalleryRead = 6,
+            GalleryReadCount = 9,
+            GalleryTitle = 2,
+            GalleryUpdated = 7,
+            NamespaceTagNamespace = 30,
+            NamespaceTagTag = 31,
+        }
+
         public class GalleryItem
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -396,16 +414,24 @@ namespace HappyPandaXDroid.Core
         }
 
 
-        public async static Task<List<GalleryItem>> GetPage(int page, string search_query =  "", int limit = 50)
+        public async static Task<List<GalleryItem>> GetPage(int page, Sort sortCriteria = (Sort)1, bool sortDec = false,
+            string searchQuery =  "", int limit = 50)
         {
+            string sort = sortCriteria.ToString().ToLower();
+            if(sortCriteria == Sort.None)
+            {
+                sort = "null";
+            }
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
             JSON.API.PushKey(ref main, "name", "test");
             JSON.API.PushKey(ref main, "session", App.Server.Info.session);
             JSON.API.PushKey(ref funct, "fname", "library_view");
             JSON.API.PushKey(ref funct, "limit", "<int>" + limit.ToString());
-            JSON.API.PushKey(ref funct, "search_query", search_query);
+            JSON.API.PushKey(ref funct, "search_query", searchQuery);
             JSON.API.PushKey(ref funct, "page", "<int>" + page);
+           JSON.API.PushKey(ref funct, "sort_by",  (sort == "null"? "<int>" : "") + sort);
+            JSON.API.PushKey(ref funct, "sort_desc", "<bool>" + sortDec.ToString().ToLower());
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);

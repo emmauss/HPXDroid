@@ -57,6 +57,7 @@ namespace HappyPandaXDroid
             bool IsInitialized = director.Contains(stageLayout.Id);
             stage = director.Direct(stageLayout);
 
+            AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
             AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironment_UnhandledExceptionRaiser;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
