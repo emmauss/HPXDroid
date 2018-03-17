@@ -27,7 +27,9 @@ namespace HappyPandaXDroid.Custom_Views
             LayoutInflater inflater = mscene.Activity.LayoutInflater;
             View listDialog = inflater.Inflate(Resource.Layout.DialogList, null);
             MainList = listDialog.FindViewById<ListView>(Resource.Id.list);
-            builder.SetView(listDialog);
+            //ImageButton button = listDialog.FindViewById<ImageButton>(Resource.Id.deletebutton);
+           // button.Visibility = ViewStates.Invisible;
+            MainList.LongClick += MainList_LongClick;
             List<string> list = new List<string>();
             switch (tag)
             {
@@ -40,9 +42,15 @@ namespace HappyPandaXDroid.Custom_Views
                 case "order":
                     list = new List<string>(new string[] { "Ascending", "Descending" });
                     break;
+                case "search":
+                    //button.Visibility = ViewStates.Visible;
+                    var searches = Core.Media.QuickSearch.Searches;
+                    list = searches;
+                    //button.Click += Button_Click;
+                    break;
             }
             items = list;
-
+            MainList.NothingSelected += MainList_NothingSelected;
             ArrayAdapter<String> adapter = new ArrayAdapter<string>(mscene.Context,
                Android.Resource.Layout.SimpleListItem1, items);
             MainList.Adapter = adapter;
@@ -50,6 +58,40 @@ namespace HappyPandaXDroid.Custom_Views
 
             AlertDialog dialog = builder.Create();
             return dialog;
+        }
+
+        private void MainList_NothingSelected(object sender, AdapterView.NothingSelectedEventArgs e)
+        {
+            MainList.ChoiceMode = ChoiceMode.Single;
+        }
+
+        private void MainList_LongClick(object sender, View.LongClickEventArgs e)
+        {
+            if (tag == "search")
+            {
+                MainList.ChoiceMode = ChoiceMode.Multiple;
+            }
+        }
+
+        private void Button_Click(object sender, EventArgs e)
+        {
+            var selecteditems = MainList.CheckedItemPositions;
+            for(int i = 0; i < items.Count; i++)
+            {
+                if (selecteditems.Get(i))
+                {
+                    Core.Media.QuickSearch.RemoveFromQuicSearch(items[i]);
+                }
+            }
+        }
+        public override void OnStart()
+        {
+            base.OnStart();
+            if (items.Count == 0)
+            {
+                Toast.MakeText(mscene.Context, "No list to display", ToastLength.Short);
+                Dismiss();
+            }
         }
 
         public void OnItemClick(AdapterView parent, View view, int position, long id)
@@ -71,6 +113,13 @@ namespace HappyPandaXDroid.Custom_Views
                         Core.App.Settings.Sort_Decending = true;
                     Dismiss();
                     mscene.Refresh();
+                    break;
+                case "search":
+                    if (MainList.ChoiceMode == ChoiceMode.Single)
+                    {
+                        mscene.Current_Query = item;
+                        Dismiss();
+                    }
                     break;
             }
         }

@@ -71,7 +71,7 @@ namespace HappyPandaXDroid
             if (!File.Exists(Core.App.Settings.basePath + ".nomedia"))
                 File.Create(Core.App.Settings.basePath + ".nomedia");
             Task.Run(() => Core.Media.Recents.LoadRecents());
-
+            Task.Run(() => Core.Media.QuickSearch.LoadSearches());
             Services.DownloadService downloadService = new Services.DownloadService();
             
             return true;

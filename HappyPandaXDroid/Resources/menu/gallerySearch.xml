@@ -4,18 +4,23 @@ xmlns:happypandaxdroid="http://schemas.android.com/apk/res-auto Jump ">
 
   <item android:id="@+id/search"
       happypandaxdroid:icon="@drawable/ic_search"
-      android:title="search"
+      android:title="Search"
       happypandaxdroid:showAsAction="ifRoom|withText"
       happypandaxdroid:actionViewClass="android.support.v7.widget.SearchView"/>
+  <item android:id="@+id/addsearch"
+      happypandaxdroid:icon="@drawable/ic_sort_black_24dp"
+      android:title="Quick Search"
+        happypandaxdroid:actionViewClass="android.widget.ImageButton"
+        android:tag="search"
+      happypandaxdroid:showAsAction="always"/>
   <item android:id="@+id/sort"
       happypandaxdroid:icon="@drawable/ic_sort_black_24dp"
       android:title="Sort by"
         android:tag="sort"
-      happypandaxdroid:showAsAction="always">
-  </item>
+      happypandaxdroid:showAsAction="ifRoom"/>
   <item android:id="@+id/sort_direction"
         android:tag="dir"
       happypandaxdroid:icon="@drawable/ic_filter_list_black_24dp"
       android:title="Sort Order"
-      happypandaxdroid:showAsAction="always"/>
+      happypandaxdroid:showAsAction="ifRoom"/>
 </menu>

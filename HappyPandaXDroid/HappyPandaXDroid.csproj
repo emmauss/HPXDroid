@@ -246,6 +246,7 @@
     <AndroidResource Include="Resources\drawable\ic_filter_list_white_24dp.png" />
     <AndroidResource Include="Resources\drawable\ic_sort_white_24dp.png" />
     <AndroidResource Include="Resources\layout\DialogList.xml" />
+    <AndroidResource Include="Resources\drawable\ic_add_white_24dp.png" />
     <TransformFile Include="Resources\menu\sortDirectionMenu.xml">
       <SubType>Designer</SubType>
     </TransformFile>

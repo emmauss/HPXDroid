@@ -1032,7 +1032,7 @@ namespace HappyPandaXDroid.Scenes
                     Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(mparent, "sort");
                     listDialog.Show(((HPXSceneActivity)mparent.MainView.Context).FragmentManager, "Sort By");
                 }
-                else
+                else if (item.TitleFormatted.ToString() == "Sort In")
                 {
                     Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(mparent, "order");
                     listDialog.Show(((HPXSceneActivity)mparent.MainView.Context).FragmentManager, "Sort In");
@@ -1040,7 +1040,7 @@ namespace HappyPandaXDroid.Scenes
 
                 return true;
 
-            }
+            }            
         }
 
 
@@ -1156,7 +1156,15 @@ namespace HappyPandaXDroid.Scenes
             var layoutParams = new Android.Support.V7.Widget.ActionMenuView.LayoutParams
                 (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             searchView.LayoutParameters = layoutParams;
+            var butitem = toolbar.Menu.FindItem(Resource.Id.addsearch);
+            var button = (ImageButton)butitem.ActionView;
 
+            button.LongClick += Button_LongClick;
+            button.Click += Button_Click;
+
+            button.SetBackgroundColor(new Color(0, 0, 0, 0));
+            button.SetImageResource(Resource.Drawable.ic_add_white);
+            
             var sortitem = toolbar.Menu.FindItem(Resource.Id.sort);
             var sortdirection = toolbar.Menu.FindItem(Resource.Id.sort_direction);
 
@@ -1168,7 +1176,21 @@ namespace HappyPandaXDroid.Scenes
             sortdirection.SetOnMenuItemClickListener(new SortMenuClickListener(this));
             sortitem.SetOnMenuItemClickListener(new SortMenuClickListener(this));
         }
+
+    private void Button_Click(object sender, EventArgs e)
+        {
+            Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(this, "search");
+            listDialog.Show(((HPXSceneActivity)MainView.Context).FragmentManager, "Quick Search");
+
+        }
+
+        private void Button_LongClick(object sender, View.LongClickEventArgs e)
+        {
+            Core.Media.QuickSearch.AddToQuickSearch(Current_Query);
+            Toast.MakeText(Context, "Added to Quick Search", ToastLength.Short);
+        }
     }
 
 
 }
+ 
