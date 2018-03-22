@@ -100,7 +100,9 @@ namespace HappyPandaXDroid.Scenes
                 SetMainLoading(true);
                 if (search != null)
                     search.ActionView.ClearFocus();
-                searchView.SetQuery(current_query, false);
+                searchView.SetQuery(Parse(current_query,true), false);
+                if (toolbar != null)
+                    toolbar.Title = Parse(current_query, true);
                 Refresh();
             }
         }
@@ -1137,7 +1139,7 @@ namespace HappyPandaXDroid.Scenes
             return true;
         }
 
-        public string Parse(string inString, bool IsEscaped = true)
+        public static string Parse(string inString, bool IsEscaped)
         {
             string res = string.Empty;
             if (IsEscaped)
@@ -1159,7 +1161,6 @@ namespace HappyPandaXDroid.Scenes
             Current_Query = Parse(query, false);
             if (search != null)
                 search.ActionView.ClearFocus();
-            searchView.SetQuery(query, false);
 
             return true;
         }
@@ -1176,7 +1177,7 @@ namespace HappyPandaXDroid.Scenes
 
             searchView = (Android.Support.V7.Widget.SearchView)search.ActionView;
             searchView.SetOnQueryTextListener(this);
-            searchView.SetQuery(Current_Query, false);
+            searchView.SetQuery(Parse(Current_Query,true), false);
             var layoutParams = new Android.Support.V7.Widget.ActionMenuView.LayoutParams
                 (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             searchView.LayoutParameters = layoutParams;
@@ -1214,7 +1215,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 Android.Support.V7.App.AlertDialog.Builder alertDialog = new Android.Support.V7.App.AlertDialog.Builder(Context);
                 alertDialog.SetTitle("Add quickserch query");
-                alertDialog.SetMessage("Do you want to add `" + Current_Query + "` to quick search?");
+                alertDialog.SetMessage("Do you want to add `" + Parse(Current_Query,true) + "` to quick search?");
                 alertDialog.SetPositiveButton("Yes", new DialogInterface(this));
                 alertDialog.SetNegativeButton("No", new DialogInterface(this));
                 alertDialog.Show();
@@ -1228,7 +1229,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 if((DialogButtonType)which == DialogButtonType.Positive)
                 {
-                    Core.Media.QuickSearch.AddToQuickSearch(LibraryScene.Current_Query);
+                    Core.Media.QuickSearch.AddToQuickSearch(Parse(LibraryScene.Current_Query,true));
                     Toast.MakeText(LibraryScene.Context, "Added to Quick Search", ToastLength.Short).Show();
                 }
             }

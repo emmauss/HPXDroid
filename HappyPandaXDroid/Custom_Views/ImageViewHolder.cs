@@ -28,7 +28,7 @@ namespace HappyPandaXDroid.Custom_Views
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public CancellationTokenSource ImageCancellationTokenSource = new CancellationTokenSource();
-        public SubsamplingScaleImageView  img;
+        public SubsamplingScaleImageView img;
         string page_path;
         Core.Gallery.Page Page { set; get; }
         public bool Loaded = false;
@@ -62,14 +62,14 @@ namespace HappyPandaXDroid.Custom_Views
 
         private void Img_ImageLoadError(object sender, SubsamplingScaleImageView.ImageLoadErrorEventArgs e)
         {
-            
-                Task.Run(() =>
-                {
-                    if(File.Exists(page_path))
+
+            Task.Run(() =>
+            {
+                if (File.Exists(page_path))
                     File.Delete(page_path);
-                    Refresh();
-                });
-            
+                Refresh();
+            });
+
         }
         protected override void OnDetachedFromWindow()
         {
@@ -93,7 +93,7 @@ namespace HappyPandaXDroid.Custom_Views
         }
         public void Refresh(bool delete = false)
         {
-            
+
             if (Page != null)
             {
                 if (delete)
@@ -108,41 +108,41 @@ namespace HappyPandaXDroid.Custom_Views
 
         public async void OnLoadStart(Core.Gallery.Page page)
         {
-                            
-                this.Page = page;
-                var h = new Handler(Looper.MainLooper);
-            bool exists = true;// await Core.Gallery.IsSourceExist("page", page.id);
-                if (!exists)
-                {
-                    h.Post(() =>
-                    {
-                        try
-                        {
-                            Glide.With(this.Context)
-                                    .Load(Resource.Drawable.image_failed)
-                                    .Into(img);
-                        }
-                        catch (System.Exception ex)
-                        {
 
-                        }
-                    });
-                    return;
-                }
-                Load();
-            
-            
+            this.Page = page;
+            var h = new Handler(Looper.MainLooper);
+            bool exists = true;// await Core.Gallery.IsSourceExist("page", page.id);
+            if (!exists)
+            {
+                h.Post(() =>
+                {
+                    try
+                    {
+                        Glide.With(this.Context)
+                                .Load(Resource.Drawable.image_failed)
+                                .Into(img);
+                    }
+                    catch (System.Exception ex)
+                    {
+
+                    }
+                });
+                return;
+            }
+            Load();
+
+
         }
 
         async void Load()
         {
             var h = new Handler(Looper.MainLooper);
             try
+            {
+                while (!IsCached())
                 {
-                    while (!IsCached())
-                    {
 
-                    bool exists =   await Core.Gallery.IsSourceExist("page", Page.id,ImageCancellationTokenSource.Token);
+                    bool exists = await Core.Gallery.IsSourceExist("page", Page.id, ImageCancellationTokenSource.Token);
                     if (!exists)
                     {
                         h.Post(() =>
@@ -160,66 +160,63 @@ namespace HappyPandaXDroid.Custom_Views
                         });
                         return;
                     }
-                    
+
                     page_path = await Page.Download();
 
-                        if (page_path.Contains("fail"))
-                        {
+                    if (page_path.Contains("fail"))
+                    {
 
-                            if (page_path.Contains("misc"))
+                        if (page_path.Contains("misc"))
+                        {
+                            tries++;
+                            if (tries < 3)
                             {
-                                tries++;
-                                if (tries < 3)
-                                {
-                                    continue;
-                                }
-
-                                return;
-
+                                continue;
                             }
-                            return;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
 
-                   if(string.IsNullOrEmpty(page_path))
-                {
-                    page_path = Core.Gallery.GetCachedPagePath(Page.id);
+                            return;
+
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
+                
+                    page_path = Core.Gallery.GetCachedPagePath(Page.id);
                 h.Post(async () =>
                     {
                         try
                         {
-                            
+
                             img.SetImage(ImageSource.InvokeUri(page_path));
                             img.ImageLoaded += Img_ImageLoaded;
-                            
+
                         }
                         catch (IllegalArgumentException iex)
                         {
                             if (iex.Message.Contains("destroyed"))
                                 return;
                         }
-                        catch(System.Exception ex)
+                        catch (System.Exception ex)
                         {
 
                         }
                         OnLoadEnd();
 
                     });
-                    tries=0;
-                
-                    
-                }
-                catch (System.Exception ex)
-                {
+                tries = 0;
 
-                }
 
-            
+            }
+            catch (System.Exception ex)
+            {
+
+            }
+
+
         }
 
         private void Img_ImageLoaded(object sender, EventArgs e)
@@ -230,7 +227,7 @@ namespace HappyPandaXDroid.Custom_Views
         {
 
             Loaded = true;
-            
+
         }
 
         bool IsCached()
