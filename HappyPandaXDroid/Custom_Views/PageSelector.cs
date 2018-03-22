@@ -35,7 +35,7 @@ namespace HappyPandaXDroid.Custom_Views
             PageInput = pageseletor.FindViewById<EditText>(Resource.Id.setpage);
             FloatingTextLayout = pageseletor
                 .FindViewById<Android.Support.Design.Widget.TextInputLayout>(Resource.Id.textInputLayout1);
-            PageCount = (int)Math.Round((double)mscene.count / 25);
+            PageCount = (int)Math.Ceiling((double)mscene.count / 25);
             FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
             builder.SetView(pageseletor);
             AlertDialog dialog = builder.Create();
