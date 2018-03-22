@@ -477,7 +477,7 @@ namespace HappyPandaXDroid.Core
                 }
 
 
-                public static ServerSettings GetSettings()
+                public static ServerSettings GetSettings(CancellationToken cancellationToken)
                 {
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
@@ -488,7 +488,7 @@ namespace HappyPandaXDroid.Core
                     string response = JSON.API.ParseToString(funct);
                     JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                     response = JSON.API.ParseToString(main);
-                    string responsestring = Net.SendPost(response);
+                    string responsestring = Net.SendPost(response,ref cancellationToken);
                     
                     var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
                     var array = obj.data as Newtonsoft.Json.Linq.JArray;
@@ -504,7 +504,7 @@ namespace HappyPandaXDroid.Core
                     return config;
                 }
 
-                public static bool SetConfig(string key, string value)
+                public static bool SetConfig(string key, string value,CancellationToken cancellationToken)
                 {
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
@@ -517,7 +517,7 @@ namespace HappyPandaXDroid.Core
                     string response = JSON.API.ParseToString(funct);
                     JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                     response = JSON.API.ParseToString(main);
-                    string responsestring = Net.SendPost(response);
+                    string responsestring = Net.SendPost(response,ref  cancellationToken);
                     if (responsestring.Contains("updated"))
                         return true;
                     else
@@ -645,11 +645,11 @@ namespace HappyPandaXDroid.Core
 
             }
 
-            public static string StartCommand(int command_id)
+            public static string StartCommand(int command_id,CancellationToken cancellationToken)
             {
                 logger.Info("Start Command. commandId={0}", command_id);
                 string response = CreateCommand("start_command", command_id);
-                response = Net.SendPost(response);
+                response = Net.SendPost(response,ref cancellationToken);
                 string state = string.Empty;
                 if (GetError(response) == "none")
                 {
@@ -671,11 +671,11 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
-            public static string StopCommand(int command_id)
+            public static string StopCommand(int command_id,CancellationToken cancellationToken)
             {
                 logger.Info("Stop Command. commandId={0}", command_id);
                 string response = CreateCommand("stop_command", command_id);
-                response = Net.SendPost(response);
+                response = Net.SendPost(response,ref cancellationToken);
                 string state = string.Empty;
                 if (GetError(response) == "none")
                 {
@@ -696,11 +696,11 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
-            public static string UndoCommand(int command_id)
+            public static string UndoCommand(int command_id, CancellationToken cancellationToken)
             {
 
                 string response = CreateCommand("undo_command", command_id);
-                response = Net.SendPost(response);
+                response = Net.SendPost(response,ref cancellationToken);
                 string state = string.Empty;
                 if (GetError(response) == "none")
                 {
@@ -756,14 +756,17 @@ namespace HappyPandaXDroid.Core
 
 
 
-            public static string GetCommandValue(int command_id, int item_id, string name, string type, bool return_url)
+            public static string GetCommandValue(int command_id, int item_id, string name, string type, bool return_url
+                ,ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command value. commandId={0}, type = {1}, url = {2}, itemID ={3}",
                     command_id, type, return_url.ToString(), item_id.ToString());
                 string response = CreateCommand("get_command_value", command_id);
-                response = Net.SendPost(response);
+                response = Net.SendPost(response,ref cancellationToken);
                 string filename = string.Empty;
                 Gallery.Profile data = new Gallery.Profile();
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
                 try
                 {
                     if (GetError(response) == "none")
@@ -791,6 +794,8 @@ namespace HappyPandaXDroid.Core
                         url = "http://" + App.Settings.Server_IP + ":"+ App.Settings.WebClient_Port + url;
                         if (return_url)
                             return url;
+                        if (cancellationToken.IsCancellationRequested)
+                            return string.Empty;
                         using (var client = new WebClient())
                         {
                             logger.Info("Downloading URL. URL : {0}\n, Path : {1}", url, filename);
@@ -805,16 +810,18 @@ namespace HappyPandaXDroid.Core
                 {
                     logger.Error(ex, "\n Exception Caught In App.Server.GetCommandValue. Message : " + ex.Message 
                         + System.Environment.NewLine + ex.StackTrace);
+                    if (File.Exists(filename))
+                        File.Delete(filename);
                     return "fail";
                 }
             }
 
-            public static string GetCommandState(int command_id)
+            public static string GetCommandState(int command_id,ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command State. commandId={0}", command_id);
 
                 string command = CreateCommand("get_command_state", command_id);
-                string response = Net.SendPost(command);
+                string response = Net.SendPost(command,ref cancellationToken);
                 string state = string.Empty;
                 string error = GetError(response);
                 if (error == "none")
@@ -832,7 +839,7 @@ namespace HappyPandaXDroid.Core
 
             }
 
-            public static T GetItem<T>(int item_id, string type)
+            public static T GetItem<T>(int item_id, string type,CancellationToken cancellationToken)
             {
                 logger.Info("Get Item. itemId={0}, type = {1}", item_id, type);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -845,7 +852,7 @@ namespace HappyPandaXDroid.Core
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
-                string responsestring = Net.SendPost(response);
+                string responsestring = Net.SendPost(response,ref cancellationToken);
                 
                 var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
@@ -856,7 +863,7 @@ namespace HappyPandaXDroid.Core
 
             }
 
-            public static List<T> GetRelatedItems<T>(int item_id, string related_type = "Page", int limit = -1)
+            public static List<T> GetRelatedItems<T>(int item_id,CancellationToken cancellationToken, string related_type = "Page", int limit = -1)
             {
                 logger.Info("Get Item. itemId={0}, related_type = {1}, limit = {2}", item_id, related_type, limit);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -871,7 +878,7 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
 
-                response = Net.SendPost(response);
+                response = Net.SendPost(response,ref cancellationToken);
                 string countstring = response;
                 var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
@@ -894,7 +901,7 @@ namespace HappyPandaXDroid.Core
                 return list;
             }
 
-            public int GetRelatedCount(int item_id, string related_type = "Page")
+            public int GetRelatedCount(int item_id, CancellationToken cancellationToken,string related_type = "Page")
             {
                 logger.Info("Get Related Count. itemId={0}, related_type = {1},", item_id, related_type);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -908,7 +915,7 @@ namespace HappyPandaXDroid.Core
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
-                string countstring = Net.SendPost(response);
+                string countstring = Net.SendPost(response,ref cancellationToken);
                 var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
                 if (JSON.API.GetData(serverobj.data, 0) is JSON.ServerObjects.IntegerObject countdata)
                     return countdata.count;
@@ -970,5 +977,5 @@ namespace HappyPandaXDroid.Core
                 }
             }
         }
-    }
+    } 
 }

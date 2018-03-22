@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -26,6 +27,7 @@ namespace HappyPandaXDroid.Custom_Views
     public class ImageViewHolder : LinearLayout
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        public CancellationTokenSource ImageCancellationTokenSource = new CancellationTokenSource();
         public SubsamplingScaleImageView  img;
         string page_path;
         Core.Gallery.Page Page { set; get; }
@@ -63,15 +65,28 @@ namespace HappyPandaXDroid.Custom_Views
             
                 Task.Run(() =>
                 {
+                    if(File.Exists(page_path))
                     File.Delete(page_path);
                     Refresh();
                 });
             
         }
+        protected override void OnDetachedFromWindow()
+        {
+            base.OnDetachedFromWindow();
+            ImageCancellationTokenSource.Cancel();
+            Release();
+        }
+
+        protected override void OnAttachedToWindow()
+        {
+            ImageCancellationTokenSource = new CancellationTokenSource();
+            base.OnAttachedToWindow();
+        }
 
         public void Release()
         {
-            
+            ImageCancellationTokenSource.Cancel();
             img.Recycle();
             System.GC.Collect();
             Java.Lang.JavaSystem.Gc();
@@ -127,7 +142,7 @@ namespace HappyPandaXDroid.Custom_Views
                     while (!IsCached())
                     {
 
-                    bool exists =   await Core.Gallery.IsSourceExist("page", Page.id);
+                    bool exists =   await Core.Gallery.IsSourceExist("page", Page.id,ImageCancellationTokenSource.Token);
                     if (!exists)
                     {
                         h.Post(() =>
@@ -232,8 +247,6 @@ namespace HappyPandaXDroid.Custom_Views
 
                 return false;
             }
-
-
         }
     }
 }

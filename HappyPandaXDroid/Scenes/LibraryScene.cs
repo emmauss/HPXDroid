@@ -48,7 +48,7 @@ namespace HappyPandaXDroid.Scenes
         bool IsRefreshing = false;
         PageCheckListener listener;
         bool initialized = false;
-
+        CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
         ProgressView.MaterialProgressBar mProgressView;
         public int count = 0, lastindex = 0, columns;
         RefreshLayout.RefreshLayout mRefreshLayout;
@@ -466,7 +466,7 @@ namespace HappyPandaXDroid.Scenes
         {
             CurrentList.Clear();
             if (Core.Net.Connect())
-                CurrentList.AddRange(await Core.Gallery.GetPage(0));
+                CurrentList.AddRange(await Core.Gallery.GetPage(0,SceneCancellationTokenSource.Token));
             else
             {
                 var h = new Handler(Looper.MainLooper);
@@ -479,7 +479,7 @@ namespace HappyPandaXDroid.Scenes
 
         public async void GetTotalCount()
         {
-            count = await Core.Gallery.GetCount(Current_Query);
+            count = await Core.Gallery.GetCount(Current_Query,SceneCancellationTokenSource.Token);
         }
 
         public async void Refresh()
@@ -495,7 +495,8 @@ namespace HappyPandaXDroid.Scenes
                 {
                     logger.Info("Refreshing HPContent");
                     CurrentList.Clear();
-                    CurrentList.AddRange(await Core.Gallery.GetPage(0, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
+                    CurrentList.AddRange(await Core.Gallery.GetPage(0,SceneCancellationTokenSource.Token, Core.App.Settings.Default_Sort,
+                        Core.App.Settings.Sort_Decending, Current_Query));
                     if (CurrentList == null || CurrentList.Count < 1)
                     {
                         h.Post(() =>
@@ -641,7 +642,7 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             CurrentList.Clear();
-            CurrentList.AddRange(await Core.Gallery.GetPage(page - 1, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
+            CurrentList.AddRange(await Core.Gallery.GetPage(page - 1, SceneCancellationTokenSource.Token,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
             if (CurrentList.Count > 0)
             {
                 h.Post(() =>
@@ -746,7 +747,8 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             int lastin = CurrentList.Count - 1;
-            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage + 1, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
+            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage + 1, SceneCancellationTokenSource.Token,Core.App.Settings.Default_Sort,
+                Core.App.Settings.Sort_Decending, Current_Query));
             if (CurrentList.Count > 0)
             {
                 h.Post(() =>
@@ -797,7 +799,8 @@ namespace HappyPandaXDroid.Scenes
             });
             var oldlist = new List<Core.Gallery.GalleryItem>(CurrentList);
             CurrentList.Clear();
-            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage - 1, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
+            CurrentList.AddRange(await Core.Gallery.GetPage(CurrentPage - 1, SceneCancellationTokenSource.Token,Core.App.Settings.Default_Sort,
+                Core.App.Settings.Sort_Decending, Current_Query));
             int newitems = CurrentList.Count;
             CurrentList.AddRange(oldlist);
             if (newitems > 0)
@@ -817,7 +820,17 @@ namespace HappyPandaXDroid.Scenes
 
         }
 
+        protected override void OnStop()
+        {
+            SceneCancellationTokenSource.Cancel();
+            base.OnStop();
+        }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            SceneCancellationTokenSource = new CancellationTokenSource();
+        }
 
         public class DialogEventListener : Custom_Views.PageSelector.INoticeDialogListener
         {
@@ -889,6 +902,7 @@ namespace HappyPandaXDroid.Scenes
         public class GalleryCardAdapter : EasyAdapter
         {
             private static Logger logger = LogManager.GetCurrentClassLogger();
+            CancellationTokenSource AdapterCancellationTokenSource = new CancellationTokenSource();
             public EventHandler<int> ItemClick;
             public LibraryScene content;
             void OnClick(int position)
@@ -905,6 +919,7 @@ namespace HappyPandaXDroid.Scenes
                 mcontext = context;
                 this.content = content;
                 mdata = content.CurrentList;
+                AdapterCancellationTokenSource = new CancellationTokenSource();
             }
 
             public override int ItemCount
@@ -912,8 +927,18 @@ namespace HappyPandaXDroid.Scenes
                 get { return mdata.Count; }
             }
 
+            public void Clear()
+            {
+
+                mdata.Clear();
+                AdapterCancellationTokenSource.Cancel();
+                NotifyDataSetChanged();
+            }
+
             public void ResetList()
             {
+                AdapterCancellationTokenSource.Cancel();
+                AdapterCancellationTokenSource = new CancellationTokenSource();
                 mdata = content.CurrentList;
                 this.NotifyDataSetChanged();
             }
@@ -929,7 +954,6 @@ namespace HappyPandaXDroid.Scenes
 
             }
 
-
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
                 GalleryCardHolder vh = holder as GalleryCardHolder;
@@ -943,7 +967,6 @@ namespace HappyPandaXDroid.Scenes
                     logger.Error(ex, "\n Exception Caught In HPContent.ListViewAdapter.OnBindViewHolder.");
 
                 }
-                //vh.gcard.SetOnClickListener(new GalleryCardClickListener());
             }
 
 
@@ -1039,7 +1062,6 @@ namespace HappyPandaXDroid.Scenes
                 }
 
                 return true;
-
             }            
         }
 
@@ -1079,6 +1101,8 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnDestroy()
         {
+            adapter?.Clear();
+            adapter = null;
             MainView = null;
             fam = null;
             appBarLayout = null;
@@ -1163,11 +1187,11 @@ namespace HappyPandaXDroid.Scenes
             button.Click += Button_Click;
 
             button.SetBackgroundColor(new Color(0, 0, 0, 0));
-            button.SetImageResource(Resource.Drawable.ic_add_white);
+            button.SetImageResource(Resource.Drawable.ic_add_white_24dp);
+            button.LayoutParameters = layoutParams;
             
             var sortitem = toolbar.Menu.FindItem(Resource.Id.sort);
             var sortdirection = toolbar.Menu.FindItem(Resource.Id.sort_direction);
-
             sortdirection.SetIcon(Resource.Drawable.ic_filter_list_white_24dp);
             sortitem.SetIcon(Resource.Drawable.ic_sort_white_24dp);    
 
@@ -1186,8 +1210,33 @@ namespace HappyPandaXDroid.Scenes
 
         private void Button_LongClick(object sender, View.LongClickEventArgs e)
         {
-            Core.Media.QuickSearch.AddToQuickSearch(Current_Query);
-            Toast.MakeText(Context, "Added to Quick Search", ToastLength.Short);
+            if (!string.IsNullOrEmpty(current_query))
+            {
+                Android.Support.V7.App.AlertDialog.Builder alertDialog = new Android.Support.V7.App.AlertDialog.Builder(Context);
+                alertDialog.SetTitle("Add quickserch query");
+                alertDialog.SetMessage("Do you want to add `" + Current_Query + "` to quick search?");
+                alertDialog.SetPositiveButton("Yes", new DialogInterface(this));
+                alertDialog.SetNegativeButton("No", new DialogInterface(this));
+                alertDialog.Show();
+            }
+        }
+
+        class DialogInterface : Java.Lang.Object, IDialogInterfaceOnClickListener
+        {
+            LibraryScene LibraryScene;
+            public void OnClick(IDialogInterface dialog, int which)
+            {
+                if((DialogButtonType)which == DialogButtonType.Positive)
+                {
+                    Core.Media.QuickSearch.AddToQuickSearch(LibraryScene.Current_Query);
+                    Toast.MakeText(LibraryScene.Context, "Added to Quick Search", ToastLength.Short).Show();
+                }
+            }
+
+            public DialogInterface(LibraryScene libraryScene)
+            {
+                LibraryScene = libraryScene;
+            }
         }
     }
 

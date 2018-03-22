@@ -60,6 +60,9 @@
     <item name="android:windowNoTitle">true</item>
     <item name="android:windowFullscreen">true</item>
   </style>
-
+  
+<style name="PopupMenuStyle" parent="Theme.AppCompat.Light">
+     <item name="android:background">@android:color/black</item>
+</style>
 
 </resources>

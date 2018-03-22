@@ -30,6 +30,7 @@ namespace HappyPandaXDroid.Scenes
             language, pages, time_posted, no_tags, last_read_page;
         public LinearLayout TagLayout;
         CardView ActionCard, ContinueCard;
+        CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
         public string thumb_path, gallerydata;
         public ImageView ThumbView;
         FrameLayout errorFrame;
@@ -103,7 +104,7 @@ namespace HappyPandaXDroid.Scenes
             if (Core.Net.Connect())
             {
                 if(thumb_path==string.Empty)
-                thumb_path = Core.Gallery.GetThumb(gallery).Result;
+                thumb_path = Core.Gallery.GetThumb(gallery,SceneCancellationTokenSource.Token).Result;
 
                 var h = new Handler(Looper.MainLooper);
                 h.Post(() =>
@@ -129,7 +130,7 @@ namespace HappyPandaXDroid.Scenes
                     }
                 });
                 
-                gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery");                
+                gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery",SceneCancellationTokenSource.Token);                
                 ParseData();
                 if (!IsDestroyed)
                     h.Post(() =>
@@ -332,9 +333,9 @@ namespace HappyPandaXDroid.Scenes
             public bool OnMenuItemClick(IMenuItem item)
             {
                 if (parent.isDownloading)
-                    Toast.MakeText(parent.Context, "Started Precaching gallery", ToastLength.Short);
+                    Toast.MakeText(parent.Context, "Started Precaching gallery", ToastLength.Short).Show();
                 else
-                    Toast.MakeText(parent.Context, "Stopped Precaching gallery", ToastLength.Short);
+                    Toast.MakeText(parent.Context, "Stopped Precaching gallery", ToastLength.Short).Show();
                 ThreadStart threadStart = new ThreadStart(StartDownload);
                 Thread thread = new Thread(threadStart);
                 thread.Start();
@@ -346,10 +347,11 @@ namespace HappyPandaXDroid.Scenes
                 Thread.Sleep(100);
                 parent.isDownloading = !parent.isDownloading;
                 var h = new Handler(Looper.MainLooper);
+                if(parent.pagelist!=null)
                 Core.Gallery.QueueDownloads(parent.pagelist);
                 h.Post(() =>
                 {
-                        Toast.MakeText(parent.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short);
+                        Toast.MakeText(parent.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short).Show();
                 });
             }
 
@@ -471,7 +473,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 var mdata = new List<Core.Gallery.Page>();
                
-                    pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id);
+                    pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id,SceneCancellationTokenSource.Token);
                 h.Post(() =>
                 {
                     pages.Text = pagelist.Count.ToString() + " Pages";
@@ -498,13 +500,7 @@ namespace HappyPandaXDroid.Scenes
         {
             base.OnStop();
             Glide.With(Context).Clear(ThumbView);
-            /*if (pagelist != null)
-            {
-                cachedlist = new List<Core.Gallery.Page>(pagelist);
-                pagelist.Clear();
-            }
-            var lists = SplitPageList();
-            adapter.SetList(lists);*/
+            SceneCancellationTokenSource.Cancel();
         }
 
 

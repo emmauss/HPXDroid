@@ -211,6 +211,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     previews = list;
                     adapter.SetList(list);
+
                 adapter.NotifyDataSetChanged();
                 }
 

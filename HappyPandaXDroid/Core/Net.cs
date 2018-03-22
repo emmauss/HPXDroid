@@ -214,7 +214,7 @@ namespace HappyPandaXDroid.Core
         }
         public static object locker = new object();
 
-        public  static string SendPost(string request)
+        public  static string SendPost(string request,ref CancellationToken cancellationToken)
         {
             logger.Info("Sending Request.\n Request : \n {0} \n", request);
             string response = "fail",pay = string.Empty;
@@ -222,8 +222,10 @@ namespace HappyPandaXDroid.Core
             lock (locker)
             {
                 Client listener = GetActiveConnection();
-                listener.client.GetStream().ReadTimeout = 30000;
-                listener.client.GetStream().WriteTimeout = 30000;
+                listener.client.GetStream().ReadTimeout = 10000;
+                listener.client.GetStream().WriteTimeout = 10000;
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
                 try
                 {
                     if (App.Server.Info.session == null || App.Server.Info.session == string.Empty || client==null | !client.client.Connected)
@@ -253,7 +255,7 @@ namespace HappyPandaXDroid.Core
             {
                 Disconnect();
                 Connect();
-                return SendPost(request);
+                return SendPost(request,ref cancellationToken);
             }
             else
             return response;

@@ -31,6 +31,7 @@ namespace HappyPandaXDroid.Custom_Views
     public class GalleryCard : LinearLayout
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        CancellationTokenSource CardCancellationTokenSource = new CancellationTokenSource();
         View galleryCard;
         ImageView img;
         int tries = 0;
@@ -39,6 +40,7 @@ namespace HappyPandaXDroid.Custom_Views
         TextView text2;
         Core.Gallery.GalleryItem gallery;
         string thumb_path;
+        bool Cancelled = false;
 
         public Core.Gallery.GalleryItem Gallery
         {
@@ -121,8 +123,6 @@ namespace HappyPandaXDroid.Custom_Views
             Name = FindViewById<TextView>(Resource.Id.textViewholder);
             Artist = FindViewById<TextView>(Resource.Id.textViewholder2);
             img = FindViewById<ImageView>(Resource.Id.imageView);
-
-
             Clickable = true;
         }
 
@@ -141,12 +141,26 @@ namespace HappyPandaXDroid.Custom_Views
             thumb_path = string.Empty;
         }
 
+        protected override void OnAttachedToWindow()
+        {
+            base.OnAttachedToWindow();
+            CardCancellationTokenSource.Cancel();
+            CardCancellationTokenSource = new CancellationTokenSource();
+
+            Refresh();
+        }
+        
+
+        protected override void OnDetachedFromWindow()
+        {
+            CardCancellationTokenSource.Cancel();
+            if (!loaded)
+                Cancelled = true;
+            base.OnDetachedFromWindow();
+        }
+
         protected override void OnWindowVisibilityChanged([GeneratedEnum] ViewStates visibility)
         {
-            if(visibility == ViewStates.Gone)
-            {
-
-            }
             base.OnWindowVisibilityChanged(visibility);
         }
 
@@ -169,7 +183,7 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 try
                 {
-                    exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id);
+                    exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id,CardCancellationTokenSource.Token);
                 }catch(Exception ex)
                 {
                     exists = true;
@@ -194,7 +208,7 @@ namespace HappyPandaXDroid.Custom_Views
                 return;
             }
 
-            if (tries > 2)
+            if (tries > 1)
             {
                 tries = 0;
                 h.Post(() =>
@@ -227,13 +241,11 @@ namespace HappyPandaXDroid.Custom_Views
                             Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
 
                     });
-                    thumb_path = await gallery.Download();
+                    thumb_path = await gallery.Download(CardCancellationTokenSource.Token);
 
                 }
             });
-                LoadThumb();
-           
-           
+                LoadThumb(); 
 
             logger.Info("Refresh {0} Successful", Gallery.id);
         }
@@ -277,7 +289,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     try
                     {
-                        exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id);
+                        exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id,CardCancellationTokenSource.Token);
                     }
                     catch (Exception ex)
                     {

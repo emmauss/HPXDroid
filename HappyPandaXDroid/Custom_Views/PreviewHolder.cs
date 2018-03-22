@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Android.App;
@@ -26,6 +27,7 @@ namespace HappyPandaXDroid.Custom_Views
         public ImageView img;
         public TextView txt;
         public int position;
+        CancellationTokenSource PreviewCancellationTokenSource = new CancellationTokenSource();
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool loaded = false;
         public Core.Gallery.Page page;
@@ -40,7 +42,12 @@ namespace HappyPandaXDroid.Custom_Views
             txt = preview.FindViewById<TextView>(Resource.Id.title);
             itemView.Click += (sender, e) => clickListener(new PreviewAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
             itemView.LongClick += (sender, e) => longClickListener(new PreviewAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
+            itemView.ViewDetachedFromWindow += ItemView_ViewDetachedFromWindow;
+        }
 
+        private void ItemView_ViewDetachedFromWindow(object sender, View.ViewDetachedFromWindowEventArgs e)
+        {
+            PreviewCancellationTokenSource.Cancel();
         }
 
         bool IsCached
@@ -67,6 +74,7 @@ namespace HappyPandaXDroid.Custom_Views
         public void Recycle()
         {
             loaded = false;
+            PreviewCancellationTokenSource.Cancel();
             Glide.With(preview.Context).Clear(img);
         }
 
@@ -79,6 +87,7 @@ namespace HappyPandaXDroid.Custom_Views
         public async Task<bool> LoadPreview(Core.Gallery.Page page)
         {
             this.page = page;
+            PreviewCancellationTokenSource = new CancellationTokenSource();
             var windo = preview.Context.GetSystemService(Context.WindowService);
             var window = windo.JavaCast<IWindowManager>();
             var display = window.DefaultDisplay;
@@ -111,7 +120,7 @@ namespace HappyPandaXDroid.Custom_Views
                     return true;
                 }
                
-                bool exists = await Core.Gallery.IsSourceExist("page", page.id);
+                bool exists = await Core.Gallery.IsSourceExist("page", page.id,PreviewCancellationTokenSource.Token);
                 if (!exists)
                 {
 
@@ -151,7 +160,7 @@ namespace HappyPandaXDroid.Custom_Views
 
                 while (!IsCached)
                 {
-                    exists = await Core.Gallery.IsSourceExist("page", page.id);
+                    exists = await Core.Gallery.IsSourceExist("page", page.id,PreviewCancellationTokenSource.Token);
                     if (!exists)
                     {
                         h.Post(() =>

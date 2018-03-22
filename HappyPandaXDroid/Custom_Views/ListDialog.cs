@@ -27,8 +27,10 @@ namespace HappyPandaXDroid.Custom_Views
             LayoutInflater inflater = mscene.Activity.LayoutInflater;
             View listDialog = inflater.Inflate(Resource.Layout.DialogList, null);
             MainList = listDialog.FindViewById<ListView>(Resource.Id.list);
-            //ImageButton button = listDialog.FindViewById<ImageButton>(Resource.Id.deletebutton);
-           // button.Visibility = ViewStates.Invisible;
+            builder.SetView(listDialog);
+            ImageButton button = listDialog.FindViewById<ImageButton>(Resource.Id.deletebutton);
+            button.SetImageResource(Resource.Drawable.v_delete_x24);
+            button.Visibility = ViewStates.Invisible;
             MainList.LongClick += MainList_LongClick;
             List<string> list = new List<string>();
             switch (tag)
@@ -43,10 +45,10 @@ namespace HappyPandaXDroid.Custom_Views
                     list = new List<string>(new string[] { "Ascending", "Descending" });
                     break;
                 case "search":
-                    //button.Visibility = ViewStates.Visible;
+                    button.Visibility = ViewStates.Visible;
                     var searches = Core.Media.QuickSearch.Searches;
                     list = searches;
-                    //button.Click += Button_Click;
+                    button.Click += Button_Click;
                     break;
             }
             items = list;
@@ -89,7 +91,7 @@ namespace HappyPandaXDroid.Custom_Views
             base.OnStart();
             if (items.Count == 0)
             {
-                Toast.MakeText(mscene.Context, "No list to display", ToastLength.Short);
+                Toast.MakeText(mscene.Context, "No list to display", ToastLength.Short).Show();
                 Dismiss();
             }
         }
@@ -115,7 +117,7 @@ namespace HappyPandaXDroid.Custom_Views
                     mscene.Refresh();
                     break;
                 case "search":
-                    if (MainList.ChoiceMode == ChoiceMode.Single)
+                    if (MainList.ChoiceMode != ChoiceMode.Multiple)
                     {
                         mscene.Current_Query = item;
                         Dismiss();

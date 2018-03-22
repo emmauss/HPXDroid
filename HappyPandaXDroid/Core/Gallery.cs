@@ -22,6 +22,7 @@ namespace HappyPandaXDroid.Core
     public class Gallery
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        public static CancellationTokenSource DownloadCancelationToken = new CancellationTokenSource();
         public static List<Page> DownloadList = new List<Page>();
         private static List<Page> CurrentlyDownloading = new List<Page>();
         private static bool IsDownloading = false;
@@ -123,9 +124,9 @@ namespace HappyPandaXDroid.Core
 
             public TagList tags;
 
-            public async Task<string> Download(string size = "medium")
+            public async Task<string> Download(CancellationToken cancellationToken,string size = "medium")
             {
-                return await GetImage(this.id, "gallery", false, size);
+                return await GetImage(this.id, "gallery", false, cancellationToken,size);
             }
 
         }
@@ -151,12 +152,12 @@ namespace HappyPandaXDroid.Core
 
             public async Task<string> Download(string size = "original")
             {
-                return await GetImage(this.id,"page", false, size);
+                return await GetImage(this.id,"page", false, DownloadCancelationToken.Token,size);
             }
 
             public async void DownloadFromQueue()
             {
-                await GetImage(this.id, "page",false, "original");
+                await GetImage(this.id, "page",false, DownloadCancelationToken.Token,"original");
                 RemoveFromQueue();
             }
 
@@ -226,7 +227,7 @@ namespace HappyPandaXDroid.Core
             public string name;
         }
 
-        public static async Task<bool> IsSourceExist(string type, int id)
+        public static async Task<bool> IsSourceExist(string type, int id,CancellationToken cancellationToken)
         {
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
@@ -238,7 +239,7 @@ namespace HappyPandaXDroid.Core
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
-            string reply = Net.SendPost(response);
+            string reply = Net.SendPost(response,ref cancellationToken);
             if (reply.Contains("exist") && reply.Contains("true"))
                 return true;
             else
@@ -253,7 +254,8 @@ namespace HappyPandaXDroid.Core
                     if (!IsPageCached(page, "original"))
                     DownloadList.Add(page);
                 }
-            Services.DownloadService.DownloadingService.StartService(null);
+            Thread thread = new Thread(new ThreadStart(StartQueue));
+            thread.Start();
         }
 
         public static void StartQueue()
@@ -282,7 +284,7 @@ namespace HappyPandaXDroid.Core
                     Thread.Sleep(1000);
                 }
             IsDownloading = false;
-            Services.DownloadService.DownloadingService.StopSelf();
+
         }
 
         public static void StopQueue()
@@ -290,7 +292,7 @@ namespace HappyPandaXDroid.Core
             IsDownloading = false;
         }
 
-        public static async void InitiateImageGeneration(int[] ids, string type,string size)
+        public static async void InitiateImageGeneration(int[] ids, string type,string size,CancellationToken cancellationToken)
         {
             await Task.Delay(10);
             try
@@ -308,7 +310,7 @@ namespace HappyPandaXDroid.Core
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
-                string reply = Net.SendPost(response);
+                string reply = Net.SendPost(response,ref cancellationToken);
             }
             catch (Exception ex)
             {
@@ -316,7 +318,7 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        private static async Task<string> GetImage(int id, string type, bool return_url, string size = "medium")
+        private static async Task<string> GetImage(int id, string type, bool return_url, CancellationToken cancellationToken, string size = "medium")
         {
             try
             {
@@ -333,11 +335,17 @@ namespace HappyPandaXDroid.Core
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
-                string reply = Net.SendPost(response);
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+                string reply = Net.SendPost(response,ref cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
                 int command_id = App.Server.GetCommandId(id, reply);
                 while (true)
                 {
-                    string state = App.Server.GetCommandState(command_id);
+                    string state = App.Server.GetCommandState(command_id,ref cancellationToken);
+                    if (cancellationToken.IsCancellationRequested)
+                        return string.Empty;
                     if (state.Contains("error"))
                         return "fail: server error";
                     if (state.Contains("failed"))
@@ -358,8 +366,10 @@ namespace HappyPandaXDroid.Core
                         break;
                 }
                 string name = App.Server.HashGenerator(size, type, id);
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
                 //get value
-                string path = App.Server.GetCommandValue(command_id, id, name, type, return_url);
+                string path = App.Server.GetCommandValue(command_id, id, name, type, return_url,ref cancellationToken);
                 return path;
 
             }
@@ -414,7 +424,7 @@ namespace HappyPandaXDroid.Core
         }
 
 
-        public async static Task<List<GalleryItem>> GetPage(int page, Sort sortCriteria = (Sort)1, bool sortDec = false,
+        public async static Task<List<GalleryItem>> GetPage(int page, CancellationToken cancellationToken,Sort sortCriteria = (Sort)1, bool sortDec = false,
             string searchQuery =  "", int limit = 50)
         {
             string sort = sortCriteria.ToString().ToLower();
@@ -432,10 +442,15 @@ namespace HappyPandaXDroid.Core
             JSON.API.PushKey(ref funct, "page", "<int>" + page);
            JSON.API.PushKey(ref funct, "sort_by",  (sort == "null"? "<int>" : "") + sort);
             JSON.API.PushKey(ref funct, "sort_desc", "<bool>" + sortDec.ToString().ToLower());
+            
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
-            string countstring = Net.SendPost(response);
+            if (cancellationToken.IsCancellationRequested)
+                return null;
+            string countstring = Net.SendPost(response,ref cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+                return null;
             var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
             if (obj == null)
             {
@@ -443,6 +458,8 @@ namespace HappyPandaXDroid.Core
             }
             var array = obj.data as Newtonsoft.Json.Linq.JArray;
             List<GalleryItem> list = new List<GalleryItem>();
+            if (cancellationToken.IsCancellationRequested)
+                return null;
             try
             {
                 if (array != null & array.Count > 0)
@@ -466,15 +483,17 @@ namespace HappyPandaXDroid.Core
                 {
                     ids[i] = list[i].id;
                 }
+                if (cancellationToken.IsCancellationRequested)
+                    return null;
                 Task.Run(() =>
                 {
-                    InitiateImageGeneration(ids, "gallery", "medium");
+                    InitiateImageGeneration(ids, "gallery", "medium",cancellationToken);
                 });
             }
             return list;
         }
         
-        public static async Task<int> GetCount(string query)
+        public static async Task<int> GetCount(string query,CancellationToken cancellationToken)
         {
 
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -488,7 +507,11 @@ namespace HappyPandaXDroid.Core
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
-            string countstring = Net.SendPost(response);
+            if (cancellationToken.IsCancellationRequested)
+                return 0;
+            string countstring = Net.SendPost(response,ref cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+                return 0;
             var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
             var dataobj = JSON.API.GetData(serverobj.data, 0);
             var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])["count"]
@@ -496,7 +519,7 @@ namespace HappyPandaXDroid.Core
             return int.Parse(data);
         }
 
-        public static async Task<TagList> GetTags(int item_id, string type)
+        public static async Task<TagList> GetTags(int item_id, string type,CancellationToken cancellationToken)
         {
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
@@ -508,7 +531,11 @@ namespace HappyPandaXDroid.Core
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
-            string responsestring = Net.SendPost(response);
+            if (cancellationToken.IsCancellationRequested)
+                return null;
+            string responsestring = Net.SendPost(response,ref cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+                return null;
             var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
             var array = obj.data as Newtonsoft.Json.Linq.JArray;
             var taglist = new TagList();
@@ -521,7 +548,7 @@ namespace HappyPandaXDroid.Core
             return taglist;
         }
 
-        public async static Task<string> GetThumb(GalleryItem gallery)
+        public async static Task<string> GetThumb(GalleryItem gallery,CancellationToken cancellationToken)
         {
             int tries = 0;
             string thumb_path = string.Empty;
@@ -531,12 +558,15 @@ namespace HappyPandaXDroid.Core
                     break;
                 
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                        return null;
                     await Task.Run(async () =>
                     {
-                        thumb_path = await gallery.Download();
+                        thumb_path = await gallery.Download(cancellationToken);
                     });
-
-                    gallery = Core.App.Server.GetItem<Core.Gallery.GalleryItem>(gallery.id, "Gallery");
+                    if (cancellationToken.IsCancellationRequested)
+                        return null;
+                    gallery = Core.App.Server.GetItem<Core.Gallery.GalleryItem>(gallery.id, "Gallery",cancellationToken);
                 }
                 tries++;
             }

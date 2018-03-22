@@ -8,6 +8,7 @@ using NLog;
 using NLog.Config;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -58,7 +59,7 @@ namespace HappyPandaXDroid
                 // Create your application here
                 if (Core.Net.Connected)
                 {
-                    var set = Core.App.Settings.Server.GetSettings();
+                    var set = Core.App.Settings.Server.GetSettings(CancellationToken.None);
                     set.Parse();
                     watch.Start();
                 }
@@ -161,7 +162,7 @@ namespace HappyPandaXDroid
                         {
                             v = "'" + v + "'";
                         }
-                        var bol = Core.App.Settings.Server.SetConfig( key, v);
+                        var bol = Core.App.Settings.Server.SetConfig( key, v,CancellationToken.None);
                     }
                 }
                 else if (pref is TwoStatePreference check)
@@ -175,7 +176,7 @@ namespace HappyPandaXDroid
                         watch.Stop();
                         bool c = check.Checked;
                         string v = c.ToString().ToLower();
-                        var bol = Core.App.Settings.Server.SetConfig(key, v);
+                        var bol = Core.App.Settings.Server.SetConfig(key, v,CancellationToken.None);
                     }
 
                 }

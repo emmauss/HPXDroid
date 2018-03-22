@@ -41,6 +41,7 @@ namespace HappyPandaXDroid
         bool overlayVisible = true;
         public  ImageAdapter adapter;
         public RequestOptions options;
+        CancellationTokenSource ViewerCancellationTokenSource = new CancellationTokenSource();
         LinearLayout ScreenFilter;
         FrameLayout lay;
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -243,6 +244,7 @@ namespace HappyPandaXDroid
         {
             adapter.PageList.Clear();
             adapter.NotifyDataSetChanged();
+            ViewerCancellationTokenSource.Cancel();
             adapter = null;
             galleryPager.ClearOnScrollListeners();
             galleryPager.ClearOnPageChangedListeners();
@@ -418,7 +420,7 @@ namespace HappyPandaXDroid
             {
                 ids[i] = pages[i].id;
             }
-            Core.Gallery.InitiateImageGeneration(ids, "page","original");
+            Core.Gallery.InitiateImageGeneration(ids, "page","original",ViewerCancellationTokenSource.Token);
             
         }
 
@@ -577,6 +579,7 @@ namespace HappyPandaXDroid
             public List<Core.Gallery.Page> PageList;
             private static Logger logger = LogManager.GetCurrentClassLogger();
             Context context;
+            CancellationTokenSource AdapterCancellationTokenSource = new CancellationTokenSource();
             IOnRecyclerViewItemClickListener mOnItemClickListener;
             public ImageAdapter(List<Core.Gallery.Page> imagelist, Context context)
             {
@@ -654,7 +657,7 @@ namespace HappyPandaXDroid
 
                 return this;
             }
-
+            
             public ImageAdapter Insert(int position, Core.Gallery.Page item)
             {
                 PageList.Insert(position,item);
