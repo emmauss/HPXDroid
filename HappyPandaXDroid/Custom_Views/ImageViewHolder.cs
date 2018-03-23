@@ -88,8 +88,6 @@ namespace HappyPandaXDroid.Custom_Views
         {
             ImageCancellationTokenSource.Cancel();
             img.Recycle();
-            System.GC.Collect();
-            Java.Lang.JavaSystem.Gc();
         }
         public void Refresh(bool delete = false)
         {
@@ -185,14 +183,13 @@ namespace HappyPandaXDroid.Custom_Views
                     }
                 }
                 
-                    page_path = Core.Gallery.GetCachedPagePath(Page.id);
+                page_path = Core.Gallery.GetCachedPagePath(Page.id);
                 h.Post(async () =>
                     {
                         try
                         {
 
                             img.SetImage(ImageSource.InvokeUri(page_path));
-                            img.ImageLoaded += Img_ImageLoaded;
 
                         }
                         catch (IllegalArgumentException iex)

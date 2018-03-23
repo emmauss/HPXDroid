@@ -169,6 +169,7 @@ namespace HappyPandaXDroid.Core
             public void RemoveFromQueue()
             {
                 DownloadList.Remove(this);
+                CurrentlyDownloading.Remove(this);
             }
         }
 
@@ -268,7 +269,7 @@ namespace HappyPandaXDroid.Core
                 {
                     if (!IsDownloading)
                         break;
-                    while (DownloadList.Count >= 3)
+                    while (CurrentlyDownloading.Count >= 3)
                     {
                         Thread.Sleep(1000);
                         if (!IsDownloading)
@@ -285,6 +286,7 @@ namespace HappyPandaXDroid.Core
                 }
             IsDownloading = false;
 
+            Toast.MakeText(Application.Context, "Precaching completed or stopped", ToastLength.Short).Show();
         }
 
         public static void StopQueue()

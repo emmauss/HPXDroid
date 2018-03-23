@@ -58,6 +58,7 @@ namespace HappyPandaXDroid.Scenes
             MainView = p0.Inflate(Resource.Layout.Gallery_Details_Layout, p1, false);
             InitializeViews();
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(gallerydata);
+            toolbar.Title = gallery.titles[0].name;
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
             if (thumb_path != string.Empty)
             {
@@ -331,11 +332,7 @@ namespace HappyPandaXDroid.Scenes
             }
 
             public bool OnMenuItemClick(IMenuItem item)
-            {
-                if (parent.isDownloading)
-                    Toast.MakeText(parent.Context, "Started Precaching gallery", ToastLength.Short).Show();
-                else
-                    Toast.MakeText(parent.Context, "Stopped Precaching gallery", ToastLength.Short).Show();
+            {              
                 ThreadStart threadStart = new ThreadStart(StartDownload);
                 Thread thread = new Thread(threadStart);
                 thread.Start();

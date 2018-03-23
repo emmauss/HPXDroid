@@ -222,8 +222,8 @@ namespace HappyPandaXDroid.Core
             lock (locker)
             {
                 Client listener = GetActiveConnection();
-                listener.client.GetStream().ReadTimeout = 10000;
-                listener.client.GetStream().WriteTimeout = 10000;
+                listener.client.GetStream().ReadTimeout = 20000;
+                listener.client.GetStream().WriteTimeout = 20000;
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
                 try

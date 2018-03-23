@@ -178,7 +178,7 @@ namespace HappyPandaXDroid.Custom_Views
                 if (gallery.artists != null)
                     Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
             });
-
+            LoadThumb();
             await Task.Run( async () =>
             {
                 try
@@ -195,9 +195,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     try
                     {
-                        Name.Text = Gallery.titles[0].name;
-                        if(gallery.artists!=null)
-                        Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
+                        
                         img.SetImageResource(Resource.Drawable.image_failed);
                     }
                     catch (Exception ex)
@@ -215,9 +213,6 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     try
                     {
-                        Name.Text = Gallery.titles[0].name;
-                        if (gallery.artists != null)
-                            Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
                         img.SetImageResource(Resource.Drawable.image_failed);
                     }
                     catch (Exception ex)
@@ -240,12 +235,9 @@ namespace HappyPandaXDroid.Custom_Views
                         if (gallery.artists != null)
                             Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
 
-                    });
-                    thumb_path = await gallery.Download(CardCancellationTokenSource.Token);
-
+                    });  
                 }
             });
-                LoadThumb(); 
 
             logger.Info("Refresh {0} Successful", Gallery.id);
         }
@@ -257,7 +249,7 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 try
                 {
-                    
+                    thumb_path = Core.Gallery.GetCachedPagePath(gallery.id, "medium", "thumb");
                     h.Post(() =>
                     {
                         try
@@ -284,6 +276,7 @@ namespace HappyPandaXDroid.Custom_Views
             }
 
             else {
+
                 bool exists = false;
                 await Task.Run(async () =>
                 {
@@ -312,8 +305,10 @@ namespace HappyPandaXDroid.Custom_Views
                     });
                     return;
                 }
-
-                Refresh();
+                else
+                {
+                    thumb_path = await gallery.Download(CardCancellationTokenSource.Token);
+                }
 
             }
         }
