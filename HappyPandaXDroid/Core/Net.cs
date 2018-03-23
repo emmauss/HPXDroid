@@ -25,7 +25,8 @@ namespace HappyPandaXDroid.Core
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public static bool Connected = false;
-        
+
+        static List<Client> ConnectedClients = new List<Client>();
 
         public static bool IsServerReachable()
         {
@@ -56,34 +57,25 @@ namespace HappyPandaXDroid.Core
             {
                 client = new TcpClient(App.Settings.Server_IP, int.Parse(App.Settings.Server_Port));
                 string response = Connect(this);
+                if (response != "fail")
+                    initialise = true;
             }
         }
-
-        public static void Disconnect()
-        {
-            if (client != null)
-                if (client.client.Connected)
-                {
-                    client.client.Client.Disconnect(false);
-                    client.client.Dispose();
-                    client = null;
-                }
-        }
-
+        
         public static bool Connect()
         {
-            
+            Client client = null;
             try
             {
-                if(client!=null)
-                if (client.client.Connected)
-                {
+                if (ConnectedClients.Exists((x) => x?.client?.Connected == true))
                     return true;
-                }
+                client = new Client();
                 client = null;
                 logger.Info("Connecting to server ...");
                 client = new Client();
                 Connected = client.client.Connected;
+                if(Connected)
+                ConnectedClients.Add(client);
                 return Connected;
             }catch(SocketException sex)
             {
@@ -103,12 +95,10 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        static Client client;
-
         static string Connect(Client cli)
         {
             var listener = cli.client;
-            if (App.Server.Info.session == null || App.Server.Info.session == string.Empty)
+            if (string.IsNullOrEmpty(App.Server.Info.session))
             {
                 try
                 {
@@ -121,7 +111,7 @@ namespace HappyPandaXDroid.Core
                     App.Server.Info = JSON.Serializer.SimpleSerializer.Deserialize<App.Server.ServerInfo>(pay);
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     JSON.API.PushKey(ref main, "name", "test");
-                    JSON.API.PushKey(ref main, "session", "");
+                    JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                     JSON.API.PushKey(ref main, "data", "{}");
                     string request = JSON.API.ParseToString(main);
                     Send(Encoding.UTF8.GetBytes(request), stream);
@@ -151,9 +141,9 @@ namespace HappyPandaXDroid.Core
                 catch (SocketException ex)
                 {
                     logger.Error(ex, "\n Exception Caught In Net.Connect.");
-                    client.client.Client.Disconnect(false);
-                    client.client.Dispose();
-                    client = null;
+                    cli.client.Client.Disconnect(false);
+                    cli.client.Dispose();
+                    cli = null;
                     return "fail";
                 }
             }
@@ -202,35 +192,56 @@ namespace HappyPandaXDroid.Core
             return payload;
         }
 
-        static Client GetActiveConnection()
+        static void CreateConnections()
         {
-            if (client == null)
+            while (ConnectedClients.Count < 5)
             {
-                client = new Client();
+                var newclient = new Client();
+                if (!newclient.client.Connected)
+                    return;
+                else if(newclient.initialise)
+                    ConnectedClients.Add(newclient);
             }
+        }
 
-            return client;                
+        static Client GetAvailableConnection()
+        {
+            if (ConnectedClients.Count == 0)
+                CreateConnections();
+            for(int i = 0; i < ConnectedClients.Count; i++)
+            {
+                if(!ConnectedClients[i].client.Connected)
+                {
+                    ConnectedClients.Remove(ConnectedClients[i]);
+                    i--;
+                    continue;
+                }
+                if (!ConnectedClients[i].InUse)
+                    return ConnectedClients[i];
+            }
+            Thread.Sleep(2000);
+            CreateConnections();
+            return GetAvailableConnection();
             
         }
-        public static object locker = new object();
 
         public  static string SendPost(string request,ref CancellationToken cancellationToken)
         {
             logger.Info("Sending Request.\n Request : \n {0} \n", request);
             string response = "fail",pay = string.Empty;
             var payload = new List<byte>();
-            lock (locker)
-            {
-                Client listener = GetActiveConnection();
+                Client listener = GetAvailableConnection();
+            
                 listener.client.GetStream().ReadTimeout = 20000;
                 listener.client.GetStream().WriteTimeout = 20000;
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
-                try
+            listener.InUse = true;
+            try
                 {
-                    if (App.Server.Info.session == null || App.Server.Info.session == string.Empty || client==null | !client.client.Connected)
+                    if (string.IsNullOrEmpty(App.Server.Info.session))
                         Connect();
-                    if (App.Server.Info.session != null && App.Server.Info.session != string.Empty && client!=null & client.client.Connected)
+                    if (!string.IsNullOrEmpty(App.Server.Info.session))
                     {
                         var stream = listener.client.GetStream();
                         Send(Encoding.UTF8.GetBytes(request), stream);
@@ -243,17 +254,22 @@ namespace HappyPandaXDroid.Core
                 }
                 catch (System.Exception ex)
                 {
-                    client.client.Client.Disconnect(false);
-                    client.client.Dispose();
-                    client = null;
+                    listener.client.Client.Disconnect(false);
+                    listener.client.Dispose();
+                ConnectedClients.Remove(listener);
+                    listener = null;
                     logger.Error(ex, "\n Exception Caught In Net.SendPost.");
 
                 }
-                
-            }
+
+            listener.InUse = false;
             if (App.Server.GetError(response).Contains("expire"))
             {
-                Disconnect();
+                foreach (var client in ConnectedClients)
+                    if(client!=null)
+                        if(client.client!=null)
+                    client.client.Close();
+                ConnectedClients.Clear();
                 Connect();
                 return SendPost(request,ref cancellationToken);
             }
