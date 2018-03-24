@@ -286,7 +286,7 @@ namespace HappyPandaXDroid.Core
                 }
             IsDownloading = false;
 
-            Toast.MakeText(Application.Context, "Precaching completed or stopped", ToastLength.Short).Show();
+            //Toast.MakeText(Application.Context, "Precaching completed or stopped", ToastLength.Short).Show();
         }
 
         public static void StopQueue()

@@ -59,6 +59,15 @@ namespace HappyPandaXDroid
 ]
 }";
                 JsonConvert.DeserializeObject(ds);
+            Task.Run(() =>
+            {
+                InitLogging();
+                if (!File.Exists(Core.App.Settings.basePath + ".nomedia"))
+                    File.Create(Core.App.Settings.basePath + ".nomedia");
+                Task.Run(() => Core.Media.Recents.LoadRecents());
+                Task.Run(() => Core.Media.QuickSearch.LoadSearches());
+            });
+
                 if (Core.Net.IsServerReachable())
                 {
                     Core.Net.Connect();
@@ -67,12 +76,7 @@ namespace HappyPandaXDroid
             CreateFolders();
 
 
-            InitLogging();
-            if (!File.Exists(Core.App.Settings.basePath + ".nomedia"))
-                File.Create(Core.App.Settings.basePath + ".nomedia");
-            Task.Run(() => Core.Media.Recents.LoadRecents());
-            Task.Run(() => Core.Media.QuickSearch.LoadSearches());
-            Services.DownloadService downloadService = new Services.DownloadService();
+            
             
             return true;
         }

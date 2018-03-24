@@ -106,28 +106,16 @@ namespace HappyPandaXDroid.Custom_Views
 
         public async void OnLoadStart(Core.Gallery.Page page)
         {
-
-            this.Page = page;
-            var h = new Handler(Looper.MainLooper);
-            bool exists = true;// await Core.Gallery.IsSourceExist("page", page.id);
-            if (!exists)
+            try
             {
-                h.Post(() =>
-                {
-                    try
-                    {
-                        Glide.With(this.Context)
-                                .Load(Resource.Drawable.image_failed)
-                                .Into(img);
-                    }
-                    catch (System.Exception ex)
-                    {
+                ImageCancellationTokenSource.Cancel();
+                ImageCancellationTokenSource = new CancellationTokenSource();
+                this.Page = page;
+                Load();
+            }catch(System.Exception ex)
+            {
 
-                    }
-                });
-                return;
             }
-            Load();
 
 
         }
@@ -143,19 +131,6 @@ namespace HappyPandaXDroid.Custom_Views
                     bool exists = await Core.Gallery.IsSourceExist("page", Page.id, ImageCancellationTokenSource.Token);
                     if (!exists)
                     {
-                        h.Post(() =>
-                        {
-                            try
-                            {
-                                Glide.With(this.Context)
-                                        .Load(Resource.Drawable.image_failed)
-                                        .Into(img);
-                            }
-                            catch (System.Exception ex)
-                            {
-
-                            }
-                        });
                         return;
                     }
 

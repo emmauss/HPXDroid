@@ -84,7 +84,8 @@ namespace HappyPandaXDroid
             
             lay = FindViewById<FrameLayout>(Resource.Id.frame);
             galleryPager = FindViewById<RecyclerViewPager>(Resource.Id.galleryViewPager);
-            var layout = new Helpers.Layouts.ExtraLayoutManager(this, LinearLayoutManager.Horizontal, false);    
+            var layout = new Helpers.Layouts.ExtraLayoutManager(this, LinearLayoutManager.Horizontal, false);
+            layout.SetExtraLayoutSpace(400);
             galleryPager.SetLayoutManager(layout);
             gestureDetector = new GestureDetector(this, new TapsDetector(this));
             adapter = new ImageAdapter(PageList,this);

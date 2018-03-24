@@ -179,7 +179,7 @@ namespace HappyPandaXDroid.Custom_Views
                     Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
             });
             LoadThumb();
-            await Task.Run( async () =>
+            /*await Task.Run( async () =>
             {
                 try
                 {
@@ -205,7 +205,7 @@ namespace HappyPandaXDroid.Custom_Views
                 });
                 return;
             }
-
+            */
             if (tries > 1)
             {
                 tries = 0;

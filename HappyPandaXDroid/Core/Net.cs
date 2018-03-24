@@ -69,13 +69,15 @@ namespace HappyPandaXDroid.Core
             {
                 if (ConnectedClients.Exists((x) => x?.client?.Connected == true))
                     return true;
-                client = new Client();
                 client = null;
                 logger.Info("Connecting to server ...");
                 client = new Client();
                 Connected = client.client.Connected;
-                if(Connected)
-                ConnectedClients.Add(client);
+                if (Connected)
+                {
+                    ConnectedClients.Add(client);
+                    CreateConnections();
+                }
                 return Connected;
             }catch(SocketException sex)
             {
@@ -98,9 +100,7 @@ namespace HappyPandaXDroid.Core
         static string Connect(Client cli)
         {
             var listener = cli.client;
-            if (string.IsNullOrEmpty(App.Server.Info.session))
-            {
-                try
+            try
                 {
                     logger.Info("Connection Successful. Starting Handshake");
                     string response = string.Empty,pay = string.Empty;
@@ -108,6 +108,8 @@ namespace HappyPandaXDroid.Core
                     var stream = listener.GetStream();
                     byte[] decom = Receive(stream);
                     pay = Encoding.UTF8.GetString(decom).TrimEnd('\0');
+                if (!string.IsNullOrEmpty(App.Server.Info.session))
+                    return null;
                     App.Server.Info = JSON.Serializer.SimpleSerializer.Deserialize<App.Server.ServerInfo>(pay);
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     JSON.API.PushKey(ref main, "name", "test");
@@ -126,6 +128,8 @@ namespace HappyPandaXDroid.Core
                         logger.Info("Handshake Failed");
                         success = true;
                         response = "fail";
+                        listener.Close();
+                        listener.Dispose();
                     }
                     else
                     {
@@ -134,8 +138,9 @@ namespace HappyPandaXDroid.Core
                         Dictionary<string, string> reply =
                             JSON.Serializer.SimpleSerializer.Deserialize<Dictionary<string, string>>(pay);
                         success = reply.TryGetValue("session", out App.Server.Info.session);
+                        cli.initialise = true;
                     }
-                    cli.initialise = true;
+
                     return response;
                 }
                 catch (SocketException ex)
@@ -146,8 +151,6 @@ namespace HappyPandaXDroid.Core
                     cli = null;
                     return "fail";
                 }
-            }
-            else return null;
 }
         static void Send(byte[] packet,NetworkStream stream)
         {
@@ -217,7 +220,10 @@ namespace HappyPandaXDroid.Core
                     continue;
                 }
                 if (!ConnectedClients[i].InUse)
+                {
+                    ConnectedClients[i].InUse = true;
                     return ConnectedClients[i];
+                }
             }
             Thread.Sleep(2000);
             CreateConnections();
@@ -231,12 +237,14 @@ namespace HappyPandaXDroid.Core
             string response = "fail",pay = string.Empty;
             var payload = new List<byte>();
                 Client listener = GetAvailableConnection();
+            if (cancellationToken.IsCancellationRequested)
+            {
+                listener.InUse = true;
+                return string.Empty;
+            }
+            listener.client.GetStream().ReadTimeout = 10000;
+                listener.client.GetStream().WriteTimeout = 10000;
             
-                listener.client.GetStream().ReadTimeout = 20000;
-                listener.client.GetStream().WriteTimeout = 20000;
-                if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
-            listener.InUse = true;
             try
                 {
                     if (string.IsNullOrEmpty(App.Server.Info.session))

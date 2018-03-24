@@ -305,7 +305,7 @@ namespace HappyPandaXDroid.Scenes
         public void InitLibrary()
         {
             int tries = 0;
-            if (Core.Net.Connect())
+            if (Core.Net.Connected)
                 Task.Run(async () =>
                 {
                     while (tries < 5 && !Core.Net.Connected)
