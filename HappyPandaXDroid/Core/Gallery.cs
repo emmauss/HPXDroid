@@ -255,8 +255,7 @@ namespace HappyPandaXDroid.Core
                     if (!IsPageCached(page, "original"))
                     DownloadList.Add(page);
                 }
-            Thread thread = new Thread(new ThreadStart(StartQueue));
-            thread.Start();
+            StartQueue();
         }
 
         public static void StartQueue()

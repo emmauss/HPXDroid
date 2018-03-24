@@ -104,7 +104,12 @@ namespace HappyPandaXDroid.Scenes
         {
             if (Core.Net.Connect())
             {
-                if(thumb_path==string.Empty)
+                Task.Run(() =>
+                {
+                    LoadPreviews();
+                });
+
+                if (thumb_path==string.Empty)
                 thumb_path = Core.Gallery.GetThumb(gallery,SceneCancellationTokenSource.Token).Result;
 
                 var h = new Handler(Looper.MainLooper);
@@ -140,7 +145,7 @@ namespace HappyPandaXDroid.Scenes
                         MainLayout.Visibility = ViewStates.Visible;
                         errorFrame.Visibility = ViewStates.Gone;
                     });                
-                LoadPreviews();
+                
                 loaded = true;
             }
             else
