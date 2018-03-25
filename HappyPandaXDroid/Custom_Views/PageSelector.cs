@@ -35,7 +35,7 @@ namespace HappyPandaXDroid.Custom_Views
             PageInput = pageseletor.FindViewById<EditText>(Resource.Id.setpage);
             FloatingTextLayout = pageseletor
                 .FindViewById<Android.Support.Design.Widget.TextInputLayout>(Resource.Id.textInputLayout1);
-            PageCount = (int)Math.Ceiling((double)mscene.count / 25);
+            PageCount = (int)Math.Ceiling((double)mscene.count / 50);
             FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
             builder.SetView(pageseletor);
             AlertDialog dialog = builder.Create();
@@ -63,7 +63,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     case DialogButtonType.Positive:
                         if (int.TryParse(pg.PageInput.Text, out pg.PageSelected))
-                            if (pg.PageSelected > 0 && pg.PageSelected !=pg.mscene.CurrentPage+1 ) 
+                            if (pg.PageSelected > 0 && pg.PageSelected !=pg.mscene.CurrentPage+1 && pg.PageSelected<pg.PageCount) 
                             listener.OnDialogPositiveClick(pg);
                         break;
                     case DialogButtonType.Negative:
@@ -93,7 +93,7 @@ namespace HappyPandaXDroid.Custom_Views
         public override void OnResume()
         {
             base.OnResume();
-            PageCount = (int)Math.Round((double)mscene.count / 50);
+            PageCount = (int)Math.Ceiling((double)mscene.count / 50);
             FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
         }
 

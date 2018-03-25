@@ -174,6 +174,8 @@ namespace HappyPandaXDroid.Scenes
         
         protected override void OnDestroyView(View p0)
         {
+            SceneCancellationTokenSource.Cancel();
+            SceneCancellationTokenSource = null;
             IsRunning = false;
             mProgressView = null;
             MainLayout = null;
@@ -204,9 +206,6 @@ namespace HappyPandaXDroid.Scenes
                 pagelist.Clear();
                 pagelist = null;
             }
-            GC.Collect();
-            Java.Lang.JavaSystem.Gc();
-            base.OnDestroy();
             base.OnDestroyView(p0);
         }
 
@@ -353,7 +352,7 @@ namespace HappyPandaXDroid.Scenes
                 Core.Gallery.QueueDownloads(parent.pagelist);
                 h.Post(() =>
                 {
-                        Toast.MakeText(parent.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short).Show();
+                        Toast.MakeText(Android.App.Application.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short).Show();
                 });
             }
 

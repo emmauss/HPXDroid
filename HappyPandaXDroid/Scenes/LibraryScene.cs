@@ -52,7 +52,7 @@ namespace HappyPandaXDroid.Scenes
         ProgressView.MaterialProgressBar mProgressView;
         public int count = 0, lastindex = 0, columns;
         RefreshLayout.RefreshLayout mRefreshLayout;
-        RecyclerView.LayoutManager mLayoutManager;
+        Helpers.Layouts.ExtraGridLayoutManager mLayoutManager;
         FrameLayout mErrorFrame;
         ImageView mErrorImage;
         TextView mErrorText;
@@ -158,7 +158,7 @@ namespace HappyPandaXDroid.Scenes
             mRecyclerView.AddOnScrollListener(listener);
             SetColumns();
             mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
-
+            mLayoutManager.SetExtraLayoutSpace(400);
 
             mRecyclerView.SetAdapter(adapter);
             mRefreshLayout.HeaderRefresh += MRefreshLayout_HeaderRefresh;
@@ -1103,8 +1103,7 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnDestroy()
         {
-            adapter?.Clear();
-            adapter = null;
+            adapter?.Clear();            
             MainView = null;
             fam = null;
             appBarLayout = null;
@@ -1121,6 +1120,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 SetColumns();
                 mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
+                mLayoutManager.SetExtraLayoutSpace(400);
                 mRecyclerView.SetLayoutManager(mLayoutManager);
                 mRecyclerView.GetRecycledViewPool().Clear();
             }

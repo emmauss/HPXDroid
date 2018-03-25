@@ -123,43 +123,13 @@ namespace HappyPandaXDroid.Custom_Views
         async void Load()
         {
             var h = new Handler(Looper.MainLooper);
+            tries = 0;
             try
             {
-                while (!IsCached())
+                if (IsCached())
                 {
-
-                    bool exists = await Core.Gallery.IsSourceExist("page", Page.id, ImageCancellationTokenSource.Token);
-                    if (!exists)
-                    {
-                        return;
-                    }
-
-                    page_path = await Page.Download();
-
-                    if (page_path.Contains("fail"))
-                    {
-
-                        if (page_path.Contains("misc"))
-                        {
-                            tries++;
-                            if (tries < 3)
-                            {
-                                continue;
-                            }
-
-                            return;
-
-                        }
-                        return;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                
-                page_path = Core.Gallery.GetCachedPagePath(Page.id);
-                h.Post(async () =>
+                    page_path = Core.Gallery.GetCachedPagePath(Page.id);
+                    h.Post(async () =>
                     {
                         try
                         {
@@ -176,10 +146,26 @@ namespace HappyPandaXDroid.Custom_Views
                         {
 
                         }
-                        OnLoadEnd();
+                         OnLoadEnd();
 
                     });
-                tries = 0;
+                }
+                else
+                while (!IsCached())
+                {
+
+                    bool exists = await Core.Gallery.IsSourceExist("page", Page.id, ImageCancellationTokenSource.Token);
+                    if (!exists)
+                    {
+                        return;
+                    }
+                        tries++;
+                    page_path = await Page.Download();
+                        if (tries > 1)
+                            return;
+                        else
+                            Load();
+                }
 
 
             }

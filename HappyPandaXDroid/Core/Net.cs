@@ -209,7 +209,7 @@ namespace HappyPandaXDroid.Core
 
         static Client GetAvailableConnection()
         {
-            if (ConnectedClients.Count == 0)
+            if (ConnectedClients.Count <5)
                 CreateConnections();
             for(int i = 0; i < ConnectedClients.Count; i++)
             {
@@ -242,8 +242,8 @@ namespace HappyPandaXDroid.Core
                 listener.InUse = true;
                 return string.Empty;
             }
-            listener.client.GetStream().ReadTimeout = 10000;
-                listener.client.GetStream().WriteTimeout = 10000;
+            listener.client.GetStream().ReadTimeout = 30000;
+                listener.client.GetStream().WriteTimeout = 30000;
             
             try
                 {
@@ -258,8 +258,8 @@ namespace HappyPandaXDroid.Core
                         logger.Info("Received response from server");
                         response = Encoding.UTF8.GetString(decomp);
                     }
-
-                }
+                listener.InUse = false;
+            }
                 catch (System.Exception ex)
                 {
                     listener.client.Client.Disconnect(false);
@@ -270,7 +270,7 @@ namespace HappyPandaXDroid.Core
 
                 }
 
-            listener.InUse = false;
+            
             if (App.Server.GetError(response).Contains("expire"))
             {
                 foreach (var client in ConnectedClients)

@@ -34,7 +34,6 @@ namespace HappyPandaXDroid.Custom_Views
         CancellationTokenSource CardCancellationTokenSource = new CancellationTokenSource();
         View galleryCard;
         ImageView img;
-        int tries = 0;
         TextView text;
         bool loaded = false;
         TextView text2;
@@ -137,7 +136,6 @@ namespace HappyPandaXDroid.Custom_Views
         public void Reset()
         {
             loaded = false;
-            tries = 0;
             thumb_path = string.Empty;
         }
 
@@ -179,51 +177,8 @@ namespace HappyPandaXDroid.Custom_Views
                     Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
             });
             LoadThumb();
-            /*await Task.Run( async () =>
-            {
-                try
-                {
-                    exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id,CardCancellationTokenSource.Token);
-                }catch(Exception ex)
-                {
-                    exists = true;
-                }
-            });
-            if (!exists)
-            {
-                h.Post(() =>
-                {
-                    try
-                    {
-                        
-                        img.SetImageResource(Resource.Drawable.image_failed);
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-                });
-                return;
-            }
-            */
-            if (tries > 1)
-            {
-                tries = 0;
-                h.Post(() =>
-                {
-                    try
-                    {
-                        img.SetImageResource(Resource.Drawable.image_failed);
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-                });
-                    return;
-            }
+            
             logger.Info("Refreshing GalleryCard. GalleryId = {0}", Gallery.id);
-            tries++;
             
             await Task.Run(async () =>
             {
@@ -258,7 +213,6 @@ namespace HappyPandaXDroid.Custom_Views
                              .Load(thumb_path)
                              .Into(img);
                             loaded = true;
-                            tries = 0;
                         }
                         catch (Exception ex)
                         {
@@ -308,6 +262,22 @@ namespace HappyPandaXDroid.Custom_Views
                 else
                 {
                     thumb_path = await gallery.Download(CardCancellationTokenSource.Token);
+                    h.Post(() =>
+                    {
+                        try
+                        {
+                            Glide.With(Context)
+                             .Load(thumb_path)
+                             .Into(img);
+                            loaded = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.Message.Contains("destroyed"))
+                                return;
+                        }
+                    });
+
                 }
 
             }
