@@ -207,27 +207,33 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        static Client GetAvailableConnection()
+        static object lockobj = new object();
+        static Client GetAvailableConnection(CancellationToken cancellationToken)
         {
-            if (ConnectedClients.Count <5)
-                CreateConnections();
-            for(int i = 0; i < ConnectedClients.Count; i++)
+            lock(lockobj)
+            while (true)
             {
-                if(!ConnectedClients[i].client.Connected)
+                if (ConnectedClients.Count < 5)
+                    CreateConnections();
+                for (int i = 0; i < ConnectedClients.Count; i++)
                 {
-                    ConnectedClients.Remove(ConnectedClients[i]);
-                    i--;
-                    continue;
+                    if (cancellationToken.IsCancellationRequested)
+                        return null;
+                    if (!ConnectedClients[i].client.Connected)
+                    {
+                        ConnectedClients.Remove(ConnectedClients[i]);
+                        i--;
+                        continue;
+                    }
+                    if (!ConnectedClients[i].InUse)
+                    {
+                        ConnectedClients[i].InUse = true;
+                        return ConnectedClients[i];
+                    }
                 }
-                if (!ConnectedClients[i].InUse)
-                {
-                    ConnectedClients[i].InUse = true;
-                    return ConnectedClients[i];
-                }
+                Thread.Sleep(2000);
+                CreateConnections();
             }
-            Thread.Sleep(2000);
-            CreateConnections();
-            return GetAvailableConnection();
             
         }
 
@@ -236,7 +242,7 @@ namespace HappyPandaXDroid.Core
             logger.Info("Sending Request.\n Request : \n {0} \n", request);
             string response = "fail",pay = string.Empty;
             var payload = new List<byte>();
-                Client listener = GetAvailableConnection();
+                Client listener = GetAvailableConnection(cancellationToken);
             if (cancellationToken.IsCancellationRequested)
             {
                 listener.InUse = true;
