@@ -71,18 +71,6 @@ namespace HappyPandaXDroid.Custom_Views
             });
 
         }
-        protected override void OnDetachedFromWindow()
-        {
-            base.OnDetachedFromWindow();
-            ImageCancellationTokenSource.Cancel();
-            Release();
-        }
-
-        protected override void OnAttachedToWindow()
-        {
-            ImageCancellationTokenSource = new CancellationTokenSource();
-            base.OnAttachedToWindow();
-        }
 
         public void Release()
         {
