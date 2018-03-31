@@ -23,6 +23,13 @@
         android:inputType="number"
         android:digits="0123456789"
       />
+    <HappyPandaXDroid.Custom_Views.OptionDialogPreference
+    android:key="logout"
+    android:dialogMessage="Do you want to logout? Current session will be lost"
+    android:dialogTitle="Logout?"
+    android:positiveButtonText="OK"
+    android:negativeButtonText="Cancel"
+/>
   </PreferenceCategory>
   <PreferenceCategory
     android:key="core"

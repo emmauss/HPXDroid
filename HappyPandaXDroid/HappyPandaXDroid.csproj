@@ -209,6 +209,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WelcomeActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\arrays.xml">
@@ -247,6 +248,9 @@
     <AndroidResource Include="Resources\drawable\ic_sort_white_24dp.png" />
     <AndroidResource Include="Resources\layout\DialogList.xml" />
     <AndroidResource Include="Resources\drawable\ic_add_white_24dp.png" />
+    <AndroidResource Include="Resources\layout\WelcomeLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <TransformFile Include="Resources\menu\sortDirectionMenu.xml">
       <SubType>Designer</SubType>
     </TransformFile>

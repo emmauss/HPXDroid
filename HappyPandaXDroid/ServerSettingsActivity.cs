@@ -25,7 +25,7 @@ namespace HappyPandaXDroid
             Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            var newFragment = new SettingsFragments();
+            var newFragment = new SettingsFragments(this);
             var ft = FragmentManager.BeginTransaction();
             ft.Add(Resource.Id.fragment_container, newFragment);
             ft.Commit();
@@ -53,6 +53,8 @@ namespace HappyPandaXDroid
             //Core.App.Settings set = new Core.App.Settings();
             ISharedPreferences sharedPreferences;
             Stopwatch watch = new Stopwatch();
+            Activity Activity;
+            Custom_Views.OptionDialogPreference LogoutPreference;
             public override void OnCreate(Bundle savedInstanceState)
             {
                 base.OnCreate(savedInstanceState);
@@ -68,10 +70,27 @@ namespace HappyPandaXDroid
                 for (int i = 0; i < PreferenceScreen.PreferenceCount; i++)
                 {
                     SetSummary(PreferenceScreen.GetPreference(i));
-                }
+                }                
                 sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
-                
+                LogoutPreference = (Custom_Views.OptionDialogPreference)FindPreference("logout");
+                LogoutPreference.Title = "Logout";
+                LogoutPreference.OnPositiveClick += LogoutPreference_OnPositiveClick;
 
+            }
+
+            public SettingsFragments(Activity activity)
+            {
+                Activity = activity;
+            }
+
+            private void LogoutPreference_OnPositiveClick(object sender, EventArgs e)
+            {
+                var intent = new Intent(LogoutPreference.Context, typeof(WelcomeActivity));
+                intent.AddFlags(ActivityFlags.ClearTask);
+                intent.AddFlags(ActivityFlags.NewTask);
+                //Activity.FinishAffinity();
+                StartActivity(intent);
+                Core.App.Settings.IsFirstRun = true;
             }
 
             public override void OnResume()

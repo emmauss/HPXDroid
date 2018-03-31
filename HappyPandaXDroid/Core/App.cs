@@ -33,8 +33,7 @@ namespace HappyPandaXDroid.Core
         public static class Settings
         {
             private static Logger logger = LogManager.GetCurrentClassLogger();
-
-            public static string username = "test";
+            
             public static string basePath = Android.OS.Environment.ExternalStorageDirectory.Path + "/HPX/";
             public static string cache = basePath + "cache/";
             public static string Log = basePath + "log/";
@@ -80,7 +79,35 @@ namespace HappyPandaXDroid.Core
                     AppSettings.AddOrUpdateValue("server_ip", value);
                 }
             }
-            
+
+            public static string Username
+            {
+                get
+                {
+                    return AppSettings.GetValueOrDefault("username", "");
+                }
+                set
+                {
+                    if (Username != value)
+                        Refresh = true;
+                    AppSettings.AddOrUpdateValue("username", value);
+                }
+            }
+
+            public static string Password
+            {
+                get
+                {
+                    return AppSettings.GetValueOrDefault("password", "");
+                }
+                set
+                {
+                    if (Password != value)
+                        Refresh = true;
+                    AppSettings.AddOrUpdateValue("password", value);
+                }
+            }
+
 
             public static int Loop_Delay
             {
@@ -105,6 +132,32 @@ namespace HappyPandaXDroid.Core
                 set
                 {
                     AppSettings.AddOrUpdateValue("default_sort", value.ToString());
+                }
+            }
+
+            public static bool IsFirstRun
+            {
+                get
+                {
+                    var set = AppSettings.GetValueOrDefault("first_run", true);
+                    return set;
+                }
+                set
+                {
+                    AppSettings.AddOrUpdateValue("first_run", value);
+                }
+            }
+
+            public static bool IsGuest
+            {
+                get
+                {
+                    var set = AppSettings.GetValueOrDefault("is_guest", true);
+                    return set;
+                }
+                set
+                {
+                    AppSettings.AddOrUpdateValue("is_guest", value);
                 }
             }
 
@@ -481,7 +534,7 @@ namespace HappyPandaXDroid.Core
                 {
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                    JSON.API.PushKey(ref main, "name", "test");
+                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                     JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                     JSON.API.PushKey(ref funct, "fname", "get_config");
 
@@ -508,7 +561,7 @@ namespace HappyPandaXDroid.Core
                 {
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                    JSON.API.PushKey(ref main, "name", "test");
+                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                     JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                     JSON.API.PushKey(ref funct, "fname", "set_config");
                     string set = "{\"" + key + "\": " + value + " }";
@@ -723,7 +776,7 @@ namespace HappyPandaXDroid.Core
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
 
-                JSON.API.PushKey(ref main, "name", Settings.username);
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", key);
                 JSON.API.PushKey(ref funct, "command_ids", "[" + command_id + "]");
@@ -844,7 +897,7 @@ namespace HappyPandaXDroid.Core
                 logger.Info("Get Item. itemId={0}, type = {1}", item_id, type);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                JSON.API.PushKey(ref main, "name", "test");
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_item");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
@@ -868,7 +921,7 @@ namespace HappyPandaXDroid.Core
                 logger.Info("Get Item. itemId={0}, related_type = {1}, limit = {2}", item_id, related_type, limit);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                JSON.API.PushKey(ref main, "name", "test");
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_related_items");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
@@ -907,7 +960,7 @@ namespace HappyPandaXDroid.Core
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
 
-                JSON.API.PushKey(ref main, "name", "test");
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_related_count");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);

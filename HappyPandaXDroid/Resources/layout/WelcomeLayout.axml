@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="50dp"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <TextView
+        android:text="Welcome"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1" />
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+    <TextView
+        android:text="Please enter the HPX server address and your login details"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center"
+        android:lines="2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2" />
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+    <android.support.v7.widget.CardView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginCard">
+        <TableLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/loginLayout">
+            <TableRow
+                android:id="@+id/tableRowIP">
+                <com.github.clans.fab.Label
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Server Address"
+                    android:textSize="15sp" />
+                <android.support.v4.widget.Space
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text="Place Holder Address"
+                    android:lines="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:id="@+id/ipBox"
+                    android:textSize="15sp"
+                    style="@android:style/Widget.EditText"
+                    android:inputType="text" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/tableRow1SPort">
+                <com.github.clans.fab.Label
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Server Port"
+                    android:textSize="15sp" />
+                <android.support.v4.widget.Space
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text="7007"
+                    android:lines="1"
+                    android:inputType="number"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/portBox"
+                    android:textSize="15sp"
+                    style="@android:style/Widget.EditText" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/tableRowWPort">
+                <com.github.clans.fab.Label
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Server WebPort"
+                    android:textSize="15sp" />
+                <android.support.v4.widget.Space
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text="7008"
+                    android:lines="1"
+                    android:inputType="number"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/webPortBox"
+                    android:textSize="15sp"
+                    style="@android:style/Widget.EditText" />
+            </TableRow>
+            <TableRow>
+                <android.support.v4.widget.Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/tableRowWUsername">
+                <com.github.clans.fab.Label
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Server Username"
+                    android:textSize="15sp" />
+                <android.support.v4.widget.Space
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text="username"
+                    android:lines="1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/usernameBox"
+                    android:textSize="15sp"
+                    style="@android:style/Widget.EditText"
+                    android:inputType="text" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/tableRowWPassword">
+                <com.github.clans.fab.Label
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Server WebPort"
+                    android:textSize="15sp" />
+                <android.support.v4.widget.Space
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:lines="1"
+                    android:inputType="textPassword"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/passBox"
+                    android:textSize="20sp"
+                    style="@android:style/Widget.EditText" />
+            </TableRow>
+            <CheckBox
+                android:text="Login As Guest"
+                android:id="@+id/guestCheckBox" />
+        </TableLayout>
+    </android.support.v7.widget.CardView>
+    <Button
+        android:text="Login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:id="@+id/loginButton" />
+</LinearLayout>
