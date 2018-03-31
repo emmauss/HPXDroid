@@ -66,6 +66,8 @@ namespace HappyPandaXDroid.Core
             GalleryUpdated = 7,
             NamespaceTagNamespace = 30,
             NamespaceTagTag = 31,
+            ParodyName = 45,
+            CircleName = 40
         }
 
         public class GalleryItem
