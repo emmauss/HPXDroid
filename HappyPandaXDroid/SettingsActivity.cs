@@ -119,15 +119,27 @@ namespace HappyPandaXDroid
 
             private async void Cachedialog_OnPositiveClick(object sender, EventArgs e)
             {
-               bool result = await Core.Media.Cache.ClearCache();
-                Task.Run(() =>
+                var h = new Handler(Looper.MainLooper);
+                h.Post(() =>
                 {
-                    string size = Math.Round((double)(Core.Media.Cache.GetCacheSize()) / (1024 * 1024), 2).ToString() + " MB";
-                    var h = new Handler(Looper.MainLooper);
-                    h.Post(() =>
+                    cachedialog.Summary = "Clearing Cache";
+                });
+                await Task.Run(async () =>
+                {
+                    if (await Core.Media.Cache.ClearCache())
                     {
-                        cachedialog.Summary = size;
-                    });
+                        string size = Math.Round((double)(Core.Media.Cache.GetCacheSize()) / (1024 * 1024), 2).ToString() + " MB";
+                        
+                        h.Post(() =>
+                        {
+                            cachedialog.Summary = size;
+                        });
+                    }
+                    else
+                        h.Post(() =>
+                        {
+                            cachedialog.Summary = "Cache Clearing already in progress";
+                        });
                 });
             }
 

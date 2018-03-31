@@ -28,6 +28,7 @@ namespace HappyPandaXDroid.Core
         public class Cache
         {
             private static Logger logger = LogManager.GetCurrentClassLogger();
+            static bool IsClearing = false;
             public static bool IsCached(string filepath)
             {
                 
@@ -63,7 +64,10 @@ namespace HappyPandaXDroid.Core
 
             public static async  Task<bool> ClearCache()
             {
-                await Task.Delay(10);
+                if (IsClearing)
+                    return false;
+                IsClearing = true;
+                await Task.Delay(1000);
                 var dirlist = new DirectoryInfo(App.Settings.cache).EnumerateDirectories("*",SearchOption.AllDirectories);
                 foreach(var dir in dirlist)
                 {
@@ -74,6 +78,8 @@ namespace HappyPandaXDroid.Core
                 {
                     file.Delete();
                 }
+                await Task.Delay(1000);
+                IsClearing = false;
                 return true;
             }
         }
