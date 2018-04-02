@@ -127,10 +127,12 @@ namespace HappyPandaXDroid.Custom_Views
 
         public void Recycle()
         {
-            text.Text = string.Empty;
-            text2.Text = string.Empty;
-            loaded = false;
-            Glide.With(Context).Clear(img);
+            Application.SynchronizationContext.Post(_ => {
+                text.Text = string.Empty;
+                text2.Text = string.Empty;
+                loaded = false;
+                Glide.With(Context).Clear(img);
+            }, null);            
         }
 
         public void Reset()
@@ -138,25 +140,7 @@ namespace HappyPandaXDroid.Custom_Views
             loaded = false;
             thumb_path = string.Empty;
         }
-
-        protected override void OnAttachedToWindow()
-        {
-            base.OnAttachedToWindow();
-            CardCancellationTokenSource.Cancel();
-            CardCancellationTokenSource = new CancellationTokenSource();
-
-            Refresh();
-        }
         
-
-        protected override void OnDetachedFromWindow()
-        {
-            CardCancellationTokenSource.Cancel();
-            if (!loaded)
-                Cancelled = true;
-            base.OnDetachedFromWindow();
-        }
-
         protected override void OnWindowVisibilityChanged([GeneratedEnum] ViewStates visibility)
         {
             base.OnWindowVisibilityChanged(visibility);
@@ -164,7 +148,6 @@ namespace HappyPandaXDroid.Custom_Views
 
         public async void Refresh()
         {
-            bool exists = false;
             if (Gallery == null)
             {
                 return;

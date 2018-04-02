@@ -272,7 +272,6 @@ namespace HappyPandaXDroid.Scenes
                 if (hold != null)
                 {
                     hold.gcard.Reset();
-                    hold.gcard.Recycle();
                 }
 
             }
@@ -317,6 +316,7 @@ namespace HappyPandaXDroid.Scenes
                 gcard.Gallery = item;
                 Task.Run(() =>
                 {
+                    gcard.Recycle();
                     gcard.Refresh();
                 });
             }

@@ -620,7 +620,7 @@ namespace HappyPandaXDroid
                Task.Run(() =>
                 {
                     
-                        vh.imageView.OnLoadStart(PageList[position]);
+                    vh.imageView.OnLoadStart(PageList[position]);
                 });
             }
 
