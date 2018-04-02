@@ -60,8 +60,30 @@ namespace HappyPandaXDroid.Core
                 if (response != "fail")
                     initialise = true;
             }
+
+            public void Disconnect()
+            {
+                client?.Close();
+                client?.Dispose();
+            }
         }
-        
+
+        public static void DisconnectAllConnections()
+        {
+            foreach(var client in ConnectedClients)
+            {
+                client.Disconnect();
+            }
+
+            ConnectedClients.Clear();
+        }
+
+        public static bool Reconnect()
+        {
+            App.Server.Info = new App.Server.ServerInfo();
+            DisconnectAllConnections();
+            return Connect();
+        }        
         public static bool Connect()
         {
             Client client = null;
@@ -72,7 +94,7 @@ namespace HappyPandaXDroid.Core
                 client = null;
                 logger.Info("Connecting to server ...");
                 client = new Client();
-                Connected = client.client.Connected;
+                Connected = (bool)client.client?.Connected;
                 if (Connected)
                 {
                     ConnectedClients.Add(client);
@@ -111,10 +133,26 @@ namespace HappyPandaXDroid.Core
                 if (!string.IsNullOrEmpty(App.Server.Info.session))
                     return null;
                     App.Server.Info = JSON.Serializer.SimpleSerializer.Deserialize<App.Server.ServerInfo>(pay);
+                if((bool)!App.Server.Info?.data.guest_allowed && App.Settings.IsGuest)
+                {
+                    DisconnectAllConnections();
+                    cli.Disconnect();
+                    App.Server.Info = new App.Server.ServerInfo();
+                    return "fail";
+                }
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
-                    JSON.API.PushKey(ref main, "name", "test");
+                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                     JSON.API.PushKey(ref main, "session", App.Server.Info.session);
+                if(App.Settings.IsGuest)
                     JSON.API.PushKey(ref main, "data", "{}");
+                else
+                {
+                    List<Tuple<string, string>> data = new List<Tuple<string, string>>();
+                    JSON.API.PushKey(ref data, "user", App.Settings.Username);
+                    JSON.API.PushKey(ref data, "password", App.Settings.Password);
+                    string datastring = JSON.API.ParseToString(data);
+                    JSON.API.PushKey(ref main, "data", "<int>\n" + datastring + "\n");
+                }
                     string request = JSON.API.ParseToString(main);
                     Send(Encoding.UTF8.GetBytes(request), stream);
                     

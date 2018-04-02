@@ -39,7 +39,14 @@ namespace HappyPandaXDroid
             
             await Load();
 
-            var intent = new Intent(this, typeof(HPXSceneActivity));
+            var intent = new Intent();
+            if(Core.App.Settings.IsFirstRun)
+            {
+                intent = new Intent(this, typeof(WelcomeActivity));
+                StartActivity(intent);
+                return;
+            }
+            intent = new Intent(this, typeof(HPXSceneActivity));
             intent.PutExtra("connected", Core.Net.Connected);
             intent.PutExtra("query", string.Empty);
             StartActivity(intent);
@@ -67,7 +74,7 @@ namespace HappyPandaXDroid
                 Task.Run(() => Core.Media.Recents.LoadRecents());
                 Task.Run(() => Core.Media.QuickSearch.LoadSearches());
             });
-
+            if(!Core.App.Settings.IsFirstRun)
                 if (Core.Net.IsServerReachable())
                 {
                     Core.Net.Connect();
@@ -118,7 +125,7 @@ namespace HappyPandaXDroid
         {
             var ex = (System.Exception)e.ExceptionObject;
             logger.Fatal(ex, "Fatal Exception Thrown : " + ex.Message + System.Environment.NewLine + ex.StackTrace);
-            //Process.KillProcess(Process.MyPid());
+            Process.KillProcess(Process.MyPid());
         }
 
         //ui thread unhandled exception handler

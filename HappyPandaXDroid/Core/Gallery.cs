@@ -234,7 +234,7 @@ namespace HappyPandaXDroid.Core
         {
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-            JSON.API.PushKey(ref main, "name", "test");
+            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
             JSON.API.PushKey(ref main, "session", App.Server.Info.session);
             JSON.API.PushKey(ref funct, "fname", "source_exists");
             JSON.API.PushKey(ref funct, "item_type", type);
@@ -303,7 +303,7 @@ namespace HappyPandaXDroid.Core
                 string item_ids = "[" + String.Join(",", ids) + "]";
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                JSON.API.PushKey(ref main, "name", "test");
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_image");
                 JSON.API.PushKey(ref funct, "item_ids", item_ids);
@@ -328,7 +328,7 @@ namespace HappyPandaXDroid.Core
 
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                JSON.API.PushKey(ref main, "name", "test");
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_image");
                 JSON.API.PushKey(ref funct, "item_ids", "[" + id + "]");
@@ -437,7 +437,7 @@ namespace HappyPandaXDroid.Core
             }
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-            JSON.API.PushKey(ref main, "name", "test");
+            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
             JSON.API.PushKey(ref main, "session", App.Server.Info.session);
             JSON.API.PushKey(ref funct, "fname", "library_view");
             JSON.API.PushKey(ref funct, "limit", "<int>" + limit.ToString());
@@ -502,7 +502,7 @@ namespace HappyPandaXDroid.Core
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
 
-            JSON.API.PushKey(ref main, "name", "test");
+            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
             JSON.API.PushKey(ref main, "session", App.Server.Info.session);
             JSON.API.PushKey(ref funct, "fname", "get_view_count");
             JSON.API.PushKey(ref funct, "item_type", "Gallery");
@@ -526,7 +526,7 @@ namespace HappyPandaXDroid.Core
         {
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-            JSON.API.PushKey(ref main, "name", "test");
+            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
             JSON.API.PushKey(ref main, "session", App.Server.Info.session);
             JSON.API.PushKey(ref funct, "fname", "get_tags");
             JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
