@@ -486,17 +486,19 @@ namespace HappyPandaXDroid.Scenes
 
         public async void Refresh()
         {
+            CurrentList = new List<Core.Gallery.GalleryItem>();
+            
             var h = new Handler(Looper.MainLooper);
             if (Core.Net.Connect())
             {
                 h.Post(() =>
                 {
+                    adapter.ResetList();
                     SetMainLoading(true);
                 });
                 await Task.Run(async () =>
                 {
                     logger.Info("Refreshing HPContent");
-                    CurrentList.Clear();
                     CurrentList.AddRange(await Core.Gallery.GetPage(0,SceneCancellationTokenSource.Token, Core.App.Settings.Default_Sort,
                         Core.App.Settings.Sort_Decending, Current_Query));
                     if (CurrentList == null || CurrentList.Count < 1)
@@ -953,6 +955,7 @@ namespace HappyPandaXDroid.Scenes
                     Task.Run(() =>
                     {
                         hold.gcard.Reset();
+                        hold.gcard.Recycle();
                     });
                 }
 

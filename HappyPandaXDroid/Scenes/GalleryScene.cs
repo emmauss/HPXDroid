@@ -313,7 +313,7 @@ namespace HappyPandaXDroid.Scenes
             previewpager.SetAdapter(new Emmaus.Widget.RecyclerViewPagerAdapter(previewpager,adapter));
             
             layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
-            layout.SetExtraLayoutSpace(300);
+            layout.SetExtraLayoutSpace(100);
             previewpager.SetLayoutManager(layout);
         }
 

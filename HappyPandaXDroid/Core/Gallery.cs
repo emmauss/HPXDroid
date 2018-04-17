@@ -36,24 +36,39 @@ namespace HappyPandaXDroid.Core
 
         public enum ItemType
         {
-            Collection = 1,
-            Gallery = 0,
-            GalleryFilter = 2,
-            Grouping = 4,
-            Page = 3
+            Artist = 7,
+            Category = 8,
+            Circle = 11,
+            Collection = 2,
+            Gallery = 1,
+            GalleryFilter = 3,
+            Grouping = 5,
+            Language = 9,
+            Page = 4,
+            Parody = 13,
+            Status = 10,
+            Title = 6,
+            Url = 12
         }
 
         public enum ViewType
         {
-            Favorite = 1,
-            Inbox = 2,
-            Library = 0
+            Favorite = 2,
+            Inbox = 3,
+            Library = 1,
+            ReadLater = 5,
+            Trash = 4,
         }
 
         public enum Sort
         {
             None = 0,
             ArtistName = 20,
+            CollectionDate = 52,
+            CollectionGalleryCount = 54,
+            CollectionName = 51,
+            CollectionPublished = 53,
+            CollectionRandom = 50,
             GalleryArtist = 3,
             GalleryDate = 4,
             GalleryPageCount = 10,

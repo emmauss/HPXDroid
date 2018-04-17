@@ -139,6 +139,8 @@ namespace HappyPandaXDroid.Custom_Views
         {
             loaded = false;
             thumb_path = string.Empty;
+            CardCancellationTokenSource.Cancel();
+            CardCancellationTokenSource = new CancellationTokenSource();
         }
         
         protected override void OnWindowVisibilityChanged([GeneratedEnum] ViewStates visibility)
