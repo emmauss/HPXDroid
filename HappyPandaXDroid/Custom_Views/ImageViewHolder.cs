@@ -142,7 +142,7 @@ namespace HappyPandaXDroid.Custom_Views
                 while (!IsCached())
                 {
 
-                    bool exists = await Core.Gallery.IsSourceExist("page", Page.id, ImageCancellationTokenSource.Token);
+                    bool exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Page, Page.id, ImageCancellationTokenSource.Token);
                     if (!exists)
                     {
                         return;

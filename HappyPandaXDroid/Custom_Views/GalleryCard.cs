@@ -221,7 +221,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     try
                     {
-                        exists = await Core.Gallery.IsSourceExist("gallery", Gallery.id,CardCancellationTokenSource.Token);
+                        exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Gallery, Gallery.id,CardCancellationTokenSource.Token);
                     }
                     catch (Exception ex)
                     {

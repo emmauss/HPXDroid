@@ -21,7 +21,7 @@ namespace HappyPandaXDroid.Custom_Views
         public EditText PageInput;
         AlertDialog.Builder builder;
         public Android.Support.Design.Widget.TextInputLayout FloatingTextLayout;
-        Scenes.LibraryScene mscene;
+        Scenes.ViewScene mscene;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public override Dialog OnCreateDialog(Bundle savedInstanceState)
         {
@@ -42,7 +42,7 @@ namespace HappyPandaXDroid.Custom_Views
             return dialog;
         }
 
-        public PageSelector(Scenes.LibraryScene scene)
+        public PageSelector(Scenes.ViewScene scene)
         {
             mscene = scene;
         }

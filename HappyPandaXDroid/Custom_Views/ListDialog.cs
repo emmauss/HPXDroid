@@ -16,7 +16,7 @@ namespace HappyPandaXDroid.Custom_Views
     class ListDialog : DialogFragment, AdapterView.IOnItemClickListener
     {
         AlertDialog.Builder builder;
-        Scenes.LibraryScene mscene;
+        Scenes.ViewScene mscene;
         ListView MainList;
         List<string> items;
         string tag;
@@ -119,14 +119,14 @@ namespace HappyPandaXDroid.Custom_Views
                 case "search":
                     if (MainList.ChoiceMode != ChoiceMode.Multiple)
                     {
-                        mscene.Current_Query = Scenes.LibraryScene.Parse(item,false);
+                        mscene.Current_Query = Scenes.ViewScene.Parse(item,false);
                         Dismiss();
                     }
                     break;
             }
         }
 
-        public ListDialog(Scenes.LibraryScene scene, string tag)
+        public ListDialog(Scenes.ViewScene scene, string tag)
         {
             mscene = scene;
             this.tag = tag;

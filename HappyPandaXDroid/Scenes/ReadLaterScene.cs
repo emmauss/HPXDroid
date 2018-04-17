@@ -13,13 +13,14 @@ using HappyPandaXDroid.Core;
 
 namespace HappyPandaXDroid.Scenes
 {
-    public class LibraryScene : ViewScene
+    class ReadLaterScene : ViewScene
     {
         public override Core.Gallery.ItemType ItemType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public LibraryScene(string title, string query) : base(title, query)
+        public ReadLaterScene(string title, string query) : base(title, query)
         {
 
         }
+
     }
 }

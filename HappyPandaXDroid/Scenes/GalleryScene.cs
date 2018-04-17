@@ -136,7 +136,7 @@ namespace HappyPandaXDroid.Scenes
                     }
                 });
                 
-                gallery.tags = await Core.Gallery.GetTags(gallery.id, "Gallery",SceneCancellationTokenSource.Token);                
+                gallery.tags = await Core.Gallery.GetTags(Core.Gallery.ItemType.Gallery,gallery.id,SceneCancellationTokenSource.Token);                
                 ParseData();
                 if (!IsDestroyed)
                     h.Post(() =>
@@ -474,7 +474,8 @@ namespace HappyPandaXDroid.Scenes
             {
                 var mdata = new List<Core.Gallery.Page>();
                
-                    pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id,SceneCancellationTokenSource.Token);
+                    pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id,SceneCancellationTokenSource.Token,
+                        Core.Gallery.ItemType.Gallery,Core.Gallery.ItemType.Page);
                 h.Post(() =>
                 {
                     pages.Text = pagelist.Count.ToString() + " Pages";

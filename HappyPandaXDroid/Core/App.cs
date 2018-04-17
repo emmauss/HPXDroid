@@ -892,16 +892,16 @@ namespace HappyPandaXDroid.Core
 
             }
 
-            public static T GetItem<T>(int item_id, string type,CancellationToken cancellationToken)
+            public static T GetItem<T>(int item_id, Gallery.ItemType itemType,CancellationToken cancellationToken)
             {
-                logger.Info("Get Item. itemId={0}, type = {1}", item_id, type);
+                logger.Info("Get Item. itemId={0}, type = {1}", item_id, itemType.ToString());
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
                 JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_item");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
-                JSON.API.PushKey(ref funct, "item_type", type);
+                JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
@@ -916,9 +916,10 @@ namespace HappyPandaXDroid.Core
 
             }
 
-            public static List<T> GetRelatedItems<T>(int item_id,CancellationToken cancellationToken, string related_type = "Page", int limit = -1)
+            public static List<T> GetRelatedItems<T>(int item_id,CancellationToken cancellationToken, Gallery.ItemType itemType
+                , Gallery.ItemType relatedType, int limit = -1)
             {
-                logger.Info("Get Item. itemId={0}, related_type = {1}, limit = {2}", item_id, related_type, limit);
+                logger.Info("Get Item. itemId={0}, related_type = {1}, limit = {2}", item_id, relatedType.ToString(), limit);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
                 JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
@@ -926,7 +927,8 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref funct, "fname", "get_related_items");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
                 JSON.API.PushKey(ref funct, "limit", "<int>" + limit);
-                JSON.API.PushKey(ref funct, "related_type", related_type);
+                JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
+                JSON.API.PushKey(ref funct, "related_type", relatedType.ToString());
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
@@ -954,9 +956,10 @@ namespace HappyPandaXDroid.Core
                 return list;
             }
 
-            public int GetRelatedCount(int item_id, CancellationToken cancellationToken,string related_type = "Page")
+            public int GetRelatedCount(int item_id, CancellationToken cancellationToken, Gallery.ItemType itemType
+                , Gallery.ItemType relatedType)
             {
-                logger.Info("Get Related Count. itemId={0}, related_type = {1},", item_id, related_type);
+                logger.Info("Get Related Count. itemId={0}, related_type = {1},", item_id, relatedType.ToString());
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
 
@@ -964,7 +967,8 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_related_count");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
-                JSON.API.PushKey(ref funct, "related_type", related_type);
+                JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
+                JSON.API.PushKey(ref funct, "related_type", relatedType.ToString());
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);

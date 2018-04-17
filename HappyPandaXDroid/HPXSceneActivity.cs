@@ -134,8 +134,8 @@ namespace HappyPandaXDroid
                     StartActivity(intent);
                     break;
                 case Resource.Id.action_home:
-                    if (!(scene is Scenes.LibraryScene)) { 
-                        Scenes.LibraryScene library = new Scenes.LibraryScene("", "");
+                    if (!(scene is Scenes.ViewScene)) { 
+                        Scenes.ViewScene library = new Scenes.LibraryScene("", "");
                         stage.PushScene(library);
                     }
                     break;

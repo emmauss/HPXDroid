@@ -120,7 +120,7 @@ namespace HappyPandaXDroid.Custom_Views
                     return true;
                 }
                
-                bool exists = await Core.Gallery.IsSourceExist("page", page.id,PreviewCancellationTokenSource.Token);
+                bool exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Page, page.id,PreviewCancellationTokenSource.Token);
                 if (!exists)
                 {
 
@@ -160,7 +160,7 @@ namespace HappyPandaXDroid.Custom_Views
 
                 while (!IsCached)
                 {
-                    exists = await Core.Gallery.IsSourceExist("page", page.id,PreviewCancellationTokenSource.Token);
+                    exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Page, page.id,PreviewCancellationTokenSource.Token);
                     if (!exists)
                     {
                         h.Post(() =>

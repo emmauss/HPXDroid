@@ -191,9 +191,13 @@
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="HPXSceneActivity.cs" />
+    <Compile Include="Scenes\FavoriteScene.cs" />
     <Compile Include="Scenes\GalleryScene.cs" />
     <Compile Include="Scenes\HPXScene.cs" />
     <Compile Include="Scenes\LibraryScene.cs" />
+    <Compile Include="Scenes\ReadLaterScene.cs" />
+    <Compile Include="Scenes\TrashScene.cs" />
+    <Compile Include="Scenes\ViewScene.cs" />
     <Compile Include="Scenes\PreviewScene.cs" />
     <Compile Include="Scenes\RecentsScene.cs" />
     <Compile Include="ServerSettingsActivity.cs" />
