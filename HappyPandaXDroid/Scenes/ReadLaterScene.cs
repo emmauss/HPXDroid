@@ -15,7 +15,7 @@ namespace HappyPandaXDroid.Scenes
 {
     class ReadLaterScene : ViewScene
     {
-        public override Core.Gallery.ItemType ItemType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override Core.Gallery.ViewType ViewType => Core.Gallery.ViewType.ReadLater;
 
         public ReadLaterScene(string title, string query) : base(title, query)
         {

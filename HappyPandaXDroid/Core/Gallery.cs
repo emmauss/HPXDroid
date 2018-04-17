@@ -442,32 +442,34 @@ namespace HappyPandaXDroid.Core
         }
 
 
-        public async static Task<List<GalleryItem>> GetPage(ItemType itemType,int page, CancellationToken cancellationToken,Sort sortCriteria = (Sort)1, bool sortDec = false,
-            string searchQuery =  "", int limit = 50)
+        public async static Task<List<GalleryItem>> GetPage(ItemType itemType, int page, CancellationToken cancellationToken, 
+            ViewType viewType = ViewType.Library, Sort sortCriteria = (Sort)1, bool sortDec = false,
+            string searchQuery = "", int limit = 50)
         {
             string sort = sortCriteria.ToString().ToLower();
-            if(sortCriteria == Sort.None)
+            if (sortCriteria == Sort.None)
             {
                 sort = "null";
             }
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
+            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
             JSON.API.PushKey(ref main, "session", App.Server.Info.session);
             JSON.API.PushKey(ref funct, "fname", "library_view");
             JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
+            JSON.API.PushKey(ref funct, "view_filter", viewType.ToString());
             JSON.API.PushKey(ref funct, "limit", "<int>" + limit.ToString());
             JSON.API.PushKey(ref funct, "search_query", searchQuery);
             JSON.API.PushKey(ref funct, "page", "<int>" + page);
-           JSON.API.PushKey(ref funct, "sort_by",  (sort == "null"? "<int>" : "") + sort);
+            JSON.API.PushKey(ref funct, "sort_by", (sort == "null" ? "<int>" : "") + sort);
             JSON.API.PushKey(ref funct, "sort_desc", "<bool>" + sortDec.ToString().ToLower());
-            
+
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
             if (cancellationToken.IsCancellationRequested)
                 return null;
-            string countstring = Net.SendPost(response,ref cancellationToken);
+            string countstring = Net.SendPost(response, ref cancellationToken);
             if (cancellationToken.IsCancellationRequested)
                 return null;
             var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
@@ -506,13 +508,13 @@ namespace HappyPandaXDroid.Core
                     return null;
                 Task.Run(() =>
                 {
-                    InitiateImageGeneration(ids, ItemType.Gallery, "medium",cancellationToken);
+                    InitiateImageGeneration(ids, ItemType.Gallery, "medium", cancellationToken);
                 });
             }
             return list;
         }
         
-        public static async Task<int> GetCount(ItemType itemType,string query,CancellationToken cancellationToken)
+        public static async Task<int> GetCount(ItemType itemType,string query,CancellationToken cancellationToken,ViewType viewType = ViewType.Library)
         {
 
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -522,6 +524,7 @@ namespace HappyPandaXDroid.Core
             JSON.API.PushKey(ref main, "session", App.Server.Info.session);
             JSON.API.PushKey(ref funct, "fname", "get_view_count");
             JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
+            JSON.API.PushKey(ref funct, "view_filter", viewType.ToString());
             JSON.API.PushKey(ref funct, "search_query", query);
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");

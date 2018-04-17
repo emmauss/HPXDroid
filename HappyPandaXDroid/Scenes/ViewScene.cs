@@ -33,7 +33,7 @@ namespace HappyPandaXDroid.Scenes
 {
     public abstract class ViewScene : HPXScene, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
     {
-        public abstract Core.Gallery.ItemType ItemType { get; set; }
+        public abstract Core.Gallery.ViewType ViewType { get;}
         Toolbar toolbar;
         Clans.Fab.FloatingActionMenu fam;
         string title, query;
@@ -500,7 +500,7 @@ namespace HappyPandaXDroid.Scenes
                 await Task.Run(async () =>
                 {
                     logger.Info("Refreshing HPContent");
-                    CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery,0, SceneCancellationTokenSource.Token, Core.App.Settings.Default_Sort,
+                    CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery,0, SceneCancellationTokenSource.Token, ViewType,Core.App.Settings.Default_Sort,
                         Core.App.Settings.Sort_Decending, Current_Query));
                     if (CurrentList == null || CurrentList.Count < 1)
                     {
@@ -647,7 +647,7 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             CurrentList.Clear();
-            CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery, page - 1, SceneCancellationTokenSource.Token,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
+            CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery, page - 1, SceneCancellationTokenSource.Token,ViewType,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
             if (CurrentList.Count > 0)
             {
                 h.Post(() =>
@@ -752,7 +752,7 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             int lastin = CurrentList.Count - 1;
-            CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery,CurrentPage + 1, SceneCancellationTokenSource.Token,Core.App.Settings.Default_Sort,
+            CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery,CurrentPage + 1, SceneCancellationTokenSource.Token,ViewType,Core.App.Settings.Default_Sort,
                 Core.App.Settings.Sort_Decending, Current_Query));
             if (CurrentList.Count > 0)
             {
@@ -804,8 +804,8 @@ namespace HappyPandaXDroid.Scenes
             });
             var oldlist = new List<Core.Gallery.GalleryItem>(CurrentList);
             CurrentList.Clear();
-            CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery,CurrentPage - 1, SceneCancellationTokenSource.Token,Core.App.Settings.Default_Sort,
-                Core.App.Settings.Sort_Decending, Current_Query));
+            CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery,CurrentPage - 1, SceneCancellationTokenSource.Token,
+                ViewType,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
             int newitems = CurrentList.Count;
             CurrentList.AddRange(oldlist);
             if (newitems > 0)

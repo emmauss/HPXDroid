@@ -15,7 +15,7 @@ namespace HappyPandaXDroid.Scenes
 {
     class FavoriteScene : ViewScene
     {
-        public override Core.Gallery.ItemType ItemType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override Core.Gallery.ViewType ViewType => Core.Gallery.ViewType.Favorite;
 
         public FavoriteScene(string title, string query) : base(title,query)
         {
