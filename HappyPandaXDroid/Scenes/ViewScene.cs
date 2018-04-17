@@ -500,8 +500,9 @@ namespace HappyPandaXDroid.Scenes
                 await Task.Run(async () =>
                 {
                     logger.Info("Refreshing HPContent");
-                    CurrentList.AddRange(await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery,0, SceneCancellationTokenSource.Token, ViewType,Core.App.Settings.Default_Sort,
-                        Core.App.Settings.Sort_Decending, Current_Query));
+                    var list = await Core.Gallery.GetPage(Core.Gallery.ItemType.Gallery,0, SceneCancellationTokenSource.Token, ViewType,Core.App.Settings.Default_Sort,
+                        Core.App.Settings.Sort_Decending, Current_Query);
+                    CurrentList.AddRange(list);
                     if (CurrentList == null || CurrentList.Count < 1)
                     {
                         h.Post(() =>
@@ -680,7 +681,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 if (holder is GalleryCardHolder vh)
                 {
-                    string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.Gallery);
+                    string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.HPXItem);
                     var galleryscene = new Scenes.GalleryScene(gallerystring, vh.gcard.ThumbnailPath);
                     var pscene = (((GalleryCardAdapter)parent.GetAdapter()).content);
                     pscene.Stage.PushScene(galleryscene);
@@ -998,7 +999,7 @@ namespace HappyPandaXDroid.Scenes
 
             public void Bind(Core.Gallery.GalleryItem item)
             {
-                gcard.Gallery = item;
+                gcard.HPXItem = item;
                 Task.Run(() =>
                 {
                     gcard.Recycle();

@@ -481,8 +481,11 @@ namespace HappyPandaXDroid.Scenes
                     pages.Text = pagelist.Count.ToString() + " Pages";
                     
                     last_read_page.Text = "Last Read Page: " + (gallery.LastPageRead + 1).ToString();
-                    var lists = SplitPageList();
-                    adapter.SetList(lists);
+                    if (pagelist != null)
+                    {
+                        var lists = SplitPageList();
+                        adapter.SetList(lists);
+                    }
                     
                 });
             }

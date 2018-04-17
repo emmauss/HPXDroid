@@ -85,21 +85,58 @@ namespace HappyPandaXDroid.Core
             CircleName = 40
         }
 
-        public class GalleryItem
+        public class MetaTag
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            bool favorite;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            bool inbox;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            bool readlater;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            bool trash;
+        }
+
+        public class HPXItem
+        {
+            public GalleryItem[] galleries;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int id;
+            public string name;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int last_updated;
+            public string info;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int pub_date;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int category_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int timestamp;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int user_id;
+        }
+
+        public class Collection : HPXItem
+        {
+            public async Task<string> Download(CancellationToken cancellationToken, string size = "medium")
+            {
+                return await GetImage(id, ItemType.Collection, false, cancellationToken, size);
+            }
+        }
+
+        public class GalleryItem : HPXItem
+        {
+            public List<Collection> collections;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int command_id;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int taggable_id;
-            public string category_id;
             public string last_read;
-            public string last_updated;
             public string language_id;
             public List<Artist> artists;
             public List<Page> pages;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public int timestamp;
-            public string[] filters;
+            public List<string> filters;
             public string info;
             public bool fetched;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -107,19 +144,20 @@ namespace HappyPandaXDroid.Core
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int number;
             public bool fav;
-            public int id;
             public int rating;
             public List<Profile> profiles;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int times_read;
             public List<Title> titles;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public int pub_date;
-            public List<URL> urls;
+            public List<Url> urls;
             public bool inbox;
             public bool singe_source;
-            public string[] collections;
+            //public List<string> parodies;
             public string[] circles;
+            public bool single_source;
+            public MetaTag metaTags;
+            public Title preferred_title;
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int page;
@@ -190,11 +228,42 @@ namespace HappyPandaXDroid.Core
             }
         }
 
+        public class Circle
+        {
+            public List<Artist> artists;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int id;
+            public string name;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int user_id;
+        }
+
+        public class Name
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int id;
+            public string name;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int language_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int alias_for_id;
+            public List<Artist> artists;
+        } 
 
         public class Artist
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int id;
             public string name;
+            public List<GalleryItem> galleries;
+            public List<Circle> circles;
+            public string info;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int user_id;
+            public MetaTag metatags;
+            public List<Name> Names;
+            public List<HPXUrl> urls;
+            public Name preferred_name;           
         }
         public class Profile
         {
@@ -208,13 +277,34 @@ namespace HappyPandaXDroid.Core
         }
         public class Title
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int id;
             public string name;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int language_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int gallery_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int alias_for_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int user_id;
+            public List<Title> aliases;       
         }
-        public class URL
+
+        public class HPXUrl
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int id;
+            public string name;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int user_id;
+            public List<Artist> artists;
+            public List<GalleryItem> galleries;
+    }
+
+        public class Url
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int id;
             public string url;
             public int gallery_id;
@@ -374,6 +464,9 @@ namespace HappyPandaXDroid.Core
                         break;
                 }
 
+                if (itemType == ItemType.Collection)
+                    type = "Collection";
+                else
                 switch (size)
                 {
                     case "medium":
@@ -423,12 +516,25 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static string GetCachedPagePath(int id, string size = "original", string type = "page")
+        public static string GetCachedPagePath(int id, ItemType itemType,string size = "original")
         {
             try
             {
+                string type = "page";
+                if (itemType == ItemType.Collection)
+                    type = "Collection";
+                else
+                    switch (size)
+                    {
+                        case "medium":
+                            type = "thumb";
+                            break;
+                        case "original":
+                            type = "page";
+                            break;
+                    }
 
-                string page_path = Core.App.Settings.cache + type + "s/" + Core.App.Server.HashGenerator(size, type, id) + ".jpg";
+                string page_path = Core.App.Settings.cache + type + "s/" + Core.App.Server.HashGenerator(size, type.ToString(), id) + ".jpg";
                 bool check = Core.Media.Cache.IsCached(page_path);
 
                 return page_path;

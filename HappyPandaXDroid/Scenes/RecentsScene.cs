@@ -226,7 +226,7 @@ namespace HappyPandaXDroid.Scenes
                 if (holder is GalleryCardHolder vh)
                 {
                     GalleryScene galleryScene = new GalleryScene
-                        (Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.Gallery), vh.gcard.ThumbnailPath);
+                        (Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.HPXItem), vh.gcard.ThumbnailPath);
                     var pscene = (((GalleryCardAdapter)parent.GetAdapter()).rscene);
                     pscene.Stage.PushScene(galleryScene);
                 }
@@ -313,7 +313,7 @@ namespace HappyPandaXDroid.Scenes
 
             public void Bind(Core.Gallery.GalleryItem item)
             {
-                gcard.Gallery = item;
+                gcard.HPXItem = item;
                 Task.Run(() =>
                 {
                     gcard.Recycle();

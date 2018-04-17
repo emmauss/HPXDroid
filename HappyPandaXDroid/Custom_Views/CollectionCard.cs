@@ -1,4 +1,4 @@
-using Android.Content;
+﻿using Android.Content;
 using Android.OS;
 using Android.Util;
 using Com.Bumptech.Glide;
@@ -7,27 +7,26 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 namespace HappyPandaXDroid.Custom_Views
 {
-    public class GalleryCard : ItemCard
+    class CollectionCard : ItemCard
     {
+        public override CardType CardType => CardType.Collection;
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public override CardType CardType => CardType.Gallery;
 
-        public GalleryCard(Context context, IAttributeSet attrs) :
+        public CollectionCard(Context context, IAttributeSet attrs) :
             base(context, attrs)
         {
 
         }
-        public GalleryCard(Context context) :
+        public CollectionCard(Context context) :
             base(context)
         {
 
         }
 
-        public GalleryCard(Context context, IAttributeSet attrs, int defStyle) :
+        public CollectionCard(Context context, IAttributeSet attrs, int defStyle) :
             base(context, attrs, defStyle)
         {
 
@@ -36,27 +35,24 @@ namespace HappyPandaXDroid.Custom_Views
         protected override void Initialize()
         {
             base.Initialize();
-
+            Artist.Visibility = Android.Views.ViewStates.Gone;
         }
 
         public override async void Refresh()
         {
-            var gallery = HPXItem as Core.Gallery.GalleryItem;
-            if (gallery == null)
+            var collection = HPXItem as Core.Gallery.Collection;
+            if (collection == null)
             {
                 return;
             }
             var h = new Handler(Looper.MainLooper);
             h.Post(() =>
             {
-
-                Name.Text = gallery.titles[0].name;
-                if (gallery.artists != null)
-                    Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
+                Name.Text = collection.name;
             });
             LoadThumb();
 
-            logger.Info("Refreshing GalleryCard. GalleryId = {0}", HPXItem.id);
+            logger.Info("Refreshing CollectionCard. CollectionId = {0}", HPXItem.id);
 
             await Task.Run(async () =>
             {
@@ -64,9 +60,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     h.Post(() =>
                     {
-                        Name.Text = gallery.titles[0].name;
-                        if (gallery.artists != null)
-                            Artist.Text = string.Join(", ", gallery.artists.Select((x) => x.name));
+                        Name.Text = collection.name;
 
                     });
                 }
@@ -77,8 +71,8 @@ namespace HappyPandaXDroid.Custom_Views
 
         public override async void LoadThumb()
         {
-            var gallery = HPXItem as Core.Gallery.GalleryItem;
-            if (gallery == null)
+            var collection = HPXItem as Core.Gallery.Collection;
+            if (collection == null)
             {
                 return;
             }
@@ -88,7 +82,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     try
                     {
-                        thumb_path = Core.Gallery.GetCachedPagePath(_HPXItem.id, Core.Gallery.ItemType.Gallery, "medium");
+                        thumb_path = Core.Gallery.GetCachedPagePath(_HPXItem.id, Core.Gallery.ItemType.Collection, CardType.ToString());
                         h.Post(() =>
                         {
                             try
@@ -107,7 +101,7 @@ namespace HappyPandaXDroid.Custom_Views
                     }
                     catch (Exception ex)
                     {
-                        logger.Error(ex, "\n Exception Caught In GalleryCard.LoadThumb.");
+                        logger.Error(ex, "\n Exception Caught In CollectionCard.LoadThumb.");
 
                     }
 
@@ -121,7 +115,7 @@ namespace HappyPandaXDroid.Custom_Views
                     {
                         try
                         {
-                            exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Gallery, HPXItem.id, CardCancellationTokenSource.Token);
+                            exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Collection, HPXItem.id, CardCancellationTokenSource.Token);
                         }
                         catch (Exception ex)
                         {
@@ -147,7 +141,7 @@ namespace HappyPandaXDroid.Custom_Views
                     }
                     else
                     {
-                        thumb_path = await gallery.Download(CardCancellationTokenSource.Token);
+                        thumb_path = await collection.Download(CardCancellationTokenSource.Token);
                         h.Post(() =>
                         {
                             try

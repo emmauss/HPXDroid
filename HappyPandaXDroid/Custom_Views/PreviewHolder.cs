@@ -231,7 +231,7 @@ namespace HappyPandaXDroid.Custom_Views
 
                 if (string.IsNullOrEmpty(thumb_path))
                 {
-                    thumb_path = Core.Gallery.GetCachedPagePath(page.id);
+                    thumb_path = Core.Gallery.GetCachedPagePath(page.id,Core.Gallery.ItemType.Page,"medium");
                 }
 
                 h = new Handler(Looper.MainLooper);

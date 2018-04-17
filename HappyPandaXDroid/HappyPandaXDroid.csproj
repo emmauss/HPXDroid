@@ -176,6 +176,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\IO.cs" />
+    <Compile Include="Custom_Views\CollectionCard.cs" />
+    <Compile Include="Custom_Views\ItemCard.cs" />
     <Compile Include="Custom_Views\ListDialog.cs" />
     <Compile Include="Custom_Views\AutoWrapLayout.cs" />
     <Compile Include="Custom_Views\ImageViewHolder.cs" />
