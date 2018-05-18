@@ -97,7 +97,7 @@ namespace HappyPandaXDroid.Core
             bool trash;
         }
 
-        public class HPXItem
+        public abstract class HPXItem
         {
             public GalleryItem[] galleries;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -114,6 +114,9 @@ namespace HappyPandaXDroid.Core
             public int timestamp;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int user_id;
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public int page;
         }
 
         public class Collection : HPXItem
@@ -154,13 +157,11 @@ namespace HappyPandaXDroid.Core
             public bool inbox;
             public bool singe_source;
             //public List<string> parodies;
-            public string[] circles;
+            public List<Circle> circles;
             public bool single_source;
             public MetaTag metaTags;
             public Title preferred_title;
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public int page;
             int lastPageRead =-1;
 
             public int LastPageRead
@@ -534,7 +535,7 @@ namespace HappyPandaXDroid.Core
                             break;
                     }
 
-                string page_path = Core.App.Settings.cache + type + "s/" + Core.App.Server.HashGenerator(size, type.ToString(), id) + ".jpg";
+                string page_path = Core.App.Settings.cache + type + "s/" + Core.App.Server.HashGenerator(size, type, id) + ".jpg";
                 bool check = Core.Media.Cache.IsCached(page_path);
 
                 return page_path;
@@ -548,7 +549,7 @@ namespace HappyPandaXDroid.Core
         }
 
 
-        public async static Task<List<GalleryItem>> GetPage(ItemType itemType, int page, CancellationToken cancellationToken, 
+        public async static Task<List<HPXItem>> GetPage(ItemType itemType, int page, CancellationToken cancellationToken, 
             ViewType viewType = ViewType.Library, Sort sortCriteria = (Sort)1, bool sortDec = false,
             string searchQuery = "", int limit = 50)
         {
@@ -581,10 +582,10 @@ namespace HappyPandaXDroid.Core
             var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
             if (obj == null)
             {
-                return new List<GalleryItem>();
+                return new List<HPXItem>();
             }
             var array = obj.data as Newtonsoft.Json.Linq.JArray;
-            List<GalleryItem> list = new List<GalleryItem>();
+            List<HPXItem> list = new List<HPXItem>();
             if (cancellationToken.IsCancellationRequested)
                 return null;
             try
@@ -594,7 +595,31 @@ namespace HappyPandaXDroid.Core
                     var data = array[0].ToObject<JSON.DataObject>();
                     var rdata = data.data as Newtonsoft.Json.Linq.JArray;
 
-                    list = rdata.ToObject<List<GalleryItem>>();
+                    var arry = rdata.ToArray();
+                    switch (itemType)
+                    {
+                        case ItemType.Gallery:
+                            foreach(var token in arry)
+                            {
+                                if (token.Values<GalleryItem>() != null)
+                                {
+                                    var item = token.ToObject<GalleryItem>();
+                                    list.Add(item);
+                                }
+                            }
+                            break;
+                        case ItemType.Collection:
+                            foreach (var token in arry)
+                            {
+                                if (token.Values<Collection>() != null)
+                                {
+                                    var item = token.ToObject<Collection>();
+                                    list.Add(item);
+                                }
+                            }
+                            break;
+                    }
+                    
                 }
             }
             catch (Exception ex)

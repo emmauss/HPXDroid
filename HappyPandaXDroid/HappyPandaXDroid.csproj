@@ -16,10 +16,12 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v8.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningKeyStore>C:\Users\Emmanuel Hansen\AppData\Local\Xamarin\Mono for Android\Keystore\emmaus\emmaus.keystore</AndroidSigningKeyStore>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -176,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\IO.cs" />
+    <Compile Include="Custom_Views\CardAdapter.cs" />
     <Compile Include="Custom_Views\CollectionCard.cs" />
     <Compile Include="Custom_Views\ItemCard.cs" />
     <Compile Include="Custom_Views\ListDialog.cs" />
@@ -257,6 +260,7 @@
     <AndroidResource Include="Resources\layout\WelcomeLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\drawable\ic_import_contacts.xml" />
     <TransformFile Include="Resources\menu\sortDirectionMenu.xml">
       <SubType>Designer</SubType>
     </TransformFile>
@@ -265,6 +269,7 @@
     <AndroidResource Include="Resources\layout\nav_header.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\drawable\ic_list_white.xml" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

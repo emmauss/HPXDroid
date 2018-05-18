@@ -82,7 +82,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     try
                     {
-                        thumb_path = Core.Gallery.GetCachedPagePath(_HPXItem.id, Core.Gallery.ItemType.Collection, CardType.ToString());
+                        thumb_path = Core.Gallery.GetCachedPagePath(_HPXItem.id, Core.Gallery.ItemType.Collection, "medium");
                         h.Post(() =>
                         {
                             try
@@ -109,38 +109,7 @@ namespace HappyPandaXDroid.Custom_Views
 
                 else
                 {
-
-                    bool exists = false;
-                    await Task.Run(async () =>
-                    {
-                        try
-                        {
-                            exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Collection, HPXItem.id, CardCancellationTokenSource.Token);
-                        }
-                        catch (Exception ex)
-                        {
-                            exists = true;
-                        }
-                    });
-                    if (!exists)
-                    {
-                        h.Post(() =>
-                        {
-                            try
-                            {
-                                Glide.With(this.Context)
-                                        .Load(Resource.Drawable.image_failed)
-                                        .Into(img);
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-                        });
-                        return;
-                    }
-                    else
-                    {
+                    
                         thumb_path = await collection.Download(CardCancellationTokenSource.Token);
                         h.Post(() =>
                         {
@@ -158,8 +127,7 @@ namespace HappyPandaXDroid.Custom_Views
                             }
                         });
 
-                    }
-
+                    
                 }
             }
         }

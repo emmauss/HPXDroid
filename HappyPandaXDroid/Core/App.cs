@@ -833,6 +833,8 @@ namespace HappyPandaXDroid.Core
                         switch (type)
                         {
                             case "thumb":
+                            case "Gallery":
+                            case "Collection":
                                 dir += "thumbs/";
                                 break;
                             case "page":                                

@@ -156,19 +156,22 @@ namespace HappyPandaXDroid.Custom_Views
         {
             get
             {
-
-
+                string t = string.Empty;
                 int item_id = _HPXItem.id;
                 try
                 {
-                    thumb_path = Core.App.Settings.cache + "thumbs/" + Core.App.Server.HashGenerator("medium", CardType.ToString(), item_id) + ".jpg";
+                    if (CardType == CardType.Collection)
+                        t = "Collection";
+                    else if (CardType == CardType.Gallery)
+                        t = "thumb";
+                    thumb_path = Core.App.Settings.cache + "thumbs/" + Core.App.Server.HashGenerator("medium", t, item_id) + ".jpg";
                     bool check = Core.Media.Cache.IsCached(thumb_path);
 
                     return check;
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached. Message : " + ex.Message
+                    logger.Error(ex, "\n Exception Caught In ItemCard.IsCached. Message : " + ex.Message
                         + System.Environment.NewLine + ex.StackTrace);
 
                     return false;
@@ -177,15 +180,6 @@ namespace HappyPandaXDroid.Custom_Views
             }
         }
 
-        private void GalleryCard_Touch(object sender, TouchEventArgs e)
-        {
-
-        }
-
-        private void GalleryCard_LongClick(object sender, LongClickEventArgs e)
-        {
-
-        }
     }
 
     public enum CardType

@@ -116,7 +116,7 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 if (IsCached())
                 {
-                    page_path = Core.Gallery.GetCachedPagePath(Page.id,Core.Gallery.ItemType.Page,"medium");
+                    page_path = Core.Gallery.GetCachedPagePath(Page.id,Core.Gallery.ItemType.Page);
                     h.Post(async () =>
                     {
                         try
