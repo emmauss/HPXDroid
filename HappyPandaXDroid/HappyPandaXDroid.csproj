@@ -214,7 +214,6 @@
     <Compile Include="Core\JSON.cs" />
     <Compile Include="Core\Media.cs" />
     <Compile Include="Core\Net.cs" />
-    <Compile Include="Custom_Views\GalleryCard.cs" />
     <Compile Include="Custom_Views\SettingsText.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

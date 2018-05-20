@@ -145,15 +145,6 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     hold.Cancel();
                 }
-                    /*if (holder is HPXCardHolder hold)
-                    {
-                        Task.Run(() =>
-                        {
-                            hold.gcard.Reset();
-                            hold.gcard.Recycle();
-                        });
-                    }*/
-
                 }
 
             public async override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
@@ -168,12 +159,13 @@ namespace HappyPandaXDroid.Custom_Views
                         var gallery = (Core.Gallery.GalleryItem)mdata[position];
                         vh.HPXItem = gallery;
                         vh.Name.Text = gallery.titles[0].name;
+                        vh.Url = UrlList[gallery.id];
                         /*vh.Open -= Vh_Open;
                         vh.Open += Vh_Open;*/
                         if (gallery.artists.Count > 0)
                             if (gallery.artists[0].Names.Count > 0)
                                 vh.Info.Text = gallery.artists[0].Names[0].name;
-                        Glide.With(holder.ItemView.Context).Load(UrlList[gallery.id]).Into(vh.Thumb);
+                        Glide.With(holder.ItemView.Context).Load(vh.Url).Into(vh.Thumb);
                     }
                 }
                 catch (Exception ex)
@@ -182,12 +174,7 @@ namespace HappyPandaXDroid.Custom_Views
 
                 }
             }
-
-            private void Vh_Open(object sender, HPXItemHolder.HPXEvent e)
-            {
-               
-            }
-
+            
             public override RecyclerView.ViewHolder OnCreateViewHolder2(ViewGroup parent, int viewType)
             {
                 View itemview = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.galleryCardList,null);
@@ -225,34 +212,14 @@ namespace HappyPandaXDroid.Custom_Views
             }
         }
 
-        public class HPXCardHolder : RecyclerView.ViewHolder
-        {
-            private static Logger logger = LogManager.GetCurrentClassLogger();
-            public ItemCard gcard;
-
-            public HPXCardHolder(View itemView) : base(itemView)
-            {
-                gcard = (ItemCard)itemView;
-            }
-
-            public void Bind(Core.Gallery.HPXItem item)
-            {
-                gcard.HPXItem = item;
-                Task.Run(() =>
-                {
-                    gcard.Recycle();
-                    gcard.Refresh();
-                });
-            }
-        }
-
         public class HPXItemHolder : RecyclerView.ViewHolder
         {
-            static object lockObj;
+            
             public Core.Gallery.HPXItem HPXItem;
             public ImageView Thumb { get; set; }
             public TextView Name { get; set; }
             public TextView Info { get; set; }
+            public string Url = string.Empty;
             CancellationTokenSource Token {get;set;}
             public event EventHandler<HPXEvent> Open;
             public HPXItemHolder(View itemView) : base(itemView)
@@ -267,42 +234,6 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 public Core.Gallery.HPXItem HPXItem;
                 public int Position;
-            }
-
-            public async Task<bool> LoadThumb(int id, Core.Gallery.ItemType itemType)
-            {
-                var h = new Handler(Looper.MainLooper);
-                if (lockObj == null)
-                    lockObj = new object();
-                Token = new CancellationTokenSource();
-                string path = string.Empty;
-                lock (lockObj)
-                {
-                    if (!Core.Gallery.IsItemCached(id, "medium", itemType.ToString()))
-                    {
-                        if (Token.IsCancellationRequested)
-                            return false;
-                        if (!(Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Gallery, id, Token.Token).Result))
-                        {
-                            if (Token.IsCancellationRequested)
-                                return false;
-                             h.Post(() => Glide.With(ItemView.Context).Load(Resource.Drawable.image_failed).Into(Thumb));
-                            return false;
-                        }
-                        if (Token.IsCancellationRequested)
-                            return false;
-                        path = Core.Gallery.GetImage(id, "Gallery", false, Token.Token).Result;
-                        if (Token.IsCancellationRequested || string.IsNullOrWhiteSpace(path))
-                            return false;
-                    }
-                    else
-                    {
-                        if (!Core.Gallery.GetCachedPagePath(id, out path, itemType.ToString(), "medium"))
-                            return false;
-                    }
-                    h.Post(() => Glide.With(ItemView.Context).Load(path).Into(Thumb));
-                }
-                return true;
             }
 
             public void Cancel()

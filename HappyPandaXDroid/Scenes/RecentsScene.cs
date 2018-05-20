@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Runtime;
 using Android.Views;
+using System.Threading;
 
 using Android.Util;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Com.Hippo.Stage;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using EasyRecyclerView;
 using Android.Content.Res;
+using Com.Bumptech.Glide;
 
 namespace HappyPandaXDroid.Scenes
 {
@@ -223,10 +225,10 @@ namespace HappyPandaXDroid.Scenes
         {
             public void OnItemClick(EasyRecyclerView.EasyRecyclerView parent, RecyclerView.ViewHolder holder)
             {
-                if (holder is GalleryCardHolder vh)
+                if (holder is Custom_Views.CardAdapter.HPXItemHolder vh)
                 {
                     GalleryScene galleryScene = new GalleryScene
-                        (Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.HPXItem), vh.gcard.ThumbnailPath);
+                        (Core.JSON.Serializer.SimpleSerializer.Serialize(vh.HPXItem), vh.Url);
                     var pscene = (((GalleryCardAdapter)parent.GetAdapter()).rscene);
                     pscene.Stage.PushScene(galleryScene);
                 }
@@ -246,12 +248,15 @@ namespace HappyPandaXDroid.Scenes
 
             public RecentsScene rscene;
             public List<Core.Gallery.GalleryItem> mdata;
+            CancellationTokenSource CancellationTokenSource;
             Android.Content.Context mcontext;
+            Dictionary<int, string> UrlList = new Dictionary<int, string>();
             public GalleryCardAdapter(Context context,RecentsScene scene)
             {
                 rscene = scene;
                 mcontext = context;
                 mdata = Core.Media.Recents.RecentList;
+                CancellationTokenSource = new CancellationTokenSource();
             }
 
             public override int ItemCount
@@ -259,19 +264,48 @@ namespace HappyPandaXDroid.Scenes
                 get { return mdata.Count; }
             }
 
-            public void ResetList()
+            public async void ResetList()
             {
                 mdata = Core.Media.Recents.RecentList;
+                UrlList.Clear();
+                await Task.Run(()=>UpdateUrls());
                 this.NotifyDataSetChanged();
+            }
+
+
+            public void UpdateUrls()
+            {
+                List<int> ids = new List<int>();
+                foreach (var item in mdata)
+                {
+                    ids.Add(item.id);
+                }
+                if (ids.Count > 0)
+                {
+                    var urls = Core.Gallery.GetImage(ids.ToArray(), "Gallery",
+                       CancellationTokenSource.Token).Result;
+                    if (urls.Count > 0)
+                    {
+                        foreach (var item in mdata)
+                        {
+                            if (!UrlList.ContainsKey(item.id))
+                            {
+                                UrlList.Add(item.id, urls[item.id]);
+                            }
+                            else
+                                UrlList[item.id] = urls[item.id];
+                        }
+                    }
+                }
             }
 
             public override void OnViewRecycled(Java.Lang.Object holder)
             {
                 base.OnViewRecycled(holder);
-                var hold = holder as GalleryCardHolder;
+                var hold = holder as Custom_Views.CardAdapter.HPXItemHolder;
                 if (hold != null)
                 {
-                    hold.gcard.Reset();
+                    hold.Cancel();
                 }
 
             }
@@ -279,49 +313,35 @@ namespace HappyPandaXDroid.Scenes
 
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
-                GalleryCardHolder vh = holder as GalleryCardHolder;
+                Custom_Views.CardAdapter.HPXItemHolder vh = holder as Custom_Views.CardAdapter.HPXItemHolder;
                 try
                 {
-                    vh.Bind(mdata[position]);
+                    if (vh.ItemView != null)
+                    {
+                        var gallery = (Core.Gallery.GalleryItem)mdata[position];
+                        vh.HPXItem = gallery;
+                        vh.Url = UrlList[gallery.id];
+                        vh.Name.Text = gallery.titles[0].name;
+                        if (gallery.artists.Count > 0)
+                            if (gallery.artists[0].Names.Count > 0)
+                                vh.Info.Text = gallery.artists[0].Names[0].name;
+                        Glide.With(holder.ItemView.Context).Load(vh.Url).Into(vh.Thumb);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "\n Exception Caught In HPContent.ListViewAdapter.OnBindViewHolder.");
+                    logger.Error(ex, "\n Exception Caught In CardAdapter.OnBindViewHolder.");
 
                 }
-                //vh.gcard.SetOnClickListener(new GalleryCardClickListener());
             }
 
 
             public override RecyclerView.ViewHolder OnCreateViewHolder2(ViewGroup parent, int viewType)
             {
-                View itemview = new Custom_Views.GalleryCard(mcontext);
-                GalleryCardHolder vh = new GalleryCardHolder(itemview);
+                View itemview = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.galleryCardList, null);
+                Custom_Views.CardAdapter.HPXItemHolder vh = new Custom_Views.CardAdapter.HPXItemHolder(itemview);
                 return vh;
             }
-        }
-
-        public class GalleryCardHolder : RecyclerView.ViewHolder
-        {
-            private static Logger logger = LogManager.GetCurrentClassLogger();
-            public Custom_Views.GalleryCard gcard;
-
-            public GalleryCardHolder(View itemView) : base(itemView)
-            {
-                gcard = (Custom_Views.GalleryCard)itemView;
-            }
-
-            public void Bind(Core.Gallery.GalleryItem item)
-            {
-                gcard.HPXItem = item;
-                Task.Run(() =>
-                {
-                    gcard.Recycle();
-                    gcard.Refresh();
-                });
-            }
-
-
         }
 
     }
