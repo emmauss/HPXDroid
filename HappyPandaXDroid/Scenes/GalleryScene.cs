@@ -30,7 +30,7 @@ namespace HappyPandaXDroid.Scenes
             language, pages, time_posted, no_tags, last_read_page;
         public LinearLayout TagLayout;
         CardView ActionCard, ContinueCard;
-        CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
+        public CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
         public string thumb_path, gallerydata;
         public ImageView ThumbView;
         FrameLayout errorFrame;

@@ -141,7 +141,7 @@ namespace HappyPandaXDroid.Custom_Views
             public override void OnViewRecycled(Java.Lang.Object holder)
             {
                 base.OnViewRecycled(holder);
-                if (holder is TestHolder hold)
+                if (holder is HPXItemHolder hold)
                 {
                     hold.Cancel();
                 }
@@ -158,7 +158,7 @@ namespace HappyPandaXDroid.Custom_Views
 
             public async override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
-                TestHolder vh = holder as TestHolder;
+                HPXItemHolder vh = holder as HPXItemHolder;
                 try
                 {
                     /*Task.Run(() =>
@@ -183,7 +183,7 @@ namespace HappyPandaXDroid.Custom_Views
                 }
             }
 
-            private void Vh_Open(object sender, TestHolder.HPXEvent e)
+            private void Vh_Open(object sender, HPXItemHolder.HPXEvent e)
             {
                
             }
@@ -200,7 +200,7 @@ namespace HappyPandaXDroid.Custom_Views
                         itemview = new CollectionCard(mcontext);
                         break;
                 }*/
-                TestHolder vh = new TestHolder(itemview);
+                HPXItemHolder vh = new HPXItemHolder(itemview);
                 return vh;
             }
         }
@@ -246,7 +246,7 @@ namespace HappyPandaXDroid.Custom_Views
             }
         }
 
-        public class TestHolder : RecyclerView.ViewHolder
+        public class HPXItemHolder : RecyclerView.ViewHolder
         {
             static object lockObj;
             public Core.Gallery.HPXItem HPXItem;
@@ -255,7 +255,7 @@ namespace HappyPandaXDroid.Custom_Views
             public TextView Info { get; set; }
             CancellationTokenSource Token {get;set;}
             public event EventHandler<HPXEvent> Open;
-            public TestHolder(View itemView) : base(itemView)
+            public HPXItemHolder(View itemView) : base(itemView)
             {
                 Thumb = itemView.FindViewById<ImageView>(Resource.Id.imageView);
                 Name = itemView.FindViewById<TextView>(Resource.Id.name);

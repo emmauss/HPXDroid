@@ -797,7 +797,7 @@ namespace HappyPandaXDroid.Scenes
         {
             public void OnItemClick(EasyRecyclerView.EasyRecyclerView parent, RecyclerView.ViewHolder holder)
             {
-                if (holder is Custom_Views.CardAdapter.TestHolder vh)
+                if (holder is Custom_Views.CardAdapter.HPXItemHolder vh)
                 {
                     string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.HPXItem);
                     var galleryscene = new Scenes.GalleryScene(gallerystring, string.Empty);

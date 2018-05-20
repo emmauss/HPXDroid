@@ -205,7 +205,6 @@
     <Compile Include="Scenes\ReadLaterScene.cs" />
     <Compile Include="Scenes\TrashScene.cs" />
     <Compile Include="Scenes\ViewScene.cs" />
-    <Compile Include="Scenes\PreviewScene.cs" />
     <Compile Include="Scenes\RecentsScene.cs" />
     <Compile Include="ServerSettingsActivity.cs" />
     <Compile Include="Services\DownloadService.cs" />
