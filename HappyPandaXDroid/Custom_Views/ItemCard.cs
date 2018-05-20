@@ -160,14 +160,7 @@ namespace HappyPandaXDroid.Custom_Views
                 int item_id = _HPXItem.id;
                 try
                 {
-                    if (CardType == CardType.Collection)
-                        t = "Collection";
-                    else if (CardType == CardType.Gallery)
-                        t = "thumb";
-                    thumb_path = Core.App.Settings.cache + "thumbs/" + Core.App.Server.HashGenerator("medium", t, item_id) + ".jpg";
-                    bool check = Core.Media.Cache.IsCached(thumb_path);
-
-                    return check;
+                    return Core.Gallery.IsItemCached(item_id, "medium", "Gallery");                    
                 }
                 catch (Exception ex)
                 {

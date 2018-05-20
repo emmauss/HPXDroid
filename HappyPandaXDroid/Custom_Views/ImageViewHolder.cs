@@ -114,9 +114,9 @@ namespace HappyPandaXDroid.Custom_Views
             tries = 0;
             try
             {
-                if (IsCached())
+                if (IsCached)
                 {
-                    page_path = Core.Gallery.GetCachedPagePath(Page.id,Core.Gallery.ItemType.Page);
+                    Core.Gallery.GetCachedPagePath(Page.id,out page_path,"Page");
                     h.Post(async () =>
                     {
                         try
@@ -139,7 +139,7 @@ namespace HappyPandaXDroid.Custom_Views
                     });
                 }
                 else
-                while (!IsCached())
+                while (!IsCached)
                 {
 
                     bool exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Page, Page.id, ImageCancellationTokenSource.Token);
@@ -176,19 +176,21 @@ namespace HappyPandaXDroid.Custom_Views
 
         }
 
-        bool IsCached()
+        bool IsCached
         {
-            int item_id = Page.id;
-            try
+            get
             {
+                int item_id = Page.id;
+                try
+                {
+                    return Core.Gallery.IsItemCached(Page.id);
+                }
+                catch (System.Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
 
-                return Core.Gallery.IsPageCached(Page);
-            }
-            catch (System.Exception ex)
-            {
-                logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
-
-                return false;
+                    return false;
+                }
             }
         }
     }

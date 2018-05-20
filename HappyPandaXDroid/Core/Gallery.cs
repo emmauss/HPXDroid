@@ -123,7 +123,7 @@ namespace HappyPandaXDroid.Core
         {
             public async Task<string> Download(CancellationToken cancellationToken, string size = "medium")
             {
-                return await GetImage(id, ItemType.Collection, false, cancellationToken, size);
+                return await GetImage(id, "Gallery", false, cancellationToken, size);
             }
         }
 
@@ -182,7 +182,7 @@ namespace HappyPandaXDroid.Core
 
             public async Task<string> Download(CancellationToken cancellationToken,string size = "medium")
             {
-                return await GetImage(this.id, ItemType.Gallery, false, cancellationToken,size);
+                return await GetImage(this.id, "Gallery", false, cancellationToken,size);
             }
 
         }
@@ -208,12 +208,12 @@ namespace HappyPandaXDroid.Core
 
             public async Task<string> Download(string size = "original")
             {
-                return await GetImage(this.id, ItemType.Page, false, DownloadCancelationToken.Token,size);
+                return await GetImage(this.id, "Page", false, DownloadCancelationToken.Token,size);
             }
 
             public async void DownloadFromQueue()
             {
-                await GetImage(this.id, ItemType.Page,false, DownloadCancelationToken.Token,"original");
+                await GetImage(this.id, "Page",false, DownloadCancelationToken.Token,"original");
                 RemoveFromQueue();
             }
 
@@ -360,7 +360,7 @@ namespace HappyPandaXDroid.Core
             foreach (var page in downloadList)
                 if (DownloadList.Find((x) => x.id == page.id) == null)
                 {
-                    if (!IsPageCached(page, "original"))
+                    if (!IsItemCached(page.id, "original"))
                     DownloadList.Add(page);
                 }
             StartQueue();
@@ -427,7 +427,7 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        private static async Task<string> GetImage(int id, ItemType itemType, bool return_url, CancellationToken cancellationToken, string size = "medium")
+        public static async Task<string> GetImage(int id, string itemType, bool return_url, CancellationToken cancellationToken, string size = "medium")
         {
             string type = string.Empty;
             try
@@ -440,7 +440,7 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref funct, "item_ids", "[" + id + "]");
                 JSON.API.PushKey(ref funct, "url", "<bool>true");
                 JSON.API.PushKey(ref funct, "size", size);
-                JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
+                JSON.API.PushKey(ref funct, "item_type", itemType);
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
@@ -464,20 +464,7 @@ namespace HappyPandaXDroid.Core
                     else
                         break;
                 }
-
-                if (itemType == ItemType.Collection)
-                    type = "Collection";
-                else
-                switch (size)
-                {
-                    case "medium":
-                        type = "thumb";
-                        break;
-                    case "original":
-                        type = "page";
-                        break;
-                }
-                string name = App.Server.HashGenerator(size, type, id);
+                string name = App.Server.HashGenerator(size, itemType, id);
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
                 //get value
@@ -498,13 +485,64 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static bool IsPageCached(Core.Gallery.Page Page, string size = "original", string type = "page")
+        public static async Task<Dictionary<int, string>> GetImage(int[] id, string itemType, CancellationToken cancellationToken, string size = "medium")
         {
-            int item_id = Page.id;
+            string type = string.Empty;
+            try
+            {
+                List<Tuple<string, string>> main = new List<Tuple<string, string>>();
+                List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
+                JSON.API.PushKey(ref main, "session", App.Server.Info.session);
+                JSON.API.PushKey(ref funct, "fname", "get_image");
+                JSON.API.PushKey(ref funct, "item_ids", "[" + string.Join(",",id)+ "]");
+                JSON.API.PushKey(ref funct, "url", "<bool>true");
+                JSON.API.PushKey(ref funct, "size", size);
+                JSON.API.PushKey(ref funct, "item_type", itemType);
+                string response = JSON.API.ParseToString(funct);
+                JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
+                response = JSON.API.ParseToString(main);
+                if (cancellationToken.IsCancellationRequested)
+                    return new Dictionary<int, string>();
+                string reply = Net.SendPost(response, ref cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                    return new Dictionary<int, string>();
+                int[] command_id = App.Server.GetCommandIds(id, reply);
+                List<int> Done;
+                while (true)
+                {
+                    bool state = App.Server.GetCompleted(out Done,command_id, ref cancellationToken);
+                    if(!state)
+                        Thread.Sleep(App.Settings.Loop_Delay);
+                    else
+                        break;
+                }
+                if (cancellationToken.IsCancellationRequested)
+                    return new Dictionary<int, string>();
+                //get value
+                Dictionary<int,string> path = App.Server.GetCommandValues(command_id, id, type, ref cancellationToken);
+                return path;
+
+            }
+            catch (System.Net.Sockets.SocketException sex)
+            {
+                logger.Error(sex, "\n Exception Caught In Gallery.GetImage.Message {0}\n {1}", sex.Message, sex.StackTrace);
+                return new Dictionary<int, string>();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "\n Exception Caught In Gallery.GetImage. type = {3}, itemId = {0}, size = {1},\n Message = {2}"
+                     + System.Environment.NewLine + ex.StackTrace, id, size, ex.Message, type);
+                return new Dictionary<int, string>();
+            }
+        }
+
+        public static bool IsItemCached(int id, string size = "original", string type = "Page")
+        {
             try
             {
 
-                string page_path = Core.App.Settings.cache + type + "s/" + Core.App.Server.HashGenerator(size, type, item_id) + ".jpg";
+                string page_path = Core.App.Settings.cache + Core.App.Server.HashGenerator(size, type, id) + ".jpg";
                 bool check = Core.Media.Cache.IsCached(page_path);
 
                 return check;
@@ -517,34 +555,21 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static string GetCachedPagePath(int id, ItemType itemType,string size = "original")
+        public static bool GetCachedPagePath(int id, out string pagePath,string type = "Page" , string size = "original")
         {
+            pagePath = string.Empty;
             try
             {
-                string type = "page";
-                if (itemType == ItemType.Collection)
-                    type = "Collection";
-                else
-                    switch (size)
-                    {
-                        case "medium":
-                            type = "thumb";
-                            break;
-                        case "original":
-                            type = "page";
-                            break;
-                    }
+                pagePath = Core.App.Settings.cache + Core.App.Server.HashGenerator(size, type, id) + ".jpg";
+                bool check = Core.Media.Cache.IsCached(pagePath);
 
-                string page_path = Core.App.Settings.cache + type + "s/" + Core.App.Server.HashGenerator(size, type, id) + ".jpg";
-                bool check = Core.Media.Cache.IsCached(page_path);
-
-                return page_path;
+                return check;
             }
             catch (System.Exception ex)
             {
                 logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
 
-                return string.Empty;
+                return false;
             }
         }
 
@@ -730,8 +755,7 @@ namespace HappyPandaXDroid.Core
                 int item_id = gallery.id;
                 try
                 {
-                    thumb_path = Core.App.Settings.cache + "thumbs/" + Core.App.Server.HashGenerator("medium", "thumb",item_id) + ".jpg";
-                    return Media.Cache.IsCached(thumb_path);
+                    return Gallery.IsItemCached(gallery.id, "medium", "Gallery");
                 }
                 catch (Exception ex)
                 {

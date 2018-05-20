@@ -38,18 +38,26 @@ namespace HappyPandaXDroid
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             
             await Load();
-
             var intent = new Intent();
-            if(Core.App.Settings.IsFirstRun)
+            if (!Core.Net.Connected)
             {
                 intent = new Intent(this, typeof(WelcomeActivity));
                 StartActivity(intent);
-                return;
             }
-            intent = new Intent(this, typeof(HPXSceneActivity));
-            intent.PutExtra("connected", Core.Net.Connected);
-            intent.PutExtra("query", string.Empty);
-            StartActivity(intent);
+            else
+            {
+                
+                if (Core.App.Settings.IsFirstRun)
+                {
+                    intent = new Intent(this, typeof(WelcomeActivity));
+                    StartActivity(intent);
+                    return;
+                }
+                intent = new Intent(this, typeof(HPXSceneActivity));
+                intent.PutExtra("connected", Core.Net.Connected);
+                intent.PutExtra("query", string.Empty);
+                StartActivity(intent);
+            }
             
         }
 
@@ -81,10 +89,6 @@ namespace HappyPandaXDroid
                     
                 }
             CreateFolders();
-
-
-            
-            
             return true;
         }
 

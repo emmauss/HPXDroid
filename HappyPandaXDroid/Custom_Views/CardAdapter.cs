@@ -27,6 +27,7 @@ using NLog;
 using Android.Content.Res;
 using RefreshLayout = Com.Hippo.Refreshlayout;
 using Com.Hippo.Stage;
+using Com.Bumptech.Glide;
 
 namespace HappyPandaXDroid.Custom_Views
 {
@@ -46,13 +47,15 @@ namespace HappyPandaXDroid.Custom_Views
 
             public Scene scene;
 
-            public List<Core.Gallery.HPXItem> mdata;
+            List<Core.Gallery.HPXItem> mdata;
+            Dictionary<int, string> UrlList;
             Android.Content.Context mcontext;
             public HPXCardAdapter(Context context, Scenes.ViewScene content)
             {
                 mcontext = context;
                 this.content = content;
                 mdata = content.CurrentList;
+                UrlList = new Dictionary<int, string>();
                 AdapterCancellationTokenSource = new CancellationTokenSource();
             }
 
@@ -61,9 +64,65 @@ namespace HappyPandaXDroid.Custom_Views
                 get { return mdata.Count; }
             }
 
+            public async void Add(List<Core.Gallery.HPXItem> newItems)
+            {
+                mdata.AddRange(newItems);
+                await Task.Run(()=>UpdateUrls(newItems));
+            }
+
+            public async void Prepend(List<Core.Gallery.HPXItem> newItems)
+            {
+                var backupData = new List<Core.Gallery.HPXItem>(mdata);
+                mdata.Clear();
+                var urls = new Dictionary<int, string>(UrlList);
+                UrlList.Clear();
+                mdata.AddRange(newItems);
+                await Task.Run(() => UpdateUrls(newItems));
+                mdata.AddRange(backupData);
+                if (urls.Count > 0)
+                {
+                    foreach (var item in mdata)
+                    {
+                        if (!UrlList.ContainsKey(item.id))
+                        {
+                            if (urls.ContainsKey(item.id))
+                                UrlList.Add(item.id, urls[item.id]);
+                        }
+                        else if (urls.ContainsKey(item.id))
+                            UrlList[item.id] = urls[item.id];
+                    }
+                }
+            }
+
+            public void UpdateUrls(List<Core.Gallery.HPXItem> newItems)
+            {
+                List<int> ids = new List<int>();
+                foreach (var item in newItems)
+                {
+                    ids.Add(item.id);
+                }
+                if (ids.Count > 0)
+                {
+                    var urls = Core.Gallery.GetImage(ids.ToArray(), ItemType.ToString(),
+                        AdapterCancellationTokenSource.Token).Result;
+                    if (urls.Count > 0)
+                    {
+                        foreach(var item in newItems)
+                        {
+                            if (!UrlList.ContainsKey(item.id))
+                            {
+                                UrlList.Add(item.id, urls[item.id]);
+                            }
+                            else
+                                UrlList[item.id] = urls[item.id];
+                        }
+                    }
+                }
+            }
+
             public void Clear()
             {
-
+                UrlList.Clear();
                 mdata.Clear();
                 AdapterCancellationTokenSource.Cancel();
                 NotifyDataSetChanged();
@@ -71,33 +130,51 @@ namespace HappyPandaXDroid.Custom_Views
 
             public void ResetList()
             {
+                UrlList.Clear();
                 AdapterCancellationTokenSource.Cancel();
                 AdapterCancellationTokenSource = new CancellationTokenSource();
                 mdata = content.CurrentList;
+                UpdateUrls(mdata);
                 this.NotifyDataSetChanged();
             }
 
             public override void OnViewRecycled(Java.Lang.Object holder)
             {
                 base.OnViewRecycled(holder);
-                if (holder is HPXCardHolder hold)
+                if (holder is TestHolder hold)
                 {
-                    Task.Run(() =>
+                    hold.Cancel();
+                }
+                    /*if (holder is HPXCardHolder hold)
                     {
-                        hold.gcard.Reset();
-                        hold.gcard.Recycle();
-                    });
+                        Task.Run(() =>
+                        {
+                            hold.gcard.Reset();
+                            hold.gcard.Recycle();
+                        });
+                    }*/
+
                 }
 
-            }
-
-            public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+            public async override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
-                HPXCardHolder vh = holder as HPXCardHolder;
+                TestHolder vh = holder as TestHolder;
                 try
                 {
-                    Task.Run(() =>
-                    vh.Bind(mdata[position]));
+                    /*Task.Run(() =>
+                    vh.Bind(mdata[position]));*/
+                    if (vh.ItemView != null)
+                    {
+                        var gallery = (Core.Gallery.GalleryItem)mdata[position];
+                        vh.HPXItem = gallery;
+                        vh.Name.Text = gallery.titles[0].name;
+                        /*vh.Open -= Vh_Open;
+                        vh.Open += Vh_Open;*/
+                        if (gallery.artists.Count > 0)
+                            if (gallery.artists[0].Names.Count > 0)
+                                vh.Info.Text = gallery.artists[0].Names[0].name;
+                        Glide.With(holder.ItemView.Context).Load(UrlList[gallery.id]).Into(vh.Thumb);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -106,11 +183,15 @@ namespace HappyPandaXDroid.Custom_Views
                 }
             }
 
+            private void Vh_Open(object sender, TestHolder.HPXEvent e)
+            {
+               
+            }
 
             public override RecyclerView.ViewHolder OnCreateViewHolder2(ViewGroup parent, int viewType)
             {
-                View itemview = null;
-                switch (ItemType)
+                View itemview = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.galleryCardList,null);
+                /*switch (ItemType)
                 {
                     case Core.Gallery.ItemType.Gallery:
                         itemview = new GalleryCard(mcontext);
@@ -118,8 +199,8 @@ namespace HappyPandaXDroid.Custom_Views
                     case Core.Gallery.ItemType.Collection:
                         itemview = new CollectionCard(mcontext);
                         break;
-                }
-                HPXCardHolder vh = new HPXCardHolder(itemview);
+                }*/
+                TestHolder vh = new TestHolder(itemview);
                 return vh;
             }
         }
@@ -163,7 +244,74 @@ namespace HappyPandaXDroid.Custom_Views
                     gcard.Refresh();
                 });
             }
+        }
 
+        public class TestHolder : RecyclerView.ViewHolder
+        {
+            static object lockObj;
+            public Core.Gallery.HPXItem HPXItem;
+            public ImageView Thumb { get; set; }
+            public TextView Name { get; set; }
+            public TextView Info { get; set; }
+            CancellationTokenSource Token {get;set;}
+            public event EventHandler<HPXEvent> Open;
+            public TestHolder(View itemView) : base(itemView)
+            {
+                Thumb = itemView.FindViewById<ImageView>(Resource.Id.imageView);
+                Name = itemView.FindViewById<TextView>(Resource.Id.name);
+                Info = itemView.FindViewById<TextView>(Resource.Id.info);
+                Token = new CancellationTokenSource();
+            }            
+
+            public class  HPXEvent: EventArgs
+            {
+                public Core.Gallery.HPXItem HPXItem;
+                public int Position;
+            }
+
+            public async Task<bool> LoadThumb(int id, Core.Gallery.ItemType itemType)
+            {
+                var h = new Handler(Looper.MainLooper);
+                if (lockObj == null)
+                    lockObj = new object();
+                Token = new CancellationTokenSource();
+                string path = string.Empty;
+                lock (lockObj)
+                {
+                    if (!Core.Gallery.IsItemCached(id, "medium", itemType.ToString()))
+                    {
+                        if (Token.IsCancellationRequested)
+                            return false;
+                        if (!(Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Gallery, id, Token.Token).Result))
+                        {
+                            if (Token.IsCancellationRequested)
+                                return false;
+                             h.Post(() => Glide.With(ItemView.Context).Load(Resource.Drawable.image_failed).Into(Thumb));
+                            return false;
+                        }
+                        if (Token.IsCancellationRequested)
+                            return false;
+                        path = Core.Gallery.GetImage(id, "Gallery", false, Token.Token).Result;
+                        if (Token.IsCancellationRequested || string.IsNullOrWhiteSpace(path))
+                            return false;
+                    }
+                    else
+                    {
+                        if (!Core.Gallery.GetCachedPagePath(id, out path, itemType.ToString(), "medium"))
+                            return false;
+                    }
+                    h.Post(() => Glide.With(ItemView.Context).Load(path).Into(Thumb));
+                }
+                return true;
+            }
+
+            public void Cancel()
+            {
+                Token.Cancel();
+                Glide.With(ItemView.Context).Clear(Thumb);
+                Name.Text = string.Empty;
+                Info.Text = string.Empty;
+            }
         }
     }
 }

@@ -229,7 +229,9 @@ namespace HappyPandaXDroid.Core
 
         static byte[] TrimEOF(byte[] payload)
         {
-            Array.Resize(ref payload, payload.Length - 5);
+            var eof = Encoding.UTF8.GetBytes("<EOF>");
+            
+            Array.Resize(ref payload, payload.Length - eof.Length);
             return payload;
         }
 

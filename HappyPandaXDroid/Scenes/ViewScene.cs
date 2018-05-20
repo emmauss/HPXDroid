@@ -101,6 +101,7 @@ namespace HappyPandaXDroid.Scenes
                         return CurrentLists.CollectionCount;
                     default:
                         return 0;
+
                 }
             }
 
@@ -613,7 +614,6 @@ namespace HappyPandaXDroid.Scenes
             {
                 h.Post(() =>
                 {
-                    adapter.ResetList();
                     SetMainLoading(true);
                 });
                 await Task.Run(async () =>
@@ -634,8 +634,8 @@ namespace HappyPandaXDroid.Scenes
                     CurrentPage = 0;
                     h.Post(() =>
                     {
-                        adapter.NotifyDataSetChanged();
                         adapter.ResetList();
+                        adapter.NotifyDataSetChanged();
                         SetMainLoading(false);
                         if (CurrentList.Count > 0)
                             mRecyclerView.ScrollToPosition(0);
@@ -797,10 +797,10 @@ namespace HappyPandaXDroid.Scenes
         {
             public void OnItemClick(EasyRecyclerView.EasyRecyclerView parent, RecyclerView.ViewHolder holder)
             {
-                if (holder is Custom_Views.CardAdapter.HPXCardHolder vh)
+                if (holder is Custom_Views.CardAdapter.TestHolder vh)
                 {
-                    string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.gcard.HPXItem);
-                    var galleryscene = new Scenes.GalleryScene(gallerystring, vh.gcard.ThumbnailPath);
+                    string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.HPXItem);
+                    var galleryscene = new Scenes.GalleryScene(gallerystring, string.Empty);
                     var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
                     pscene.Stage.PushScene(galleryscene);
                 }
@@ -871,8 +871,8 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             int lastin = CurrentList.Count - 1;
-            CurrentList.AddRange(await Core.Gallery.GetPage(ItemType,CurrentPage + 1, SceneCancellationTokenSource.Token,ViewType,Core.App.Settings.Default_Sort,
-                Core.App.Settings.Sort_Decending, Current_Query));
+            adapter.Add((await Core.Gallery.GetPage(ItemType,CurrentPage + 1, SceneCancellationTokenSource.Token,ViewType,Core.App.Settings.Default_Sort,
+                Core.App.Settings.Sort_Decending, Current_Query)));
             if (CurrentList.Count > 0)
             {
                 h.Post(() =>
@@ -921,12 +921,11 @@ namespace HappyPandaXDroid.Scenes
                 mRefreshLayout.HeaderRefreshing = true;
             });
             var oldlist = new List<Core.Gallery.HPXItem>(CurrentList);
-            CurrentList.Clear();
-            CurrentList.AddRange(await Core.Gallery.GetPage(ItemType,CurrentPage - 1, SceneCancellationTokenSource.Token,
-                ViewType,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
-            int newitems = CurrentList.Count;
-            CurrentList.AddRange(oldlist);
-            if (newitems > 0)
+            var newitems = await Core.Gallery.GetPage(ItemType,CurrentPage - 1, SceneCancellationTokenSource.Token,
+                ViewType,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query);
+            int nitems = newitems.Count;
+            adapter.Prepend(newitems);
+            if (nitems > 0)
             {
                 h.Post(() =>
                 {

@@ -787,6 +787,23 @@ namespace HappyPandaXDroid.Core
                 return response;
             }
 
+            static string CreateCommand(string key, int[] command_id)
+            {
+                logger.Info("Create Command. commandName ={0}, commandId ={1}", key, command_id);
+                List<Tuple<string, string>> main = new List<Tuple<string, string>>();
+                List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
+
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
+                JSON.API.PushKey(ref main, "session", App.Server.Info.session);
+                JSON.API.PushKey(ref funct, "fname", key);
+                JSON.API.PushKey(ref funct, "command_ids", "[" + string.Join(",",command_id) + "]");
+                string response = JSON.API.ParseToString(funct);
+                JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
+                response = JSON.API.ParseToString(main);
+
+                return response;
+            }
+
             public static int GetCommandId(int item_id, string command_response)
             {
                 if (command_response.Contains("\"" + item_id + "\""))
@@ -799,6 +816,32 @@ namespace HappyPandaXDroid.Core
                     return int.Parse(id);
                 }
                 else return -1;
+            }
+
+            public static int[] GetCommandIds(int[] item_ids, string command_response)
+            {
+                List<int> commandIds = new List<int>();
+                {
+                    var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(command_response);
+                    var dataobj = JSON.API.GetData(serverobj.data, 0);
+                    foreach(int id in item_ids)
+                    {
+                        var value = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[id.ToString()]
+                        .ToString();
+                        commandIds.Add(int.Parse(value));
+                    }
+                }
+                /*if (command_response.Contains("\"" + item_id + "\""))
+                {
+                    var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(command_response);
+                    var dataobj = JSON.API.GetData(serverobj.data, 0);
+                    var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[item_id.ToString()]
+                        .ToString();
+                    string id = data;
+                    return int.Parse(id);
+                }
+                else return -1;*/
+                return commandIds.ToArray();
             }
 
             public class ErrorObject
@@ -829,19 +872,7 @@ namespace HappyPandaXDroid.Core
                         data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                             .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
                         
-                        string dir = Settings.cache;
-                        switch (type)
-                        {
-                            case "thumb":
-                            case "Gallery":
-                            case "Collection":
-                                dir += "thumbs/";
-                                break;
-                            case "page":                                
-                                    dir += "pages/";
-                                break;
-
-                        }
+                        string dir = Settings.cache;                        
                         if (!Directory.Exists(dir))
                             Directory.CreateDirectory(dir);                        
                         filename = dir + name + ".jpg";
@@ -871,6 +902,51 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
+            public static Dictionary<int,string> GetCommandValues(int[] command_ids, int[] item_ids, string type,
+                ref CancellationToken cancellationToken)
+            {
+                logger.Info("Get Command values. commandId={0}, type = {1},  itemIDs =[{2}]",
+                    command_ids, type,  item_ids.ToString());
+                string response = CreateCommand("get_command_value", command_ids);
+                response = Net.SendPost(response, ref cancellationToken);
+                string filename = string.Empty;
+                Gallery.Profile data = new Gallery.Profile();
+                if (cancellationToken.IsCancellationRequested)
+                    return new Dictionary<int, string>();
+                Dictionary<int, string> urls = new Dictionary<int, string>();
+                try
+                {
+                    if (GetError(response) == "none")
+                    {
+                        var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+                        var dataobj = JSON.API.GetData(serverobj.data, 0);
+                        for(int i =0; i< command_ids.Length;i++)
+                        {
+                            int id = command_ids[i];
+                            data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[id.ToString()]
+                            .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
+                            string url = data.data;
+                            url = "http://" + App.Settings.Server_IP + ":" + App.Settings.WebClient_Port + url;
+                            urls.Add(item_ids[i], url);
+                        }
+                        /*data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
+                            .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
+                            */
+                        
+                    }
+                    else return new Dictionary<int, string>();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In App.Server.GetCommandValue. Message : " + ex.Message
+                        + System.Environment.NewLine + ex.StackTrace);
+                    if (File.Exists(filename))
+                        File.Delete(filename);
+                    return new Dictionary<int, string>();
+                }
+                return urls;
+            }
+
             public static string GetCommandState(int command_id,ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command State. commandId={0}", command_id);
@@ -891,7 +967,39 @@ namespace HappyPandaXDroid.Core
                 }
                 logger.Info("Get Command State Successful. commandId={0}, \n error={1}", command_id, error);
                 return (error);
+            }
 
+            public static bool GetCompleted(out List<int> done, int[] command_ids, ref CancellationToken cancellationToken)
+            {
+                done = new List<int>();
+                logger.Info("Get completed. commandId={0}", command_ids);
+
+                string command = CreateCommand("get_command_state", command_ids);
+                string response = Net.SendPost(command, ref cancellationToken);
+                string state = string.Empty;
+                string error = GetError(response);
+                if (error == "none")
+                {
+                    var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+                    var dataobj = JSON.API.GetData(serverobj.data, 0);
+                    foreach(int id in command_ids)
+                    {
+                        var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[id.ToString()]
+                        .ToString();
+                        if (!done.Contains(id))
+                        {
+                            if (data.ToLower() == "finished")
+                                done.Add(id);
+                        }
+                    }
+                    if(done.Count >= command_ids.Length)
+                    return true;
+                   /* 
+                    state = data;
+                    logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, state);*/
+                    return false;
+                }
+                return true;
             }
 
             public static T GetItem<T>(int item_id, Gallery.ItemType itemType,CancellationToken cancellationToken)

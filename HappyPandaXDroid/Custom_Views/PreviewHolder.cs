@@ -57,10 +57,7 @@ namespace HappyPandaXDroid.Custom_Views
                 int item_id = page.id;
                 try
                 {
-                    thumb_path = Core.App.Settings.cache + "thumbs/" + Core.App.Server.HashGenerator("medium", "thumb", item_id) + ".jpg";
-                    bool check = Core.Media.Cache.IsCached(thumb_path);
-
-                    return check;
+                    return Core.Gallery.IsItemCached(page.id,"medium");
                 }
                 catch (Exception ex)
                 {
@@ -231,7 +228,7 @@ namespace HappyPandaXDroid.Custom_Views
 
                 if (string.IsNullOrEmpty(thumb_path))
                 {
-                    thumb_path = Core.Gallery.GetCachedPagePath(page.id,Core.Gallery.ItemType.Page,"medium");
+                    Core.Gallery.GetCachedPagePath(page.id, out thumb_path, "Page", "medium");
                 }
 
                 h = new Handler(Looper.MainLooper);
