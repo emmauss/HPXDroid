@@ -339,7 +339,7 @@ namespace HappyPandaXDroid.Scenes
             public override RecyclerView.ViewHolder OnCreateViewHolder2(ViewGroup parent, int viewType)
             {
                 View itemview = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.galleryCardList, null);
-                Custom_Views.CardAdapter.HPXItemHolder vh = new Custom_Views.CardAdapter.HPXItemHolder(itemview);
+                Custom_Views.CardAdapter.HPXItemHolder vh = new Custom_Views.CardAdapter.HPXItemHolder(itemview,null);
                 return vh;
             }
         }

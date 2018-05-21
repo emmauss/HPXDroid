@@ -38,8 +38,10 @@ namespace HappyPandaXDroid.Custom_Views
             private static Logger logger = LogManager.GetCurrentClassLogger();
             CancellationTokenSource AdapterCancellationTokenSource = new CancellationTokenSource();
             public EventHandler<int> ItemClick;
+            public event EventHandler<HPXItemHolder.HPXEvent> ImagesReady;
             protected Core.Gallery.ItemType ItemType;
             public Scenes.ViewScene content;
+            bool IsImageReady = false;
             void OnClick(int position)
             {
                 ItemClick?.Invoke(this, position);
@@ -48,7 +50,7 @@ namespace HappyPandaXDroid.Custom_Views
             public Scene scene;
 
             List<Core.Gallery.HPXItem> mdata;
-            Dictionary<int, string> UrlList;
+            public Dictionary<int, string> UrlList;
             Android.Content.Context mcontext;
             public HPXCardAdapter(Context context, Scenes.ViewScene content)
             {
@@ -67,7 +69,7 @@ namespace HappyPandaXDroid.Custom_Views
             public async void Add(List<Core.Gallery.HPXItem> newItems)
             {
                 mdata.AddRange(newItems);
-                await Task.Run(()=>UpdateUrls(newItems));
+                Task.Run(()=>UpdateUrls(newItems));
             }
 
             public async void Prepend(List<Core.Gallery.HPXItem> newItems)
@@ -77,25 +79,30 @@ namespace HappyPandaXDroid.Custom_Views
                 var urls = new Dictionary<int, string>(UrlList);
                 UrlList.Clear();
                 mdata.AddRange(newItems);
-                await Task.Run(() => UpdateUrls(newItems));
                 mdata.AddRange(backupData);
-                if (urls.Count > 0)
+                Task.Run(() =>
                 {
-                    foreach (var item in mdata)
+                    UpdateUrls(newItems);
+                    if (urls.Count > 0)
                     {
-                        if (!UrlList.ContainsKey(item.id))
+                        foreach (var item in mdata)
                         {
-                            if (urls.ContainsKey(item.id))
-                                UrlList.Add(item.id, urls[item.id]);
+                            if (!UrlList.ContainsKey(item.id))
+                            {
+                                if (urls.ContainsKey(item.id))
+                                    UrlList.Add(item.id, urls[item.id]);
+                            }
+                            else if (urls.ContainsKey(item.id))
+                                UrlList[item.id] = urls[item.id];
                         }
-                        else if (urls.ContainsKey(item.id))
-                            UrlList[item.id] = urls[item.id];
                     }
-                }
+                
+                });
             }
 
             public void UpdateUrls(List<Core.Gallery.HPXItem> newItems)
             {
+                IsImageReady = false;
                 List<int> ids = new List<int>();
                 foreach (var item in newItems)
                 {
@@ -117,7 +124,9 @@ namespace HappyPandaXDroid.Custom_Views
                                 UrlList[item.id] = urls[item.id];
                         }
                     }
-                }
+                }                
+                ImagesReady.Invoke(this, null);
+                IsImageReady = true;
             }
 
             public void Clear()
@@ -134,7 +143,7 @@ namespace HappyPandaXDroid.Custom_Views
                 AdapterCancellationTokenSource.Cancel();
                 AdapterCancellationTokenSource = new CancellationTokenSource();
                 mdata = content.CurrentList;
-                UpdateUrls(mdata);
+                Task.Run(()=>UpdateUrls(mdata));
                 this.NotifyDataSetChanged();
             }
 
@@ -143,19 +152,26 @@ namespace HappyPandaXDroid.Custom_Views
                 base.OnViewRecycled(holder);
                 if (holder is HPXItemHolder hold)
                 {
+                    hold.Url = string.Empty;
                     hold.Cancel();
                 }
-                }
+            }
 
-            public async override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+            public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
                 HPXItemHolder vh = holder as HPXItemHolder;
                 try
                 {
                     if (vh.ItemView != null)
                     {
-
-                        vh.Url = UrlList[mdata[position].id];
+                        vh.Id = mdata[position].id;
+                        if (IsImageReady) {
+                            if (UrlList.ContainsKey(vh.Id))
+                            {
+                                vh.Url = UrlList[vh.Id];
+                                Glide.With(holder.ItemView.Context).Load(vh.Url).Into(vh.Thumb);
+                            }
+                        }
                         if (mdata[position] is Core.Gallery.GalleryItem gallery)
                         {
                             vh.HPXItem = gallery;
@@ -173,7 +189,6 @@ namespace HappyPandaXDroid.Custom_Views
                                     vh.Info.Text = collection.galleries.Length + " galler" + 
                                     (collection.galleries.Length>1?"ies":"y");
                         }
-                            Glide.With(holder.ItemView.Context).Load(vh.Url).Into(vh.Thumb);
                     }
                 }
                 catch (Exception ex)
@@ -195,7 +210,7 @@ namespace HappyPandaXDroid.Custom_Views
                         itemview = new CollectionCard(mcontext);
                         break;
                 }*/
-                HPXItemHolder vh = new HPXItemHolder(itemview);
+                HPXItemHolder vh = new HPXItemHolder(itemview,this);
                 return vh;
             }
         }
@@ -222,27 +237,52 @@ namespace HappyPandaXDroid.Custom_Views
 
         public class HPXItemHolder : RecyclerView.ViewHolder
         {
-            
+            public event EventHandler<HPXEvent> ImageCompleted;
+            HPXCardAdapter HPXCardAdapter;
             public Core.Gallery.HPXItem HPXItem;
             public Core.Gallery.ItemType ItemType;
             public ImageView Thumb { get; set; }
             public TextView Name { get; set; }
             public TextView Info { get; set; }
             public string Url = string.Empty;
+            public int Id = 0;
             CancellationTokenSource Token {get;set;}
-            public event EventHandler<HPXEvent> Open;
-            public HPXItemHolder(View itemView) : base(itemView)
+            public HPXItemHolder(View itemView, HPXCardAdapter adapter) : base(itemView)
             {
+                HPXCardAdapter = adapter;
                 Thumb = itemView.FindViewById<ImageView>(Resource.Id.imageView);
                 Name = itemView.FindViewById<TextView>(Resource.Id.name);
                 Info = itemView.FindViewById<TextView>(Resource.Id.info);
                 Token = new CancellationTokenSource();
-            }            
+                if(adapter!=null)
+                adapter.ImagesReady += HPXItemHolder_ImageCompleted;
+            }
+
+            private void HPXItemHolder_ImageCompleted(object sender, HPXEvent e)
+            {
+                if (Id > 0)
+                {
+                    if (string.IsNullOrEmpty(Url))
+                    {
+                        if (HPXCardAdapter.UrlList.ContainsKey(Id))
+                        {
+                            Url = HPXCardAdapter.UrlList[Id];
+                            var h = new Handler(Looper.MainLooper);
+                            h.Post(() => Glide.With(ItemView.Context).Load(Url).Into(Thumb));
+                        }
+                    }
+                }
+            }
 
             public class  HPXEvent: EventArgs
             {
-                public Core.Gallery.HPXItem HPXItem;
+                public string Url;
                 public int Position;
+            }
+
+            public void RegisterImageReadyEvent(EventHandler<HPXEvent> eventHandler)
+            {
+                
             }
 
             public void Cancel()
