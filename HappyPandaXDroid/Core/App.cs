@@ -976,6 +976,7 @@ namespace HappyPandaXDroid.Core
             public static bool GetCompleted(out List<int> done, int[] command_ids, ref CancellationToken cancellationToken)
             {
                 done = new List<int>();
+                List<int> failed = new List<int>();
                 logger.Info("Get completed. commandId={0}", command_ids);
 
                 string command = CreateCommand("get_command_state", command_ids);
@@ -994,9 +995,12 @@ namespace HappyPandaXDroid.Core
                         {
                             if (data.ToLower() == "finished")
                                 done.Add(id);
+                            else
+                              if (data.ToLower().Contains("fail"))
+                                failed.Add(id);
                         }
                     }
-                    if(done.Count >= command_ids.Length)
+                    if((done.Count >= command_ids.Length) || (failed.Count+done.Count >= command_ids.Length))
                     return true;
                    /* 
                     state = data;
