@@ -75,8 +75,7 @@ namespace HappyPandaXDroid.Scenes
                 {
                     loaded = false;
                 }
-
-                if (!loaded)
+            if (!loaded && MainLayout != null)
                 {
                     var h = new Handler(Looper.MainLooper);
                     h.Post(() =>
@@ -174,7 +173,6 @@ namespace HappyPandaXDroid.Scenes
         protected override void OnDestroyView(View p0)
         {
             SceneCancellationTokenSource.Cancel();
-            SceneCancellationTokenSource = null;
             IsRunning = false;
             mProgressView = null;
             MainLayout = null;
