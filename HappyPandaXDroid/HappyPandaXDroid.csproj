@@ -179,7 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\IO.cs" />
-    <Compile Include="Custom_Views\Adapter1.cs" />
     <Compile Include="Custom_Views\CardAdapter.cs" />
     <Compile Include="Custom_Views\CollectionCard.cs" />
     <Compile Include="Custom_Views\ItemCard.cs" />
@@ -198,12 +197,10 @@
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="HPXSceneActivity.cs" />
-    <Compile Include="Scenes\FavoriteScene.cs" />
+    <Compile Include="Scenes\CollectionScene.cs" />
     <Compile Include="Scenes\GalleryScene.cs" />
     <Compile Include="Scenes\HPXScene.cs" />
     <Compile Include="Scenes\LibraryScene.cs" />
-    <Compile Include="Scenes\ReadLaterScene.cs" />
-    <Compile Include="Scenes\TrashScene.cs" />
     <Compile Include="Scenes\ViewScene.cs" />
     <Compile Include="Scenes\RecentsScene.cs" />
     <Compile Include="ServerSettingsActivity.cs" />
@@ -261,6 +258,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\ic_import_contacts.xml" />
+    <AndroidResource Include="Resources\layout\CollectionSceneLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <TransformFile Include="Resources\menu\sortDirectionMenu.xml">
       <SubType>Designer</SubType>
     </TransformFile>

@@ -228,7 +228,7 @@ namespace HappyPandaXDroid.Scenes
                 if (holder is Custom_Views.CardAdapter.HPXItemHolder vh)
                 {
                     GalleryScene galleryScene = new GalleryScene
-                        (Core.JSON.Serializer.SimpleSerializer.Serialize(vh.HPXItem), vh.Url);
+                        (vh.HPXItem as Core.Gallery.GalleryItem, vh.Url);
                     var pscene = (((GalleryCardAdapter)parent.GetAdapter()).rscene);
                     pscene.Stage.PushScene(galleryScene);
                 }

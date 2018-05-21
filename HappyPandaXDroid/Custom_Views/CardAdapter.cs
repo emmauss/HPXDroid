@@ -31,7 +31,7 @@ using Com.Bumptech.Glide;
 
 namespace HappyPandaXDroid.Custom_Views
 {
-    class CardAdapter
+    public class CardAdapter
     {
         public abstract class HPXCardAdapter : EasyAdapter
         {
@@ -152,20 +152,28 @@ namespace HappyPandaXDroid.Custom_Views
                 HPXItemHolder vh = holder as HPXItemHolder;
                 try
                 {
-                    /*Task.Run(() =>
-                    vh.Bind(mdata[position]));*/
                     if (vh.ItemView != null)
                     {
-                        var gallery = (Core.Gallery.GalleryItem)mdata[position];
-                        vh.HPXItem = gallery;
-                        vh.Name.Text = gallery.titles[0].name;
-                        vh.Url = UrlList[gallery.id];
-                        /*vh.Open -= Vh_Open;
-                        vh.Open += Vh_Open;*/
-                        if (gallery.artists.Count > 0)
-                            if (gallery.artists[0].Names.Count > 0)
-                                vh.Info.Text = gallery.artists[0].Names[0].name;
-                        Glide.With(holder.ItemView.Context).Load(vh.Url).Into(vh.Thumb);
+
+                        vh.Url = UrlList[mdata[position].id];
+                        if (mdata[position] is Core.Gallery.GalleryItem gallery)
+                        {
+                            vh.HPXItem = gallery;
+                            vh.Name.Text = gallery.titles[0].name;
+                            if (gallery.artists.Count > 0)
+                                if (gallery.artists[0].Names.Count > 0)
+                                    vh.Info.Text = gallery.artists[0].Names[0].name;
+                        }
+                        else
+                         if (mdata[position] is Core.Gallery.Collection collection)
+                        {
+                            vh.HPXItem = collection;
+                            vh.Name.Text = collection.name;
+                            if (collection.galleries!=null)
+                                    vh.Info.Text = collection.galleries.Length + " galler" + 
+                                    (collection.galleries.Length>1?"ies":"y");
+                        }
+                            Glide.With(holder.ItemView.Context).Load(vh.Url).Into(vh.Thumb);
                     }
                 }
                 catch (Exception ex)
@@ -216,6 +224,7 @@ namespace HappyPandaXDroid.Custom_Views
         {
             
             public Core.Gallery.HPXItem HPXItem;
+            public Core.Gallery.ItemType ItemType;
             public ImageView Thumb { get; set; }
             public TextView Name { get; set; }
             public TextView Info { get; set; }

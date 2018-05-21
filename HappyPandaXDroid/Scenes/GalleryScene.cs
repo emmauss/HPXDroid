@@ -31,7 +31,7 @@ namespace HappyPandaXDroid.Scenes
         public LinearLayout TagLayout;
         CardView ActionCard, ContinueCard;
         public CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
-        public string thumb_path, gallerydata;
+        public string thumb_path;
         public ImageView ThumbView;
         FrameLayout errorFrame;
         public bool isDownloading = false;
@@ -57,7 +57,6 @@ namespace HappyPandaXDroid.Scenes
         {
             MainView = p0.Inflate(Resource.Layout.Gallery_Details_Layout, p1, false);
             InitializeViews();
-            gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(gallerydata);
             toolbar.Title = gallery.titles[0].name;
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
             if (thumb_path != string.Empty)
@@ -94,9 +93,9 @@ namespace HappyPandaXDroid.Scenes
             return MainView;
         }
 
-        public GalleryScene(string gallery,string thumb)
+        public GalleryScene(Core.Gallery.GalleryItem gallery,string thumb)
         {
-            gallerydata = gallery;
+            this.gallery = gallery;
             thumb_path = thumb;
         }
 

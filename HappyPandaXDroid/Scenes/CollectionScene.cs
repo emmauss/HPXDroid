@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Text;
+using System.Threading.Tasks;
 
 using Android.App;
 using Android.Content;
@@ -10,56 +10,59 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using HappyPandaXDroid.Core;
+using Com.Bumptech.Glide;
 
 namespace HappyPandaXDroid.Scenes
 {
-    public class LibraryScene : ViewScene
+    class CollectionScene : ViewScene
     {
-        string query;
-        Clans.Fab.FloatingActionButton mToggleFab;
-
-        public LibraryScene(string title, string query) : base(title, query)
+        TextView titleView, galleries;
+        ImageView thumb;
+        Core.Gallery.Collection Collection;
+        string url;
+        public CollectionScene(Core.Gallery.Collection collection,string url) : base(collection.name, null)
         {
-            this.query = query;
+            Collection = collection;
+            title = collection.name;
+            this.url = url;
+        }
+
+        protected override View OnCreateView(LayoutInflater p0, ViewGroup p1)
+        {
+            MainView = p0.Inflate(Resource.Layout.CollectionSceneLayout, p1, false);
+            Initialize();
+
+            return MainView;
         }
 
         protected override void Initialize()
         {
-            fabclick = new FABClickListener(this);
-            mToggleFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabToggle);
-            mToggleFab.SetImageResource(Resource.Drawable.ic_list_white);
-            mToggleFab.SetOnClickListener(fabclick);
             base.Initialize();
-            OnCreateOptionsMenu();
-            if (query.Trim() != string.Empty)
-            {
-
-                toolbar.Title = title.Replace("__namespace__:", "misc:");
-                toolbar.Title = title.Replace("\\", "");
-            }
-            else
-                toolbar.Title = "Library";
-            Current_Query = Parse(query, false);
+            toolbar.Title = Collection.name;
+            //initialize header
+            titleView = MainView.FindViewById<TextView>(Resource.Id.title);
+            // category = MainView.FindViewById<TextView>(Resource.Id.category);
+            galleries = MainView.FindViewById<TextView>(Resource.Id.pages);
+            thumb = MainView.FindViewById<ImageView>(Resource.Id.thumb);
+            titleView.Text = Collection.name;
+            Glide.With(Context).Load(url).Into(thumb);
+            current_query = string.Empty;
+            Refresh();
         }
 
-        protected override void OnSaveViewState(View p0, Bundle p1)
-        {
-            var bundle = p1;
-            bundle.PutString("query", Current_Query);
-            base.OnSaveViewState(p0, p1);
-        }
+        public readonly new Core.Gallery.ItemType ItemType = Core.Gallery.ItemType.Gallery;
 
-        protected override void OnRestoreViewState(View p0, Bundle p1)
-        {
-            var bundle = p1;
-            query = bundle.GetString("query");
-            base.OnRestoreViewState(p0, p1);
-        }
+        public override Core.Gallery.ViewType ViewType => Core.Gallery.ViewType.Library;
 
         public override async void GetTotalCount()
         {
-            Count = await Core.Gallery.GetCount(ItemType, Current_Query, SceneCancellationTokenSource.Token, ViewType);
+            await Task.Run(() =>
+            {
+                Count = Core.App.Server.GetRelatedCount(Collection.id, SceneCancellationTokenSource.Token, Core.Gallery.ItemType.Collection
+                    , Core.Gallery.ItemType.Gallery);
+                var h = new Handler(Looper.MainLooper);
+                h.Post(() => galleries.Text = Count.ToString());
+            });
         }
 
         public override async void Refresh()
@@ -77,8 +80,8 @@ namespace HappyPandaXDroid.Scenes
                 await Task.Run(async () =>
                 {
                     logger.Info("Refreshing HPContent");
-                    var list = await Core.Gallery.GetPage(ItemType, 0, SceneCancellationTokenSource.Token, ViewType, Core.App.Settings.Default_Sort,
-                        Core.App.Settings.Sort_Decending, Current_Query);
+                    var list = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
+                        Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, 0);
                     CurrentList.AddRange(list);
                     if (CurrentList == null || CurrentList.Count < 1)
                     {
@@ -133,8 +136,9 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             int lastin = CurrentList.Count - 1;
-            adapter.Add((await Core.Gallery.GetPage(ItemType, CurrentPage + 1, SceneCancellationTokenSource.Token, ViewType, Core.App.Settings.Default_Sort,
-                Core.App.Settings.Sort_Decending, Current_Query)));
+            var list = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
+                        Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, CurrentPage+1);
+            adapter.Add(new List<Core.Gallery.HPXItem>(list));
             if (CurrentList.Count > 0)
             {
                 h.Post(() =>
@@ -183,10 +187,10 @@ namespace HappyPandaXDroid.Scenes
                 mRefreshLayout.HeaderRefreshing = true;
             });
             var oldlist = new List<Core.Gallery.HPXItem>(CurrentList);
-            var newitems = await Core.Gallery.GetPage(ItemType, CurrentPage - 1, SceneCancellationTokenSource.Token,
-                ViewType, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query);
+            var newitems = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
+                        Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, CurrentPage - 1);
             int nitems = newitems.Count;
-            adapter.Prepend(newitems);
+            adapter.Prepend(new List<Core.Gallery.HPXItem>(newitems));
             if (nitems > 0)
             {
                 h.Post(() =>
@@ -203,24 +207,5 @@ namespace HappyPandaXDroid.Scenes
 
         }
 
-        protected override void SwitchToView(Core.Gallery.ItemType itemType)
-        {
-            if (itemType == ItemType)
-                return;
-            ItemType = itemType;
-            adapter = GetAdapter();
-            mRecyclerView.SetAdapter(adapter);
-            if (ItemType == Core.Gallery.ItemType.Gallery)
-                mToggleFab.SetImageResource(Resource.Drawable.ic_list_white);
-            else if (ItemType == Core.Gallery.ItemType.Collection)
-                mToggleFab.SetImageResource(Resource.Drawable.ic_import_contacts);
-            adapter.ResetList();
-            if (CurrentList.Count == 0)
-            {
-                Refresh();
-            }
-        }
-
-        public override Core.Gallery.ViewType ViewType => Core.Gallery.ViewType.Library;
     }
 }

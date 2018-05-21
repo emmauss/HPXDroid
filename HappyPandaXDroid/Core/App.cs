@@ -925,8 +925,12 @@ namespace HappyPandaXDroid.Core
                             int id = command_ids[i];
                             data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[id.ToString()]
                             .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
-                            string url = data.data;
-                            url = "http://" + App.Settings.Server_IP + ":" + App.Settings.WebClient_Port + url;
+                            string url = string.Empty;
+                            if (data != null)
+                            {
+                                url = data.data;
+                                url = "http://" + App.Settings.Server_IP + ":" + App.Settings.WebClient_Port + url;
+                            }
                             urls.Add(item_ids[i], url);
                         }
                         /*data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
@@ -1027,7 +1031,7 @@ namespace HappyPandaXDroid.Core
             }
 
             public static List<T> GetRelatedItems<T>(int item_id,CancellationToken cancellationToken, Gallery.ItemType itemType
-                , Gallery.ItemType relatedType, int limit = -1)
+                , Gallery.ItemType relatedType, int limit = -1, int page = 0)
             {
                 logger.Info("Get Item. itemId={0}, related_type = {1}, limit = {2}", item_id, relatedType.ToString(), limit);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -1037,6 +1041,7 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref funct, "fname", "get_related_items");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
                 JSON.API.PushKey(ref funct, "limit", "<int>" + limit);
+                JSON.API.PushKey(ref funct, "offset", "<int>" + (limit > 0 ? page * limit : 0));
                 JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
                 JSON.API.PushKey(ref funct, "related_type", relatedType.ToString());
                 string response = JSON.API.ParseToString(funct);
@@ -1066,7 +1071,7 @@ namespace HappyPandaXDroid.Core
                 return list;
             }
 
-            public int GetRelatedCount(int item_id, CancellationToken cancellationToken, Gallery.ItemType itemType
+            public static int GetRelatedCount(int item_id, CancellationToken cancellationToken, Gallery.ItemType itemType
                 , Gallery.ItemType relatedType)
             {
                 logger.Info("Get Related Count. itemId={0}, related_type = {1},", item_id, relatedType.ToString());

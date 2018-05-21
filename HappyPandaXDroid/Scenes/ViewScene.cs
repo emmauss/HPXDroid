@@ -34,38 +34,37 @@ namespace HappyPandaXDroid.Scenes
     public abstract class ViewScene : HPXScene, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
     {
         public abstract Core.Gallery.ViewType ViewType { get;}
-        Toolbar toolbar;
+        protected Toolbar toolbar;
         Clans.Fab.FloatingActionMenu fam;
-        string title, query;
+        public string title;
         AppBarLayout appBarLayout;
         bool isGrid = false;
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-        Clans.Fab.FloatingActionButton mRefreshFab;
-        Clans.Fab.FloatingActionButton mJumpFab;
-        Clans.Fab.FloatingActionButton mToggleFab;
-        View MainView { get; set; }
+        protected static Logger logger = LogManager.GetCurrentClassLogger();
+        protected Clans.Fab.FloatingActionButton mRefreshFab;
+        protected Clans.Fab.FloatingActionButton mJumpFab;
+        protected View MainView { get; set; }
         public GalleryLists CurrentLists = new GalleryLists();
         public Core.Gallery.ItemType ItemType = Core.Gallery.ItemType.Gallery;
         public Custom_Views.PageSelector mpageSelector;
-        EasyRecyclerView.EasyRecyclerView mRecyclerView;
+        protected EasyRecyclerView.EasyRecyclerView mRecyclerView;
         bool IsRefreshing = false;
         PageCheckListener listener;
         bool initialized = false;
-        CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
+        protected CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
         ProgressView.MaterialProgressBar mProgressView;
         public int columns;
-        RefreshLayout.RefreshLayout mRefreshLayout;
+        protected RefreshLayout.RefreshLayout mRefreshLayout;
         Helpers.Layouts.ExtraGridLayoutManager mLayoutManager;
         FrameLayout mErrorFrame;
         ImageView mErrorImage;
         TextView mErrorText;
-        Custom_Views.CardAdapter.HPXCardAdapter adapter;
+        protected Custom_Views.CardAdapter.HPXCardAdapter adapter;
         Custom_Views.CardAdapter.GalleryCardAdapter galleryAdapter;
         Custom_Views.CardAdapter.CollectionCardAdapter collectionAdapter;
         CountDown countDown;
-
-        bool isLoading = false;
-        bool IsLoading
+        protected FABClickListener fabclick;
+        protected bool isLoading = false;
+        protected bool IsLoading
         {
             get { return isLoading; }
             set
@@ -149,7 +148,7 @@ namespace HappyPandaXDroid.Scenes
             }
         }
 
-        string current_query = string.Empty;
+        protected string current_query = string.Empty;
         public String Current_Query
         {
             get
@@ -183,7 +182,7 @@ namespace HappyPandaXDroid.Scenes
             return MainView;
         }
 
-        private void Initialize()
+        protected virtual void Initialize()
         {
             toolbar = MainView.FindViewById<Toolbar>(Resource.Id.toolbar);
 
@@ -194,15 +193,14 @@ namespace HappyPandaXDroid.Scenes
 
             mRefreshFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabRefresh);
             mJumpFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabJumpTo);
-            mToggleFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabToggle);
+            
             mJumpFab.SetImageResource(Resource.Drawable.v_go_to_dark_x24);
-            mToggleFab.SetImageResource(Resource.Drawable.ic_list_white);
+            
             mRefreshFab.SetImageResource(Resource.Drawable.v_refresh_dark_x24);
             fam = MainView.FindViewById<Clans.Fab.FloatingActionMenu>(Resource.Id.fam);
-            FABClickListener fabclick = new FABClickListener(this);
+            
             mJumpFab.SetOnClickListener(fabclick);
             mRefreshFab.SetOnClickListener(fabclick);
-            mToggleFab.SetOnClickListener(fabclick);
             countDown = new CountDown(500, 10, this);
             listener = new PageCheckListener(this);
             logger.Info("Initializing HPContent");
@@ -250,16 +248,7 @@ namespace HappyPandaXDroid.Scenes
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");
-            OnCreateOptionsMenu();
-            if (query.Trim() != string.Empty)
-            {
-
-                toolbar.Title = title.Replace("__namespace__:", "misc:");
-                toolbar.Title = title.Replace("\\", "");
-            }
-            else
-                toolbar.Title = "Library";
-            Current_Query = Parse(query, false);
+            
         }
 
         private void MRefreshLayout_FooterRefresh(object sender, EventArgs e)
@@ -271,7 +260,7 @@ namespace HappyPandaXDroid.Scenes
             thread.Start();
         }
 
-        Custom_Views.CardAdapter.HPXCardAdapter GetAdapter()
+        public Custom_Views.CardAdapter.HPXCardAdapter GetAdapter()
         {
             switch (ItemType)
             {
@@ -317,29 +306,13 @@ namespace HappyPandaXDroid.Scenes
 
         public ViewScene(string title, string query) : base()
         {
-            this.title = title;
-            this.query = query;
+            this.title = title;            
         }
 
         private void AppBarLayout_Drag(object sender, View.DragEventArgs e)
         {
             e.Handled = true;
-        }
-
-        protected override void OnSaveViewState(View p0, Bundle p1)
-        {
-            var bundle = p1;
-            bundle.PutString("query", Current_Query);
-            base.OnSaveViewState(p0, p1);
-        }
-
-        protected override void OnRestoreViewState(View p0, Bundle p1)
-        {
-            var bundle = p1;
-            query = bundle.GetString("query");
-            base.OnRestoreViewState(p0, p1);
-        }
-
+        }        
 
         void SetColumns()
         {
@@ -471,22 +444,9 @@ namespace HappyPandaXDroid.Scenes
             }
         }
 
-        void SwitchToView(Core.Gallery.ItemType itemType)
+        protected virtual void SwitchToView(Core.Gallery.ItemType itemType)
         {
-            if (itemType == ItemType)
-                return;
-            ItemType = itemType;
-            adapter = GetAdapter();
-            mRecyclerView.SetAdapter(adapter);
-            if (ItemType == Core.Gallery.ItemType.Gallery)
-                mToggleFab.SetImageResource(Resource.Drawable.ic_list_white);
-            else if (ItemType == Core.Gallery.ItemType.Collection)
-                mToggleFab.SetImageResource(Resource.Drawable.ic_import_contacts);
-            adapter.ResetList();
-            if (CurrentList.Count == 0)
-            {
-                Refresh();
-            }
+           
         }
 
         private void MErrorFrame_Click(object sender, EventArgs e)
@@ -599,60 +559,9 @@ namespace HappyPandaXDroid.Scenes
             }
         }
 
-        public async void GetTotalCount()
-        {
-            Count = await Core.Gallery.GetCount(ItemType,Current_Query,SceneCancellationTokenSource.Token,ViewType);
-        }
+        public abstract void GetTotalCount();
 
-        public async void Refresh()
-        {
-            CurrentList = new List<Core.Gallery.HPXItem>();
-            CurrentPage = 0;
-            
-            var h = new Handler(Looper.MainLooper);
-            if (Core.Net.Connect())
-            {
-                h.Post(() =>
-                {
-                    SetMainLoading(true);
-                });
-                await Task.Run(async () =>
-                {
-                    logger.Info("Refreshing HPContent");
-                    var list = await Core.Gallery.GetPage(ItemType,0, SceneCancellationTokenSource.Token, ViewType,Core.App.Settings.Default_Sort,
-                        Core.App.Settings.Sort_Decending, Current_Query);
-                    CurrentList.AddRange(list);
-                    if (CurrentList == null || CurrentList.Count < 1)
-                    {
-                        h.Post(() =>
-                        {
-                            SetMainLoading(false);
-                            SetError(true);
-                        });
-                        return;
-                    }
-                    CurrentPage = 0;
-                    h.Post(() =>
-                    {
-                        adapter.ResetList();
-                        adapter.NotifyDataSetChanged();
-                        SetMainLoading(false);
-                        if (CurrentList.Count > 0)
-                            mRecyclerView.ScrollToPosition(0);
-                    });
-                    GetTotalCount();
-                    mpageSelector = new Custom_Views.PageSelector(this);
-                    logger.Info("HPContent Refresh Successful");
-                });
-            }
-            else
-            {
-                h.Post(() =>
-                {
-                    SetError(true);
-                });
-            }
-        }
+        public abstract void Refresh();
 
         public void SetBottomLoading(bool state)
         {
@@ -799,12 +708,19 @@ namespace HappyPandaXDroid.Scenes
             {
                 if (holder is Custom_Views.CardAdapter.HPXItemHolder vh)
                 {
-                    string gallerystring = Core.JSON.Serializer.SimpleSerializer.Serialize(vh.HPXItem);
-                    var galleryscene = new Scenes.GalleryScene(gallerystring, string.Empty);
-                    var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
-                    pscene.Stage.PushScene(galleryscene);
+                    if (vh.HPXItem is Core.Gallery.GalleryItem gallery)
+                    {
+                        var galleryscene = new Scenes.GalleryScene(gallery, string.Empty);
+                        var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
+                        pscene.Stage.PushScene(galleryscene);
+                    }
+                    else if (vh.HPXItem is Core.Gallery.Collection collection)
+                    {
+                        var collectionscene = new Scenes.CollectionScene(collection,vh.Url);
+                        var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
+                        pscene.Stage.PushScene(collectionscene);
+                    }
                 }
-
             }
         }
 
@@ -850,96 +766,9 @@ namespace HappyPandaXDroid.Scenes
         }
 
 
-        public async void NextPage()
-        {
-            isLoading = true;
-            logger.Info("Loading Next Page");
-            var h = new Handler(Looper.MainLooper);
-            if ((CurrentPage + 1) >= (Count / 25))
-            {
-                h.Post(() =>
-                {
-                    Toast to = Toast.MakeText(this.Context, "Reached end of library", ToastLength.Short);
-                    to.SetGravity(GravityFlags.Bottom, 0, 10);
+        public abstract void NextPage();
 
-                    to.Show();
-                    SetBottomLoading(false);
-                    mRefreshLayout.HeaderRefreshing = false;
-                    mRefreshLayout.FooterRefreshing = false;
-                    isLoading = false;
-                });
-                return;
-            }
-            int lastin = CurrentList.Count - 1;
-            adapter.Add((await Core.Gallery.GetPage(ItemType,CurrentPage + 1, SceneCancellationTokenSource.Token,ViewType,Core.App.Settings.Default_Sort,
-                Core.App.Settings.Sort_Decending, Current_Query)));
-            if (CurrentList.Count > 0)
-            {
-                h.Post(() =>
-                {
-                    adapter.NotifyItemRangeInserted(lastin + 1, CurrentList.Count - (lastin + 1));
-
-                    mRefreshLayout.HeaderRefreshing = false;
-                    mRefreshLayout.FooterRefreshing = false;
-                    isLoading = false;
-                    SetBottomLoading(false);
-                    mRecyclerView.RefreshDrawableState();
-
-                });
-                CurrentPage++;
-
-
-
-            }
-            logger.Info("Loading Next Page Successful");
-
-        }
-
-        public async void PreviousPage()
-        {
-            isLoading = true;
-            logger.Info("Loading Previous Page");
-            var h = new Handler(Looper.MainLooper);
-            if (CurrentPage <= 0)
-            {
-                h.Post(() =>
-                {
-                    SetBottomLoading(false);
-                });
-                return;
-            }
-            if (mRefreshLayout.FooterRefreshing)
-            {
-                logger.Info("Refresh Operation already in progress");
-                isLoading = false;
-                return;
-            }
-
-            h.Post(() =>
-            {
-                SetBottomLoading(true);
-                mRefreshLayout.HeaderRefreshing = true;
-            });
-            var oldlist = new List<Core.Gallery.HPXItem>(CurrentList);
-            var newitems = await Core.Gallery.GetPage(ItemType,CurrentPage - 1, SceneCancellationTokenSource.Token,
-                ViewType,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query);
-            int nitems = newitems.Count;
-            adapter.Prepend(newitems);
-            if (nitems > 0)
-            {
-                h.Post(() =>
-                {
-                    adapter.NotifyItemRangeInserted(0, 25);
-                    mRefreshLayout.HeaderRefreshing = false;
-                    isLoading = false;
-
-                });
-                CurrentPage--;
-            }
-            SetBottomLoading(false);
-            logger.Info("Loading Previous Page Successful");
-
-        }
+        public abstract void PreviousPage();
 
         protected override void OnStop()
         {
@@ -1097,7 +926,7 @@ namespace HappyPandaXDroid.Scenes
         }
 
 
-        class FABClickListener : Java.Lang.Object, View.IOnClickListener
+        public class FABClickListener : Java.Lang.Object, View.IOnClickListener
         {
             ViewScene main;
             private static Logger logger = LogManager.GetCurrentClassLogger();
