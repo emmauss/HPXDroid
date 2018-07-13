@@ -1,33 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Support.V4.View;
+using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using System.Threading.Tasks;
-using Android.Support.V4.Widget;
-using Android.Support.Design.Widget;
-using Android.Support.V7.Widget;
-using System.Threading;
-using Android.Support.V7.View;
-using Android.Support.V7.App;
-using Android.Support.V4.View;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
-using ProgressView = XamarinBindings.MaterialProgressBar;
-using EasyRecyclerView;
-using EasyRecyclerView.Addons;
 using NLog;
-using Android.Content.Res;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using ProgressView = XamarinBindings.MaterialProgressBar;
 using RefreshLayout = Com.Hippo.Refreshlayout;
-using Com.Hippo.Stage;
-using Java;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
+using HappyPandaXDroid.Core;
 
 namespace HappyPandaXDroid.Scenes
 {
@@ -548,7 +539,13 @@ namespace HappyPandaXDroid.Scenes
         {
             CurrentList.Clear();
             if (Core.Net.Connect())
-                CurrentList.AddRange(await Core.Gallery.GetPage(ItemType,0,SceneCancellationTokenSource.Token,ViewType));
+            {
+                CurrentList.AddRange(await Core.Gallery.GetPage(ItemType, 0, SceneCancellationTokenSource.Token, ViewType));
+                foreach (var item in CurrentList)
+                {
+                    item.Image = new Media.Image();
+                }
+            }
             else
             {
                 var h = new Handler(Looper.MainLooper);
@@ -679,6 +676,10 @@ namespace HappyPandaXDroid.Scenes
             CurrentList.AddRange(await Core.Gallery.GetPage(ItemType, page - 1, SceneCancellationTokenSource.Token,ViewType,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
             if (CurrentList.Count > 0)
             {
+                foreach (var item in CurrentList)
+                {
+                    item.Image = new Media.Image();
+                }
                 h.Post(() =>
                 {
                     adapter.ResetList();

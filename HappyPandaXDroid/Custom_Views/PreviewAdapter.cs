@@ -18,7 +18,7 @@ namespace HappyPandaXDroid.Custom_Views
         public event EventHandler<PreviewAdapterClickEventArgs> ItemLongClick;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public List<Core.Gallery.Page> mdata;
-        Dictionary<int, string> URLlist;
+        Dictionary<int, Core.Media.Image> URLlist;
         Android.Content.Context mcontext;
         int columns = 1;
         Scene previewScene;
@@ -26,7 +26,7 @@ namespace HappyPandaXDroid.Custom_Views
         {
             previewScene = scene;
             mcontext = context;
-            URLlist = new Dictionary<int, string>();
+            URLlist = new Dictionary<int, Core.Media.Image>();
         }
 
         public override int ItemCount
@@ -37,6 +37,8 @@ namespace HappyPandaXDroid.Custom_Views
         public async void SetList(List<Core.Gallery.Page> PageList)
         {
             mdata = new List<Core.Gallery.Page>();
+            foreach (var page in PageList)
+                page.Image = new Core.Media.Image();
             if (PageList != null)
             {
                 mdata.AddRange(PageList);
@@ -47,14 +49,14 @@ namespace HappyPandaXDroid.Custom_Views
 
         public void UpdateUrls(List<Core.Gallery.Page> newList)
         {
-            List<int> ids = new List<int>();
+            var items = new List<Core.Gallery.HPXItem>();
             foreach (var item in newList)
             {
-                ids.Add(item.id);
+                items.Add(item);
             }
-            if (ids.Count > 0)
+            if (items.Count > 0)
             {
-                var urls = Core.Gallery.GetImage(ids.ToArray(), "Page",
+                var urls = Core.Gallery.GetImage(items, "Page",
                     ((Scenes.GalleryScene)previewScene).SceneCancellationTokenSource.Token).Result;
                 if (urls.Count > 0)
                 {
@@ -78,8 +80,7 @@ namespace HappyPandaXDroid.Custom_Views
             if (vh != null)
             {
                 vh.page = page;
-                if (URLlist.ContainsKey(page.id))
-                    Glide.With(previewScene.Context).Load(URLlist[page.id]).Into(vh.img);
+                vh.Bound = true;
 
             }
             /*Task.Run(async () =>
@@ -105,6 +106,7 @@ namespace HappyPandaXDroid.Custom_Views
             if (hold != null)
             {
                 hold.Recycle();
+                hold.Bound = false;
             }
         }
 

@@ -192,6 +192,7 @@
     <Compile Include="Custom_Views\RoundSideRectDrawable.cs" />
     <Compile Include="Custom_Views\SafeCoordinatorLayout.cs" />
     <Compile Include="Custom_Views\TagsAdapter.cs" />
+    <Compile Include="Custom_Views\ThumbViewHolder.cs" />
     <Compile Include="GalleryViewer.cs" />
     <Compile Include="Helpers\Layouts.cs" />
     <Compile Include="Helpers\Settings.cs" />

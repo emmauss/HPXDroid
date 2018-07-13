@@ -250,7 +250,7 @@ namespace HappyPandaXDroid.Scenes
             public List<Core.Gallery.GalleryItem> mdata;
             CancellationTokenSource CancellationTokenSource;
             Android.Content.Context mcontext;
-            Dictionary<int, string> UrlList = new Dictionary<int, string>();
+            Dictionary<int, Core.Media.Image> UrlList = new Dictionary<int, Core.Media.Image>();
             public GalleryCardAdapter(Context context,RecentsScene scene)
             {
                 rscene = scene;
@@ -275,14 +275,17 @@ namespace HappyPandaXDroid.Scenes
 
             public void UpdateUrls()
             {
-                List<int> ids = new List<int>();
+                var items = new List<Core.Gallery.HPXItem>();
+
                 foreach (var item in mdata)
                 {
-                    ids.Add(item.id);
+                    item.Image = new Core.Media.Image();
+                    items.Add(item);
                 }
-                if (ids.Count > 0)
+
+                if (items.Count > 0)
                 {
-                    var urls = Core.Gallery.GetImage(ids.ToArray(), "Gallery",
+                    var urls = Core.Gallery.GetImage(items, "Gallery",
                        CancellationTokenSource.Token).Result;
                     if (urls.Count > 0)
                     {
@@ -305,6 +308,7 @@ namespace HappyPandaXDroid.Scenes
                 var hold = holder as Custom_Views.CardAdapter.HPXItemHolder;
                 if (hold != null)
                 {
+                    hold.Bound = false;
                     hold.Cancel();
                 }
 
@@ -320,12 +324,11 @@ namespace HappyPandaXDroid.Scenes
                     {
                         var gallery = (Core.Gallery.GalleryItem)mdata[position];
                         vh.HPXItem = gallery;
-                        vh.Url = UrlList[gallery.id];
+                        vh.Bound = true;
                         vh.Name.Text = gallery.titles[0].name;
                         if (gallery.artists.Count > 0)
                             if (gallery.artists[0].Names.Count > 0)
                                 vh.Info.Text = gallery.artists[0].Names[0].name;
-                        Glide.With(holder.ItemView.Context).Load(vh.Url).Into(vh.Thumb);
                     }
                 }
                 catch (Exception ex)
@@ -339,7 +342,7 @@ namespace HappyPandaXDroid.Scenes
             public override RecyclerView.ViewHolder OnCreateViewHolder2(ViewGroup parent, int viewType)
             {
                 View itemview = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.galleryCardList, null);
-                Custom_Views.CardAdapter.HPXItemHolder vh = new Custom_Views.CardAdapter.HPXItemHolder(itemview,null);
+                Custom_Views.CardAdapter.HPXItemHolder vh = new Custom_Views.CardAdapter.HPXItemHolder(itemview);
                 return vh;
             }
         }

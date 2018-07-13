@@ -285,7 +285,8 @@ namespace HappyPandaXDroid.Core
                 Client listener = GetAvailableConnection(cancellationToken);
             if (cancellationToken.IsCancellationRequested)
             {
-                listener.InUse = true;
+                if (listener != null)
+                    listener.InUse = true;
                 return string.Empty;
             }
             listener.client.GetStream().ReadTimeout = 30000;

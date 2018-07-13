@@ -84,6 +84,24 @@ namespace HappyPandaXDroid.Core
             }
         }
 
+        public class Image
+        {
+            public string Uri;
+            public bool IsUrl;
+            public bool IsReady { get; set; }
+            public event EventHandler<ImageLoadEvent> Ready;
+
+            public class ImageLoadEvent : EventArgs
+            {
+                string Uri;
+            }
+
+            public void RequestLoad()
+            {
+                Ready.Invoke(null, null);
+            }
+        }
+
         public class Recents
         {
             public static List<Gallery.GalleryItem> RecentList = new List<Gallery.GalleryItem>();

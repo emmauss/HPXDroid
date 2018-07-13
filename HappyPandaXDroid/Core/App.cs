@@ -818,17 +818,18 @@ namespace HappyPandaXDroid.Core
                 else return -1;
             }
 
-            public static int[] GetCommandIds(int[] item_ids, string command_response)
+            public static int[] GetCommandIds(Gallery.HPXItem[] items, string command_response)
             {
                 List<int> commandIds = new List<int>();
                 {
                     var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(command_response);
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
-                    foreach(int id in item_ids)
+                    foreach(Gallery.HPXItem it in items)
                     {
-                        var value = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[id.ToString()]
+                        var value = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[it.id.ToString()]
                         .ToString();
                         commandIds.Add(int.Parse(value));
+                        it.CommandId = int.Parse(value);
                     }
                 }
                 /*if (command_response.Contains("\"" + item_id + "\""))
@@ -849,8 +850,6 @@ namespace HappyPandaXDroid.Core
                 public int code;
                 public string msg;
             }
-
-
 
             public static string GetCommandValue(int command_id, int item_id, string name, string type, bool return_url
                 ,ref CancellationToken cancellationToken)
@@ -899,6 +898,44 @@ namespace HappyPandaXDroid.Core
                     if (File.Exists(filename))
                         File.Delete(filename);
                     return "fail";
+                }
+            }
+
+            public static string GetCommandValue(int command_id, int item_id, string type
+                , ref CancellationToken cancellationToken)
+            {
+                logger.Info("Get Command values. commandId={0}, type = {1},  itemIDs =[{2}]",
+                    command_id, type, item_id.ToString());
+                string response = CreateCommand("get_command_value", command_id);
+                response = Net.SendPost(response, ref cancellationToken);
+                string filename = string.Empty;
+                Gallery.Profile data = new Gallery.Profile();
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+                Dictionary<int, string> urls = new Dictionary<int, string>();
+                try
+                {
+                    if (GetError(response) == "none")
+                    {
+                        var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+                        var dataobj = JSON.API.GetData(serverobj.data, 0);
+                        data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
+                            .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
+
+                        string url = data.data;
+                        url = "http://" + App.Settings.Server_IP + ":" + App.Settings.WebClient_Port + url;
+
+                        return url;
+                    }
+                    else return string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In App.Server.GetCommandValue. Message : " + ex.Message
+                        + System.Environment.NewLine + ex.StackTrace);
+                    if (File.Exists(filename))
+                        File.Delete(filename);
+                    return string.Empty;
                 }
             }
 
@@ -973,7 +1010,7 @@ namespace HappyPandaXDroid.Core
                 return (error);
             }
 
-            public static bool GetCompleted(out List<int> done, int[] command_ids, ref CancellationToken cancellationToken)
+            public static bool GetCompleted(out List<int> done, int[] command_ids, Gallery.HPXItem[] hPXItem, ref CancellationToken cancellationToken)
             {
                 done = new List<int>();
                 List<int> failed = new List<int>();
@@ -994,7 +1031,20 @@ namespace HappyPandaXDroid.Core
                         if (!done.Contains(id))
                         {
                             if (data.ToLower() == "finished")
+                            {
                                 done.Add(id);
+                                foreach(var hp in hPXItem)
+                                {
+                                    if (id == hp.CommandId)
+                                    {
+                                        hp.Image.IsReady = true;
+                                        Task.Run(() =>
+                                        {
+                                            hp.Image.RequestLoad() ;
+                                        });
+                                    }
+                                }
+                            }
                             else
                               if (data.ToLower().Contains("fail"))
                                 failed.Add(id);

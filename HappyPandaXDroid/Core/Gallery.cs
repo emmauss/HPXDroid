@@ -117,6 +117,9 @@ namespace HappyPandaXDroid.Core
             
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int page;
+
+            public Media.Image Image;
+            public int CommandId;
         }
 
         public class Collection : HPXItem
@@ -187,18 +190,14 @@ namespace HappyPandaXDroid.Core
 
         }
         
-        public class Page
+        public class Page : HPXItem
         {
             public int number;
             public int gallery_id;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int taggable_id;
-            public int id;
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public int last_updated;
             public bool in_archive;
             public string path;
-            public string name;
             public string thumb_url;
             public string image_url;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -485,9 +484,12 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static async Task<Dictionary<int, string>> GetImage(int[] id, string itemType, CancellationToken cancellationToken, string size = "medium")
+        public static async Task<Dictionary<int, Media.Image>> GetImage(List<HPXItem> items, string itemType, CancellationToken cancellationToken, string size = "medium")
         {
             string type = string.Empty;
+            List<int> ids = new List<int>();
+            foreach (var it in items)
+                ids.Add(it.id);
             try
             {
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -495,7 +497,7 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_image");
-                JSON.API.PushKey(ref funct, "item_ids", "[" + string.Join(",",id)+ "]");
+                JSON.API.PushKey(ref funct, "item_ids", "[" + string.Join(",",ids)+ "]");
                 JSON.API.PushKey(ref funct, "url", "<bool>true");
                 JSON.API.PushKey(ref funct, "size", size);
                 JSON.API.PushKey(ref funct, "item_type", itemType);
@@ -503,37 +505,49 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
                 if (cancellationToken.IsCancellationRequested)
-                    return new Dictionary<int, string>();
+                    return new Dictionary<int, Media.Image>();
                 string reply = Net.SendPost(response, ref cancellationToken);
                 if (cancellationToken.IsCancellationRequested)
-                    return new Dictionary<int, string>();
-                int[] command_id = App.Server.GetCommandIds(id, reply);
+                    return new Dictionary<int, Media.Image>();
+                int[] command_ids = App.Server.GetCommandIds(items.ToArray(), reply);
                 List<int> Done;
                 while (true)
                 {
-                    bool state = App.Server.GetCompleted(out Done,command_id, ref cancellationToken);
+                    bool state = App.Server.GetCompleted(out Done,command_ids,items.ToArray(), ref cancellationToken);
                     if(!state)
                         Thread.Sleep(App.Settings.Loop_Delay);
                     else
                         break;
                 }
                 if (cancellationToken.IsCancellationRequested)
-                    return new Dictionary<int, string>();
+                    return new Dictionary<int, Media.Image>();
+                Dictionary<int, Media.Image> path = new Dictionary<int, Media.Image>();
+                foreach (var it in items)
+                {
+                    foreach (var id in ids)
+                    {
+                        if (id == it.id)
+                        {
+                            path.Add(id, it.Image);
+                            break;
+                        }
+                    }
+                }
                 //get value
-                Dictionary<int,string> path = App.Server.GetCommandValues(command_id, id, type, ref cancellationToken);
+                //Dictionary<int,Media.Image> path = App.Server.GetCommandValues(command_ids, id, type, ref cancellationToken);
                 return path;
 
             }
             catch (System.Net.Sockets.SocketException sex)
             {
                 logger.Error(sex, "\n Exception Caught In Gallery.GetImage.Message {0}\n {1}", sex.Message, sex.StackTrace);
-                return new Dictionary<int, string>();
+                return new Dictionary<int, Media.Image>();
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "\n Exception Caught In Gallery.GetImage. type = {3}, itemId = {0}, size = {1},\n Message = {2}"
-                     + System.Environment.NewLine + ex.StackTrace, id, size, ex.Message, type);
-                return new Dictionary<int, string>();
+                     + System.Environment.NewLine + ex.StackTrace, ids, size, ex.Message, type);
+                return new Dictionary<int, Media.Image>();
             }
         }
 

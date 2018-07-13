@@ -79,6 +79,10 @@ namespace HappyPandaXDroid.Scenes
                     logger.Info("Refreshing HPContent");
                     var list = await Core.Gallery.GetPage(ItemType, 0, SceneCancellationTokenSource.Token, ViewType, Core.App.Settings.Default_Sort,
                         Core.App.Settings.Sort_Decending, Current_Query);
+                    foreach(var item in list)
+                    {
+                        item.Image = new Media.Image();
+                    }
                     CurrentList.AddRange(list);
                     if (CurrentList == null || CurrentList.Count < 1)
                     {

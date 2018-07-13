@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
+using HappyPandaXDroid.Core;
 
 namespace HappyPandaXDroid.Scenes
 {
@@ -82,6 +83,10 @@ namespace HappyPandaXDroid.Scenes
                     logger.Info("Refreshing HPContent");
                     var list = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
                         Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, 0);
+                    foreach (var item in list)
+                    {
+                        item.Image = new Media.Image();
+                    }
                     CurrentList.AddRange(list);
                     if (CurrentList == null || CurrentList.Count < 1)
                     {
