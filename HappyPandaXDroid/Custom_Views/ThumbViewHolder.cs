@@ -60,8 +60,12 @@ namespace HappyPandaXDroid.Custom_Views
         {
             await Task.Delay(1000);
             var token = CancellationTokenSource.Token;
-            string url = App.Server.GetCommandValue(HPXItem.CommandId, HPXItem.id,
-                string.Empty, ref token);
+            string url = string.Empty;
+            if (string.IsNullOrWhiteSpace(HPXItem.Image.Uri))
+                url = App.Server.GetCommandValue(HPXItem.CommandId, HPXItem.id,
+                    string.Empty, ref token);
+            else
+                url = HPXItem.Image.Uri;
             if (!string.IsNullOrWhiteSpace(url))
             {
                 var h = new Handler(Looper.MainLooper);

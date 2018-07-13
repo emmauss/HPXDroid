@@ -8,6 +8,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 using Com.Bumptech.Glide;
 
 namespace HappyPandaXDroid.Custom_Views
@@ -219,12 +220,14 @@ namespace HappyPandaXDroid.Custom_Views
                 if (previews.Count < 1)
                     return;
                 var page = adapter.mdata[pos];
-                    Intent intent = new Intent(ItemView.Context, typeof(GalleryViewer));
-                    intent.PutExtra("no", pos);
-                    intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(previews));
-                    intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(e.Gallery));
-                    ItemView.Context.StartActivity(intent);
-                
+                CancellationTokenSource token = new CancellationTokenSource();
+                var list = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(e.Gallery.id, token.Token,
+                    Core.Gallery.ItemType.Gallery, Core.Gallery.ItemType.Page);
+                Intent intent = new Intent(ItemView.Context, typeof(GalleryViewer));
+                intent.PutExtra("no", pos);
+                intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(list));
+                intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(e.Gallery));
+                ItemView.Context.StartActivity(intent);
             }
 
             void SetColumns()

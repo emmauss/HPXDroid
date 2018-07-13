@@ -61,11 +61,11 @@ namespace HappyPandaXDroid
 
             // Create your application here
             SetContentView(Resource.Layout.GalleryLayout);
-            
-                string data = Intent.GetStringExtra("page");
-                PageList = Core.JSON.Serializer.SimpleSerializer.Deserialize<List<Core.Gallery.Page>>(data);
+
+            string data = Intent.GetStringExtra("page");
+            PageList = Core.JSON.Serializer.SimpleSerializer.Deserialize<List<Core.Gallery.Page>>(data);
             logger.Info("Initializing Gallery Viewer");
-            Task.Run(()=>InitPageGen());
+            Task.Run(() => InitPageGen());
 
             data = Intent.GetStringExtra("gallery");
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(data);
@@ -74,21 +74,21 @@ namespace HappyPandaXDroid
                 .Override(Target.SizeOriginal, Target.SizeOriginal);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             ScreenFilter = FindViewById<LinearLayout>(Resource.Id.screenFilter);
-            
+
             FilterSlider = FindViewById<SeekBar>(Resource.Id.filterSlider);
             FilterSlider.Max = 255;
             FilterSlider.Progress = 255;
             FilterSlider.ProgressChanged += FilterSlider_ProgressChanged;
             FilterSlider.Click += FilterSlider_Click;
             SetSupportActionBar(toolbar);
-            
+
             lay = FindViewById<FrameLayout>(Resource.Id.frame);
             galleryPager = FindViewById<RecyclerViewPager>(Resource.Id.galleryViewPager);
             var layout = new Helpers.Layouts.ExtraLayoutManager(this, LinearLayoutManager.Horizontal, false);
             layout.SetExtraLayoutSpace(400);
             galleryPager.SetLayoutManager(layout);
             gestureDetector = new GestureDetector(this, new TapsDetector(this));
-            adapter = new ImageAdapter(PageList,this);
+            adapter = new ImageAdapter(PageList, this);
             galleryPager.SetAdapter(new RecyclerViewPagerAdapter(galleryPager, adapter));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             countDown = new UICountdown(5000, 10, this);
@@ -104,7 +104,7 @@ namespace HappyPandaXDroid
             galleryPager.AddOnPageChangedListener(new PageChangeListener(this));
             seekbar.SetOnSeekBarChangeListener(new SeekBarChangeListener(this));
             logger.Info("Gallery Viewer Initialized");
-            
+
 
             galleryPager.AddOnItemTouchListener(new ItemTouchListener(this));
             countDown.Start();
@@ -112,7 +112,7 @@ namespace HappyPandaXDroid
             SupportActionBar.Title = PageList[pageno].name;
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 
-         }
+        }
 
         public class ItemTouchListener : RecyclerView.SimpleOnItemTouchListener
         {
