@@ -1,8 +1,9 @@
 ﻿using Android.Content;
 using Android.Runtime;
 using Android.Views;
+using Android.OS;
 using System.Threading;
-
+using Android.App;
 using Android.Util;
 using System.Threading.Tasks;
 using System;
@@ -70,6 +71,8 @@ namespace HappyPandaXDroid.Scenes
             mRecyclerView.SetAdapter(adapter);
 
             mRecyclerView.SetLayoutManager(mLayoutManager);
+
+            //adapter.ResetList();
         }
 
         void SetColumns()
@@ -255,8 +258,9 @@ namespace HappyPandaXDroid.Scenes
             {
                 rscene = scene;
                 mcontext = context;
-                mdata = Core.Media.Recents.RecentList;
                 CancellationTokenSource = new CancellationTokenSource();
+
+                ResetList();
             }
 
             public override int ItemCount
@@ -268,20 +272,25 @@ namespace HappyPandaXDroid.Scenes
             {
                 mdata = Core.Media.Recents.RecentList;
                 UrlList.Clear();
-                await Task.Run(()=>UpdateUrls());
-                this.NotifyDataSetChanged();
+                await Task.Run(()=>UpdateUrls());                
             }
 
 
             public void UpdateUrls()
             {
+
                 var items = new List<Core.Gallery.HPXItem>();
 
                 foreach (var item in mdata)
                 {
-                    item.Image = new Core.Media.Image();
+                    if (item.Image == null)
+                        item.Image = new Core.Media.Image();
                     items.Add(item);
                 }
+
+                var h = new Handler(Looper.MainLooper);
+                h.Post(() =>
+                this.NotifyDataSetChanged());
 
                 if (items.Count > 0)
                 {
