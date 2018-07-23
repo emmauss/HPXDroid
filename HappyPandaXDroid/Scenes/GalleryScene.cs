@@ -440,16 +440,17 @@ namespace HappyPandaXDroid.Scenes
                         if (language == null)
                             language = MainView.FindViewById<TextView>(Resource.Id.language);
                         language.Text = "Language: ";
-                        if (gallery.tags.Language.Count > 0)
-                        {
-                            
-                            string lan = gallery.tags.Language[0].name;
-                            language.Text += System.Globalization.CultureInfo.CurrentCulture
-                                .TextInfo.ToTitleCase(lan.ToLower());
-                        }
-                        else
-                            language.Text += "English";
-                        
+                        if (gallery.tags != null)
+                            if (gallery.tags.Language.Count > 0)
+                            {
+
+                                string lan = gallery.tags.Language[0].name;
+                                language.Text += System.Globalization.CultureInfo.CurrentCulture
+                                    .TextInfo.ToTitleCase(lan.ToLower());
+                            }
+                            else
+                                language.Text += "English";
+
                         ParseTags();
                     }
                     catch (Exception ex)

@@ -58,9 +58,9 @@
                         android:layout_marginRight="@dimen/keyline_margin"
                         android:singleLine="true" />
                 </LinearLayout>
+                <include
+                    layout="@layout/HPContent" />
             </LinearLayout>
-            <include
-                layout="@layout/HPContent" />
         </ScrollView>
     </LinearLayout>
     <com.github.clans.fab.FloatingActionMenu
