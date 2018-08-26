@@ -11,11 +11,14 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Com.Hippo.Stage;
+using HappyPandaXDroid.Core;
 
 namespace HappyPandaXDroid.Scenes
 {
     public abstract class HPXScene : Scene
     {
+        public RequestToken RequestToken { get; set; }
+
         public abstract void OnConfigurationChanged(Configuration newConfig);
         
         public HPXScene()
@@ -23,5 +26,11 @@ namespace HappyPandaXDroid.Scenes
             SetWillRetainView(true);
         }
 
+        protected override void OnDestroyView(View p0)
+        {
+            RequestToken.IsPaused = false;
+            RequestToken = null;
+            base.OnDestroyView(p0);
+        }
     }
 }

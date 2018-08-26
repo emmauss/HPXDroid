@@ -272,7 +272,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 mdata = Core.Media.Recents.RecentList;
                 UrlList.Clear();
-                await Task.Run(()=>UpdateUrls());                
+                await Task.Run(()=>UpdateUrls(), CancellationTokenSource.Token);                
             }
 
 

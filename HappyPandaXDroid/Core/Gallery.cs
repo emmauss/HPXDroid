@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +25,7 @@ namespace HappyPandaXDroid.Core
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public static CancellationTokenSource DownloadCancelationToken = new CancellationTokenSource();
-        public static List<Page> DownloadList = new List<Page>();
+        public static ConcurrentQueue<Page> DownloadList = new ConcurrentQueue<Page>();
         private static List<Page> CurrentlyDownloading = new List<Page>();
         private static bool IsDownloading = false;
         public enum ImageSize
@@ -53,6 +55,7 @@ namespace HappyPandaXDroid.Core
 
         public enum ViewType
         {
+            All = 6,
             Favorite = 2,
             Inbox = 3,
             Library = 1,
@@ -213,18 +216,19 @@ namespace HappyPandaXDroid.Core
             public async void DownloadFromQueue()
             {
                 await GetImage(this.id, "Page",false, DownloadCancelationToken.Token,"original");
+
                 RemoveFromQueue();
             }
 
             public void Queue()
             {
-                DownloadList.Add(this);
+                DownloadList.Enqueue(this);
             }
 
             public void RemoveFromQueue()
             {
-                DownloadList.Remove(this);
-                CurrentlyDownloading.Remove(this);
+                //DownloadList.(this);
+               CurrentlyDownloading.Remove(this);
             }
         }
 
@@ -347,7 +351,21 @@ namespace HappyPandaXDroid.Core
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
-            string reply = Net.SendPost(response,ref cancellationToken);
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+            RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+                return false;
+
+            request.Request = response;
+
+            request.Queue();
+
+            request.RequestResetEvent.WaitOne();
+
+            string reply = (string)request.Result;
+
             if (reply.Contains("exist") && reply.Contains("true"))
                 return true;
             else
@@ -357,10 +375,11 @@ namespace HappyPandaXDroid.Core
         public static void QueueDownloads(List<Page> downloadList)
         {
             foreach (var page in downloadList)
-                if (DownloadList.Find((x) => x.id == page.id) == null)
+                if (DownloadList.ToList().Find((x) => x.id == page.id) == null)
                 {
-                    if (!IsItemCached(page.id, "original"))
-                    DownloadList.Add(page);
+                    if (page.id > 0)
+                        if (!IsItemCached(page.id, "original"))
+                            DownloadList.Enqueue(page);
                 }
             StartQueue();
         }
@@ -368,9 +387,46 @@ namespace HappyPandaXDroid.Core
         public static void StartQueue()
         {
             if (IsDownloading)
+            {
+                Toast.MakeText(Application.Context, "Precaching already running", ToastLength.Short).Show();
                 return;
+            }
+
             IsDownloading = true;
-            if(DownloadList.Count>0)
+            while (DownloadList.Count > 0)
+            {
+                while (DownloadList.TryDequeue(out Page page))
+                {
+                    while (CurrentlyDownloading.Count >= 4)
+                    {
+                        Thread.Sleep(3000);
+                    }
+
+                    if (CurrentlyDownloading.Find(x => x.id == page.id) != null)
+                        continue;
+
+                    if (!IsDownloading) {
+                        foreach (var cpage in CurrentlyDownloading)
+                            DownloadList.Enqueue(cpage);
+                        DownloadList.Enqueue(page);
+                        CurrentlyDownloading.Clear();
+                        break;
+                    }
+
+                    if (IsItemCached(page.id))
+                        continue;
+
+                    CurrentlyDownloading.Add(page);
+
+                    Task.Run(() => page.DownloadFromQueue());
+
+                    Thread.Sleep(1000);
+                }
+
+
+            }
+
+                /*
                 for (int i = 0; i < DownloadList.Count; i++)
                 {
                     if (!IsDownloading)
@@ -381,15 +437,18 @@ namespace HappyPandaXDroid.Core
                         if (!IsDownloading)
                             break;
                     }
-                    Gallery.Page page = DownloadList[i];
-                    CurrentlyDownloading.Add(page);
-                    Task.Run(() =>
+                    if (i < DownloadList.Count)
                     {
-                        page.DownloadFromQueue();
+                        Gallery.Page page = DownloadList[i];
+                        CurrentlyDownloading.Add(page);
+                        Task.Run(() =>
+                        {
+                            page.DownloadFromQueue();
 
-                    });
-                    Thread.Sleep(1000);
-                }
+                        });
+                        Thread.Sleep(1000);
+                    }
+                }*/
             IsDownloading = false;
 
             //Toast.MakeText(Application.Context, "Precaching completed or stopped", ToastLength.Short).Show();
@@ -418,7 +477,16 @@ namespace HappyPandaXDroid.Core
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
-                string reply = Net.SendPost(response,ref cancellationToken);
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
+                request.Request = response;
+
+                request.Queue();
             }
             catch (Exception ex)
             {
@@ -431,6 +499,9 @@ namespace HappyPandaXDroid.Core
             string type = string.Empty;
             try
             {
+                if (id < 1)
+                    return type;
+
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
                 JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
@@ -445,10 +516,26 @@ namespace HappyPandaXDroid.Core
                 response = JSON.API.ParseToString(main);
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
-                string reply = Net.SendPost(response,ref cancellationToken);
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                string reply = (string)request.Result;
+
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
                 int command_id = App.Server.GetCommandId(id, reply);
+                if (command_id == 0 || command_id == -1)
+                    return string.Empty;
                 while (true)
                 {
                     string state = App.Server.GetCommandState(command_id,ref cancellationToken);
@@ -456,7 +543,8 @@ namespace HappyPandaXDroid.Core
                         return string.Empty;
                     if (state.Contains("error"))
                         return "fail: server error";
-                    if (state.Contains("failed"))
+                    if (state.Contains("failed") || state.Contains("out_of_service") 
+                        || state.Contains("stopped"))
                         return "fail: command error";
                     if (!state.Contains("finished"))
                         Thread.Sleep(App.Settings.Loop_Delay);
@@ -489,7 +577,8 @@ namespace HappyPandaXDroid.Core
             string type = string.Empty;
             List<int> ids = new List<int>();
             foreach (var it in items)
-                ids.Add(it.id);
+                if (it != null && it.id > 0)
+                    ids.Add(it.id);
             try
             {
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -504,13 +593,29 @@ namespace HappyPandaXDroid.Core
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
+
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
                 if (cancellationToken.IsCancellationRequested)
                     return new Dictionary<int, Media.Image>();
-                string reply = Net.SendPost(response, ref cancellationToken);
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                string reply = (string)request.Result;
+
                 if (cancellationToken.IsCancellationRequested)
                     return new Dictionary<int, Media.Image>();
-                int[] command_ids = App.Server.GetCommandIds(items.ToArray(), reply);
+                var command_ids = App.Server.GetCommandIds(items.ToArray(), reply).ToList();
+                command_ids.RemoveAll(x => x == -1 || x == 0);
+
                 List<int> Done;
+
                 while (true)
                 {
                     bool state = App.Server.GetCompleted(out Done,command_ids,items.ToArray(), ref cancellationToken);
@@ -521,21 +626,21 @@ namespace HappyPandaXDroid.Core
                 }
                 if (cancellationToken.IsCancellationRequested)
                     return new Dictionary<int, Media.Image>();
-                Dictionary<int, Media.Image> path = new Dictionary<int, Media.Image>();
+                Dictionary<int, Media.Image> images = new Dictionary<int, Media.Image>();
                 foreach (var it in items)
                 {
                     foreach (var id in ids)
                     {
                         if (id == it.id)
                         {
-                            path.Add(id, it.Image);
+                            images.Add(id, it.Image);
                             break;
                         }
                     }
                 }
                 //get value
                 //Dictionary<int,Media.Image> path = App.Server.GetCommandValues(command_ids, id, type, ref cancellationToken);
-                return path;
+                return images;
 
             }
             catch (System.Net.Sockets.SocketException sex)
@@ -588,7 +693,7 @@ namespace HappyPandaXDroid.Core
         }
 
 
-        public async static Task<List<HPXItem>> GetPage(ItemType itemType, int page, CancellationToken cancellationToken, 
+        public async static void GetPage(ItemType itemType, int page, RequestToken request,
             ViewType viewType = ViewType.Library, Sort sortCriteria = (Sort)1, bool sortDec = false,
             string searchQuery = "", int limit = 50)
         {
@@ -613,78 +718,88 @@ namespace HappyPandaXDroid.Core
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
-            if (cancellationToken.IsCancellationRequested)
-                return null;
-            string countstring = Net.SendPost(response, ref cancellationToken);
-            if (cancellationToken.IsCancellationRequested)
-                return null;
-            var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
-            if (obj == null)
-            {
-                return new List<HPXItem>();
-            }
-            var array = obj.data as Newtonsoft.Json.Linq.JArray;
-            List<HPXItem> list = new List<HPXItem>();
-            if (cancellationToken.IsCancellationRequested)
-                return null;
-            try
-            {
-                if (array != null & array.Count > 0)
-                {
-                    var data = array[0].ToObject<JSON.DataObject>();
-                    var rdata = data.data as Newtonsoft.Json.Linq.JArray;
+            if (request.CancellationToken.IsCancellationRequested)
+                return;
 
-                    var arry = rdata.ToArray();
-                    switch (itemType)
+            request.Request = response;
+
+            request.ProcessResult = (x) =>
+            {
+                if (x.CancellationToken.IsCancellationRequested)
+                    return;
+                var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>((string)x.Result);
+                if (obj == null)
+                {
+                    return;
+                }
+                var array = obj.data as Newtonsoft.Json.Linq.JArray;
+                List<HPXItem> list = new List<HPXItem>();
+                if (x.CancellationToken.IsCancellationRequested)
+                    return;
+                try
+                {
+                    if (array != null & array.Count > 0)
                     {
-                        case ItemType.Gallery:
-                            foreach(var token in arry)
-                            {
-                                if (token.Values<GalleryItem>() != null)
-                                {
-                                    var item = token.ToObject<GalleryItem>();
-                                    list.Add(item);
-                                }
-                            }
-                            break;
-                        case ItemType.Collection:
-                            foreach (var token in arry)
-                            {
-                                if (token.Values<Collection>() != null)
-                                {
-                                    var item = token.ToObject<Collection>();
-                                    list.Add(item);
-                                }
-                            }
-                            break;
-                    }
-                    
-                }
-            }
-            catch (Exception ex)
-            {
+                        var data = array[0].ToObject<JSON.DataObject>();
+                        var rdata = data.data as Newtonsoft.Json.Linq.JArray;
 
-            }
-            foreach (var g in list)
-                g.page = page;
-            if (list.Count > 0)
-            {
-                int[] ids = new int[list.Count];
-                for (int i = 0; i < ids.Length; i++)
-                {
-                    ids[i] = list[i].id;
+                        var arry = rdata.ToArray();
+                        switch (itemType)
+                        {
+                            case ItemType.Gallery:
+                                foreach (var token in arry)
+                                {
+                                    if (token.Values<GalleryItem>() != null)
+                                    {
+                                        var item = token.ToObject<GalleryItem>();
+                                        if (item != null && item.id > 0)
+                                            list.Add(item);
+                                    }
+                                }
+                                break;
+                            case ItemType.Collection:
+                                foreach (var token in arry)
+                                {
+                                    if (token.Values<Collection>() != null)
+                                    {
+                                        var item = token.ToObject<Collection>();
+
+                                        if (item != null && item.id > 0)
+                                            list.Add(item);
+                                    }
+                                }
+                                break;
+                        }
+
+                    }
                 }
-                if (cancellationToken.IsCancellationRequested)
-                    return null;
-                Task.Run(() =>
+                catch (Exception ex)
                 {
-                    InitiateImageGeneration(ids, ItemType.Gallery, "medium", cancellationToken);
-                });
-            }
-            return list;
+
+                }
+                foreach (var g in list)
+                    g.page = page;
+                if (list.Count > 0)
+                {
+                    int[] ids = new int[list.Count];
+                    for (int i = 0; i < ids.Length; i++)
+                    {
+                        ids[i] = list[i].id;
+                    }
+                    if (x.CancellationToken.IsCancellationRequested)
+                        return;
+                    Task.Run(() =>
+                    {
+                        InitiateImageGeneration(ids, ItemType.Gallery, "medium", x.CancellationToken);
+                    }, x.CancellationToken);
+
+                    x.SetResult(list);
+                }
+            };
+            request.Queue();
         }
         
-        public static async Task<int> GetCount(ItemType itemType,string query,CancellationToken cancellationToken,ViewType viewType = ViewType.Library)
+        public static async void GetCount(ItemType itemType,string query, RequestToken request,ViewType viewType = ViewType.Library)
         {
 
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -699,19 +814,31 @@ namespace HappyPandaXDroid.Core
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
-            if (cancellationToken.IsCancellationRequested)
-                return 0;
-            string countstring = Net.SendPost(response,ref cancellationToken);
-            if (cancellationToken.IsCancellationRequested)
-                return 0;
-            var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
-            var dataobj = JSON.API.GetData(serverobj.data, 0);
-            var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])["count"]
-                .ToString();
-            return int.Parse(data);
+            if (request.CancellationToken.IsCancellationRequested)
+                return;
+
+            request.Request = response;
+
+            request.ProcessResult = (x) =>
+            {
+                var cancellationToken = x.CancellationToken;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+                var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>((string)x.Result);
+                var dataobj = JSON.API.GetData(serverobj.data, 0);
+                var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])["count"]
+                    .ToString();
+
+                x.SetResult(int.Parse(data));
+            };
+
+            request.Queue();
+
+            return;
         }
 
-        public static async Task<TagList> GetTags(ItemType itemType,int item_id,CancellationToken cancellationToken)
+        public static async void GetTags(ItemType itemType,int item_id,RequestToken request)
         {
             List<Tuple<string, string>> main = new List<Tuple<string, string>>();
             List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
@@ -723,45 +850,96 @@ namespace HappyPandaXDroid.Core
             string response = JSON.API.ParseToString(funct);
             JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
             response = JSON.API.ParseToString(main);
-            if (cancellationToken.IsCancellationRequested)
-                return null;
-            string responsestring = Net.SendPost(response,ref cancellationToken);
-            if (cancellationToken.IsCancellationRequested)
-                return null;
-            var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
-            var array = obj.data as Newtonsoft.Json.Linq.JArray;
-            var taglist = new TagList();
-            if (array != null)
+            if (request.CancellationToken.IsCancellationRequested)
+                return;
+
+            request.Request = response;
+
+            request.ProcessResult = (x) =>
             {
-                var data = array[0].ToObject<JSON.DataObject>();
-                var sett = data.data as Newtonsoft.Json.Linq.JObject;
-                taglist = sett.ToObject<TagList>();
-            }
-            return taglist;
+                var cancellationToken = x.CancellationToken;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+                var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>((string)request.Result);
+                if (obj == null || obj.data == null)
+                    return;
+                var array = obj.data as Newtonsoft.Json.Linq.JArray;
+                var taglist = new TagList();
+                if (array != null)
+                {
+                    var data = array[0].ToObject<JSON.DataObject>();
+                    var sett = data.data as Newtonsoft.Json.Linq.JObject;
+                    taglist = sett.ToObject<TagList>();
+                }
+
+                request.SetResult(taglist);
+            };
+            request.Queue();
+
+            return;
         }
 
-        public async static Task<string> GetThumb(GalleryItem gallery,CancellationToken cancellationToken)
+        public static async void GalleryReadEvent(int item_id, CancellationToken cancellationToken)
+        {
+            List<Tuple<string, string>> main = new List<Tuple<string, string>>();
+            List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
+            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
+            JSON.API.PushKey(ref main, "session", App.Server.Info.session);
+            JSON.API.PushKey(ref funct, "fname", "gallery_read_event");
+            JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
+            string response = JSON.API.ParseToString(funct);
+            JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
+            response = JSON.API.ParseToString(main);
+
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+            RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+            request.Request = response;
+
+            request.Queue();
+
+            /*string responsestring = Net.SendPost(response, ref cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+                return false;
+            var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
+            var token = obj.data as Newtonsoft.Json.Linq.JToken;
+            if (token != null)
+            {
+                var data = token[0].ToObject<JSON.DataObject>();
+                var sett = data.data as Newtonsoft.Json.Linq.JObject;
+                bool result = sett.ToObject<bool>();
+
+                return result;
+            }
+            return false;*/
+        }
+
+        public async static Task<string> GetThumb(GalleryItem gallery, CancellationToken cancellationToken)
         {
             int tries = 0;
             string thumb_path = string.Empty;
-            while (true)
-            {
-                if (tries > 3)
-                    break;
-                
+
+            if (gallery.id > 0)
+                while (true)
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                        return null;
-                    await Task.Run(async () =>
+                    if (tries > 3)
+                        break;
+
                     {
-                        thumb_path = await gallery.Download(cancellationToken);
-                    });
-                    if (cancellationToken.IsCancellationRequested)
-                        return null;
-                    gallery = Core.App.Server.GetItem<Core.Gallery.GalleryItem>(gallery.id, ItemType.Gallery,cancellationToken);
+                        if (cancellationToken.IsCancellationRequested)
+                            return null;
+                        await Task.Run(async () =>
+                        {
+                            thumb_path = await gallery.Download(cancellationToken);
+                        });
+                        if (cancellationToken.IsCancellationRequested)
+                            return null;
+                        gallery = Core.App.Server.GetItem<Core.Gallery.GalleryItem>(gallery.id, ItemType.Gallery, cancellationToken);
+                    }
+                    tries++;
                 }
-                tries++;
-            }
 
 
             bool IsCached()
@@ -781,7 +959,6 @@ namespace HappyPandaXDroid.Core
             }
 
             return thumb_path;
-
         }
     }
 }

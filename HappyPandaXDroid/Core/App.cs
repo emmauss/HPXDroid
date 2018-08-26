@@ -541,9 +541,23 @@ namespace HappyPandaXDroid.Core
                     string response = JSON.API.ParseToString(funct);
                     JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                     response = JSON.API.ParseToString(main);
-                    string responsestring = Net.SendPost(response,ref cancellationToken);
-                    
-                    var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
+
+                    ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                    RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return null;
+
+                    request.Request = response;
+
+                    request.Queue();
+
+                    request.RequestResetEvent.WaitOne();
+
+                    string reply = (string)request.Result;
+
+                    var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(reply);
                     var array = obj.data as Newtonsoft.Json.Linq.JArray;
                     var config = new ServerSettings();
                     if (array != null)
@@ -570,8 +584,23 @@ namespace HappyPandaXDroid.Core
                     string response = JSON.API.ParseToString(funct);
                     JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                     response = JSON.API.ParseToString(main);
-                    string responsestring = Net.SendPost(response,ref  cancellationToken);
-                    if (responsestring.Contains("updated"))
+
+                    ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                    RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return false;
+
+                    request.Request = response;
+
+                    request.Queue();
+
+                    request.RequestResetEvent.WaitOne();
+
+                    string reply = (string)request.Result;
+
+                    if (reply.Contains("updated"))
                         return true;
                     else
                         return false;
@@ -702,7 +731,25 @@ namespace HappyPandaXDroid.Core
             {
                 logger.Info("Start Command. commandId={0}", command_id);
                 string response = CreateCommand("start_command", command_id);
-                response = Net.SendPost(response,ref cancellationToken);
+
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
                 string state = string.Empty;
                 if (GetError(response) == "none")
                 {
@@ -728,7 +775,25 @@ namespace HappyPandaXDroid.Core
             {
                 logger.Info("Stop Command. commandId={0}", command_id);
                 string response = CreateCommand("stop_command", command_id);
-                response = Net.SendPost(response,ref cancellationToken);
+
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
                 string state = string.Empty;
                 if (GetError(response) == "none")
                 {
@@ -753,7 +818,24 @@ namespace HappyPandaXDroid.Core
             {
 
                 string response = CreateCommand("undo_command", command_id);
-                response = Net.SendPost(response,ref cancellationToken);
+
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
                 string state = string.Empty;
                 if (GetError(response) == "none")
                 {
@@ -857,7 +939,23 @@ namespace HappyPandaXDroid.Core
                 logger.Info("Get Command value. commandId={0}, type = {1}, url = {2}, itemID ={3}",
                     command_id, type, return_url.ToString(), item_id.ToString());
                 string response = CreateCommand("get_command_value", command_id);
-                response = Net.SendPost(response,ref cancellationToken);
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
                 string filename = string.Empty;
                 Gallery.Profile data = new Gallery.Profile();
                 if (cancellationToken.IsCancellationRequested)
@@ -907,7 +1005,23 @@ namespace HappyPandaXDroid.Core
                 logger.Info("Get Command values. commandId={0}, type = {1},  itemIDs =[{2}]",
                     command_id, type, item_id.ToString());
                 string response = CreateCommand("get_command_value", command_id);
-                response = Net.SendPost(response, ref cancellationToken);
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
                 string filename = string.Empty;
                 Gallery.Profile data = new Gallery.Profile();
                 if (cancellationToken.IsCancellationRequested)
@@ -945,7 +1059,25 @@ namespace HappyPandaXDroid.Core
                 logger.Info("Get Command values. commandId={0}, type = {1},  itemIDs =[{2}]",
                     command_ids, type,  item_ids.ToString());
                 string response = CreateCommand("get_command_value", command_ids);
-                response = Net.SendPost(response, ref cancellationToken);
+
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return new Dictionary<int, string>();
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return new Dictionary<int, string>();
+
                 string filename = string.Empty;
                 Gallery.Profile data = new Gallery.Profile();
                 if (cancellationToken.IsCancellationRequested)
@@ -992,8 +1124,24 @@ namespace HappyPandaXDroid.Core
             {
                 logger.Info("Get Command State. commandId={0}", command_id);
 
-                string command = CreateCommand("get_command_state", command_id);
-                string response = Net.SendPost(command,ref cancellationToken);
+                string response = CreateCommand("get_command_state", command_id);
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return string.Empty;
                 string state = string.Empty;
                 string error = GetError(response);
                 if (error == "none")
@@ -1010,22 +1158,40 @@ namespace HappyPandaXDroid.Core
                 return (error);
             }
 
-            public static bool GetCompleted(out List<int> done, int[] command_ids, Gallery.HPXItem[] hPXItem, ref CancellationToken cancellationToken)
+            public static bool GetCompleted(out List<int> done, List<int> command_ids, Gallery.HPXItem[] hPXItem, ref CancellationToken cancellationToken)
             {
                 done = new List<int>();
                 List<int> failed = new List<int>();
                 logger.Info("Get completed. commandId={0}", command_ids);
 
-                string command = CreateCommand("get_command_state", command_ids);
-                string response = Net.SendPost(command, ref cancellationToken);
+                string response = CreateCommand("get_command_state", command_ids.ToArray());
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return false;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return false;
                 string state = string.Empty;
+                int count = command_ids.Count;
                 string error = GetError(response);
                 if (error == "none")
                 {
                     var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
-                    foreach(int id in command_ids)
+                    for (int i = 0; i < command_ids.Count; i++)
                     {
+                        int id = command_ids[i];
                         var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[id.ToString()]
                         .ToString();
                         if (!done.Contains(id))
@@ -1033,24 +1199,25 @@ namespace HappyPandaXDroid.Core
                             if (data.ToLower() == "finished")
                             {
                                 done.Add(id);
-                                foreach(var hp in hPXItem)
+                                foreach (var hp in hPXItem)
                                 {
                                     if (id == hp.CommandId)
                                     {
                                         hp.Image.IsReady = true;
                                         Task.Run(() =>
                                         {
-                                            hp.Image.RequestLoad() ;
-                                        });
+                                            hp.Image.RequestLoad();
+                                        }, cancellationToken);
                                     }
                                 }
                             }
                             else
-                              if (data.ToLower().Contains("fail"))
+                              if (data.ToLower().Contains("fail") || data.ToLower().Contains("stopped")
+                                || data.ToLower().Contains("out_of_service"))
                                 failed.Add(id);
                         }
                     }
-                    if((done.Count >= command_ids.Length) || (failed.Count+done.Count >= command_ids.Length))
+                    if((done.Count >= count) || (failed.Count+done.Count >= count))
                     return true;
                    /* 
                     state = data;
@@ -1073,9 +1240,26 @@ namespace HappyPandaXDroid.Core
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
-                string responsestring = Net.SendPost(response,ref cancellationToken);
-                
-                var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(responsestring);
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return default(T);
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return default(T);
+
+                var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
                 
                     var data = array[0].ToObject<JSON.DataObject>();
@@ -1102,7 +1286,24 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
 
-                response = Net.SendPost(response,ref cancellationToken);
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return new List<T>();
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return new List<T>();
+
                 string countstring = response;
                 var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
@@ -1141,8 +1342,25 @@ namespace HappyPandaXDroid.Core
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
-                string countstring = Net.SendPost(response,ref cancellationToken);
-                var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
+                ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    return 0;
+
+                request.Request = response;
+
+                request.Queue();
+
+                request.RequestResetEvent.WaitOne();
+
+                response = (string)request.Result;
+
+                if (cancellationToken.IsCancellationRequested)
+                    return 0;
+                var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
+
                 if (JSON.API.GetData(serverobj.data, 0) is JSON.ServerObjects.IntegerObject countdata)
                     return countdata.count;
                 else return 0;

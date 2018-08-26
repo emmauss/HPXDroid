@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ namespace HappyPandaXDroid.Services
         public override void OnCreate()
         {
             if (Core.Gallery.DownloadList == null)
-                Core.Gallery.DownloadList = new List<Core.Gallery.Page>();
+                Core.Gallery.DownloadList = new ConcurrentQueue<Core.Gallery.Page>();
             base.OnCreate();
         }
 

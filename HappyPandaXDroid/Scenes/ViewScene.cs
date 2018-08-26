@@ -38,7 +38,7 @@ namespace HappyPandaXDroid.Scenes
         public Core.Gallery.ItemType ItemType = Core.Gallery.ItemType.Gallery;
         public Custom_Views.PageSelector mpageSelector;
         protected EasyRecyclerView.EasyRecyclerView mRecyclerView;
-        bool IsRefreshing = false;
+        public bool IsRefreshing = false;
         PageCheckListener listener;
         bool initialized = false;
         protected CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
@@ -155,7 +155,7 @@ namespace HappyPandaXDroid.Scenes
                 searchView.SetQuery(Parse(current_query,true), false);
                 if (toolbar != null)
                     toolbar.Title = Parse(current_query, true);
-                Refresh();
+                Refresh(0);
             }
         }
         public DialogEventListener dialogeventlistener;
@@ -283,16 +283,9 @@ namespace HappyPandaXDroid.Scenes
                         logger.Info("Swipe Header Refreshing");
 
                         await Task.Delay(10);
-                        Refresh();
+                        Refresh(0);
                     }
-
-                    h.Post(() =>
-                    {
-                        mRefreshLayout.HeaderRefreshing = false;
-                        mRefreshLayout.FooterRefreshing = false;
-                    });
-                    IsRefreshing = false;
-                });
+                }, SceneCancellationTokenSource.Token);
         }
 
         public ViewScene(string title, string query) : base()
@@ -404,11 +397,13 @@ namespace HappyPandaXDroid.Scenes
                                 h.Post(() =>
                                 {
                                     SetMainLoading(false);
+                                    if(!SceneCancellationTokenSource.IsCancellationRequested)
                                     adapter.ResetList();
                                     SetMainLoading(false);
 
                                 });
-                                GetTotalCount();
+                                if (!SceneCancellationTokenSource.IsCancellationRequested)
+                                    GetTotalCount();
 
                             }
                         }
@@ -422,7 +417,7 @@ namespace HappyPandaXDroid.Scenes
                             SetError(true);
                         });
                     }
-                });
+                }, SceneCancellationTokenSource.Token);
             else
             {
                 var h = new Handler(Looper.MainLooper);
@@ -443,7 +438,7 @@ namespace HappyPandaXDroid.Scenes
         private void MErrorFrame_Click(object sender, EventArgs e)
         {
             SetMainLoading(true);
-            Refresh();
+            Refresh(0);
         }
 
         private void MRefreshLayout_OnFooterRefresh(object sender, EventArgs e)
@@ -457,7 +452,8 @@ namespace HappyPandaXDroid.Scenes
 
         private void MRefreshLayout_OnHeaderRefresh(object sender, EventArgs e)
         {
-            if (!IsRefreshing)
+            if (SceneCancellationTokenSource.IsCancellationRequested)
+                SceneCancellationTokenSource = new CancellationTokenSource();
                 Task.Run(async () =>
                 {
                     if (CurrentPage != 0)
@@ -465,24 +461,19 @@ namespace HappyPandaXDroid.Scenes
                         await Task.Run(() =>
                         {
                             SetBottomLoading(true);
+                            if(!SceneCancellationTokenSource.IsCancellationRequested)
                             PreviousPage();
                             SetBottomLoading(false);
-                        });
+                        }, SceneCancellationTokenSource.Token);
                     }
                     else
                     {
                         logger.Info("Swipe Header Refreshing");
                         IsRefreshing = true;
                         await Task.Delay(10);
-                        Refresh();
-                    }
-                    IsRefreshing = false;
-                    var h = new Handler(Looper.MainLooper);
-                    h.Post(() =>
-                    {
-                        mRefreshLayout.HeaderRefreshing = false;
-                        mRefreshLayout.FooterRefreshing = false;
-                    });
+                        if (!SceneCancellationTokenSource.IsCancellationRequested)
+                            Refresh(0);
+                    }                    
                 });
         }
 
@@ -522,15 +513,8 @@ namespace HappyPandaXDroid.Scenes
                             logger.Info("Swipe Header Refreshing");
 
                             await Task.Delay(10);
-                            content.Refresh();
+                            content.Refresh(0);
                         }
-
-                        h.Post(() =>
-                        {
-                            content.mRefreshLayout.HeaderRefreshing = false;
-                            content.mRefreshLayout.FooterRefreshing = false;
-                        });
-                        content.IsRefreshing = false;
                     });
             }
         }
@@ -540,10 +524,20 @@ namespace HappyPandaXDroid.Scenes
             CurrentList.Clear();
             if (Core.Net.Connect())
             {
-                CurrentList.AddRange(await Core.Gallery.GetPage(ItemType, 0, SceneCancellationTokenSource.Token, ViewType));
-                foreach (var item in CurrentList)
+                ManualResetEvent manualResetEvent = new ManualResetEvent(false);
+                RequestToken token = new RequestToken(manualResetEvent, SceneCancellationTokenSource.Token);
+                Core.Gallery.GetPage(ItemType, 0, token, ViewType);
+
+                manualResetEvent.WaitOne();
+
+                if (!token.CancellationToken.IsCancellationRequested)
                 {
-                    item.Image = new Media.Image();
+                    var list = (List<Core.Gallery.HPXItem>)token.Result;
+                    CurrentList.AddRange(list);
+                    foreach (var item in CurrentList)
+                    {
+                        item.Image = new Media.Image();
+                    }
                 }
             }
             else
@@ -558,7 +552,7 @@ namespace HappyPandaXDroid.Scenes
 
         public abstract void GetTotalCount();
 
-        public abstract void Refresh();
+        public abstract void Refresh(int page);
 
         public void SetBottomLoading(bool state)
         {
@@ -672,34 +666,7 @@ namespace HappyPandaXDroid.Scenes
                 IsLoading = false;
                 return;
             }
-            CurrentList.Clear();
-            CurrentList.AddRange(await Core.Gallery.GetPage(ItemType, page - 1, SceneCancellationTokenSource.Token,ViewType,Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query));
-            if (CurrentList.Count > 0)
-            {
-                foreach (var item in CurrentList)
-                {
-                    item.Image = new Media.Image();
-                }
-                h.Post(() =>
-                {
-                    adapter.ResetList();
-                    if (CurrentList.Count > 0)
-                        mRecyclerView.ScrollToPosition(0);
-
-                });
-                GetTotalCount();
-                CurrentPage = page - 1;
-
-
-            }
-            h.Post(() =>
-            {
-
-                SetMainLoading(false);
-            });
-            logger.Info("Loading Next Page Successful");
-
-            IsLoading = false;
+            Refresh(page - 1);
         }
 
 
@@ -709,17 +676,20 @@ namespace HappyPandaXDroid.Scenes
             {
                 if (holder is Custom_Views.CardAdapter.HPXItemHolder vh)
                 {
-                    if (vh.HPXItem is Core.Gallery.GalleryItem gallery)
+                    if (vh.HPXItem != null && vh.HPXItem.id > 0)
                     {
-                        var galleryscene = new Scenes.GalleryScene(gallery, string.Empty);
-                        var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
-                        pscene.Stage.PushScene(galleryscene);
-                    }
-                    else if (vh.HPXItem is Core.Gallery.Collection collection)
-                    {
-                        var collectionscene = new Scenes.CollectionScene(collection,vh.Url);
-                        var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
-                        pscene.Stage.PushScene(collectionscene);
+                        if (vh.HPXItem is Core.Gallery.GalleryItem gallery)
+                        {
+                            var galleryscene = new Scenes.GalleryScene(gallery, string.Empty);
+                            var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
+                            pscene.Stage.PushScene(galleryscene);
+                        }
+                        else if (vh.HPXItem is Core.Gallery.Collection collection)
+                        {
+                            var collectionscene = new Scenes.CollectionScene(collection, vh.Url);
+                            var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
+                            pscene.Stage.PushScene(collectionscene);
+                        }
                     }
                 }
             }
@@ -741,7 +711,6 @@ namespace HappyPandaXDroid.Scenes
                     mProgressView.Visibility = ViewStates.Gone;
                     mRefreshLayout.Visibility = ViewStates.Visible;
                     mRecyclerView.Visibility = ViewStates.Visible;
-                    //mRefreshLayout.EnableSwipeHeader = true;
                     IsLoading = false;
                     break;
             }
@@ -773,16 +742,23 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnStop()
         {
-            SceneCancellationTokenSource.Cancel();
+           // SceneCancellationTokenSource.Cancel();
             base.OnStop();
         }
 
         protected override void OnStart()
         {
             base.OnStart();
-            SceneCancellationTokenSource = new CancellationTokenSource();
+           // SceneCancellationTokenSource = new CancellationTokenSource();
         }
 
+        protected override void OnPause()
+        {
+            if (RequestToken != null)
+                RequestToken.IsPaused = true;
+            base.OnPause();
+            // SceneCancellationTokenSource = new CancellationTokenSource();
+        }
         public class DialogEventListener : Custom_Views.PageSelector.INoticeDialogListener
         {
             ViewScene parent;
@@ -946,7 +922,7 @@ namespace HappyPandaXDroid.Scenes
                             ((HPXSceneActivity)main.MainView.Context).FragmentManager, "PageSelecter");
                         break;
                     case Resource.Id.fabRefresh:
-                        main.Refresh();
+                        main.Refresh(0);
                         break;
                     case Resource.Id.fabToggle:
                         if (main.ItemType == Core.Gallery.ItemType.Gallery)
@@ -962,12 +938,13 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnDestroyView(View p0)
         {
-
+            SceneCancellationTokenSource.Cancel();
             base.OnDestroyView(p0);
         }
 
         protected override void OnDestroy()
         {
+            SceneCancellationTokenSource.Cancel();
             adapter?.Clear();            
             MainView = null;
             fam = null;
@@ -980,6 +957,9 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnResume()
         {
+            if(RequestToken!=null)
+            RequestToken.IsPaused = false;
+
             base.OnResume();
             if (isGrid != Core.App.Settings.IsGrid)
             {

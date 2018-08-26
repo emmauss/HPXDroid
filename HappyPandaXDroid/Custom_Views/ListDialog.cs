@@ -106,7 +106,7 @@ namespace HappyPandaXDroid.Custom_Views
                     var enumv = (Core.Gallery.Sort)Enum.Parse(typeof(Core.Gallery.Sort), item);
                     Core.App.Settings.Default_Sort = enumv;
                     Dismiss();
-                    mscene.Refresh();
+                    mscene.Refresh(0);
                     break;
                 case "order":
                     if (item == "Ascending")
@@ -114,7 +114,7 @@ namespace HappyPandaXDroid.Custom_Views
                     else if (item == "Descending")
                         Core.App.Settings.Sort_Decending = true;
                     Dismiss();
-                    mscene.Refresh();
+                    mscene.Refresh(0);
                     break;
                 case "search":
                     if (MainList.ChoiceMode != ChoiceMode.Multiple)

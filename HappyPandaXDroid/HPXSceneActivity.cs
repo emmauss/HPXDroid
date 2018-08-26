@@ -165,7 +165,7 @@ namespace HappyPandaXDroid
                     {
                         await Task.Delay(10);
                         Core.Net.Connect();
-                    });
+                    },new System.Threading.CancellationToken());
                 }
                 catch (System.Exception ex)
                 {

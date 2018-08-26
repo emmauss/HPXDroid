@@ -15,6 +15,7 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.Widget;
 using Android.Support.V7.View;
 using Com.Bumptech.Glide;
+using HappyPandaXDroid.Core;
 using Com.Bumptech.Glide.Request;
 using ProgressView = XamarinBindings.MaterialProgressBar;
 using NLog;
@@ -24,7 +25,7 @@ using Com.Hippo.Stage;
 namespace HappyPandaXDroid.Scenes
 {
     class GalleryScene : HPXScene
-    {
+    { 
         private TextView mErrorText;
         public TextView title, category, read_action,
             language, pages, time_posted, no_tags, last_read_page;
@@ -100,13 +101,19 @@ namespace HappyPandaXDroid.Scenes
 
         public async void Load()
         {
-            if (Core.Net.Connect())
+            if (RequestToken != null)
             {
-                Task.Run(() =>
-                {
-                    LoadPreviews();
-                });
+                SceneCancellationTokenSource?.Cancel();
 
+                SceneCancellationTokenSource = new CancellationTokenSource();
+
+                RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
+            }
+            else
+                RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
+
+            if (Core.Net.Connect())
+            {                
                 if (thumb_path==string.Empty)
                 thumb_path = Core.Gallery.GetThumb(gallery,SceneCancellationTokenSource.Token).Result;
 
@@ -133,22 +140,71 @@ namespace HappyPandaXDroid.Scenes
                         logger.Error(ex, "\n Exception Caught In GalleryActivity.Oncreate.");
                     }
                 });
+
+                if (SceneCancellationTokenSource.IsCancellationRequested)
+                    return;
+
                 
-                gallery.tags = await Core.Gallery.GetTags(Core.Gallery.ItemType.Gallery,gallery.id,SceneCancellationTokenSource.Token);                
+
+                RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
+
+                RequestToken.FinishedCallback += RequestToken_AsyncCallback;
+
+                RequestToken.FailedCallback += RequestToken_FailedCallback;
+                
+                Core.Gallery.GetTags(Core.Gallery.ItemType.Gallery,gallery.id,RequestToken);
+
+                Task.Run(() =>
+                {
+                    LoadPreviews();
+                }, SceneCancellationTokenSource.Token);
+
+                loaded = true;
+            }
+            else
+            {
+                loaded = false;
+            }
+        }
+
+        private void RequestToken_FailedCallback(object sender, EventArgs e)
+        {
+            if (sender is RequestToken token && !token.CancellationToken.IsCancellationRequested && token == RequestToken)
+            {
+                if (SceneCancellationTokenSource.IsCancellationRequested)
+                    return;
+                gallery.tags = new Core.Gallery.TagList();
+                var h = new Handler(Looper.MainLooper);
+                if (!IsDestroyed)
+                    h.Post(() =>
+                    {
+                        mProgressView.Visibility = ViewStates.Invisible;
+                        //MainLayout.Visibility = ViewStates.Visible;
+                        mErrorText.Text = "Failed to retrieve tags";
+                        errorFrame.Visibility = ViewStates.Visible;
+                    });
+            }
+        }
+
+        private void RequestToken_AsyncCallback(object sender, EventArgs e)
+        {
+            if (sender is RequestToken token && !token.CancellationToken.IsCancellationRequested && token == RequestToken)
+            {
+                gallery.tags = (Core.Gallery.TagList)token.Result;
                 ParseData();
+
+                if (SceneCancellationTokenSource.IsCancellationRequested)
+                    return;
+
+                var h = new Handler(Looper.MainLooper);
                 if (!IsDestroyed)
                     h.Post(() =>
                     {
                         mProgressView.Visibility = ViewStates.Invisible;
                         MainLayout.Visibility = ViewStates.Visible;
                         errorFrame.Visibility = ViewStates.Gone;
-                    });                
-                
-                loaded = true;
-            }
-            else
-            {
-                loaded = false;
+                    });
+
             }
         }
 
@@ -172,6 +228,7 @@ namespace HappyPandaXDroid.Scenes
         
         protected override void OnDestroyView(View p0)
         {
+
             SceneCancellationTokenSource.Cancel();
             IsRunning = false;
             mProgressView = null;
@@ -208,14 +265,15 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnResume()
         {
-            base.OnResume();        
-
+            base.OnResume(); 
 
             Task.Run(async () =>
             {
 
                 var h = new Handler(Looper.MainLooper);
                 await Task.Delay(3000);
+                if (SceneCancellationTokenSource.IsCancellationRequested)
+                    return;
                 var item = Core.Media.Recents.GetRecentGallery(gallery.id);
                 if (item != null)
                     if (gallery.id == item.id)
@@ -416,7 +474,6 @@ namespace HappyPandaXDroid.Scenes
             intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
             intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
             StartActivity(intent);
-
         }
 
         public void ParseMeta()
@@ -441,15 +498,16 @@ namespace HappyPandaXDroid.Scenes
                             language = MainView.FindViewById<TextView>(Resource.Id.language);
                         language.Text = "Language: ";
                         if (gallery.tags != null)
-                            if (gallery.tags.Language.Count > 0)
-                            {
+                            if (gallery.tags.Language != null)
+                                if (gallery.tags.Language.Count > 0)
+                                {
 
-                                string lan = gallery.tags.Language[0].name;
-                                language.Text += System.Globalization.CultureInfo.CurrentCulture
-                                    .TextInfo.ToTitleCase(lan.ToLower());
-                            }
-                            else
-                                language.Text += "English";
+                                    string lan = gallery.tags.Language[0].name;
+                                    language.Text += System.Globalization.CultureInfo.CurrentCulture
+                                        .TextInfo.ToTitleCase(lan.ToLower());
+                                }
+                                else
+                                    language.Text += "English";
 
                         ParseTags();
                     }
@@ -476,6 +534,8 @@ namespace HappyPandaXDroid.Scenes
                         Core.Gallery.ItemType.Gallery,Core.Gallery.ItemType.Page);
                 h.Post(() =>
                 {
+                    if (SceneCancellationTokenSource.IsCancellationRequested)
+                        return;
                     pages.Text = pagelist.Count.ToString() + " Pages";
                     
                     last_read_page.Text = "Last Read Page: " + (gallery.LastPageRead + 1).ToString();
@@ -500,15 +560,15 @@ namespace HappyPandaXDroid.Scenes
         }
 
         protected override void OnStop()
-        {
+        { 
             base.OnStop();
-            Glide.With(Context).Clear(ThumbView);
-            SceneCancellationTokenSource.Cancel();
         }
 
-
-
-
+        protected override void OnPause()
+        { 
+            base.OnPause();
+        }
+        
         void ParseTags()
         {
             if (!IsTagAvailable())
@@ -558,6 +618,8 @@ namespace HappyPandaXDroid.Scenes
         {
             int count = 0;
             var taglist = gallery.tags;
+            if (taglist == null)
+                return false;
             if (taglist.Artist != null)
                 count += taglist.Artist.Count;
             if (taglist.Female != null)

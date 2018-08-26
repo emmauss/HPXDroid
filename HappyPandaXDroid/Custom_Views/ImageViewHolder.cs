@@ -100,7 +100,8 @@ namespace HappyPandaXDroid.Custom_Views
                 ImageCancellationTokenSource = new CancellationTokenSource();
                 this.Page = page;
                 Load();
-            }catch(System.Exception ex)
+            }
+            catch (System.Exception ex)
             {
 
             }
@@ -116,7 +117,7 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 if (IsCached)
                 {
-                    Core.Gallery.GetCachedPagePath(Page.id,out page_path,"Page");
+                    Core.Gallery.GetCachedPagePath(Page.id, out page_path, "Page");
                     h.Post(async () =>
                     {
                         try
@@ -134,26 +135,26 @@ namespace HappyPandaXDroid.Custom_Views
                         {
 
                         }
-                         OnLoadEnd();
+                        OnLoadEnd();
 
                     });
                 }
                 else
-                while (!IsCached)
-                {
-
-                    bool exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Page, Page.id, ImageCancellationTokenSource.Token);
-                    if (!exists)
+                    while (!IsCached)
                     {
-                        return;
-                    }
+
+                        bool exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Page, Page.id, ImageCancellationTokenSource.Token);
+                        if (!exists)
+                        {
+                            return;
+                        }
                         tries++;
-                    page_path = await Page.Download();
+                        page_path = await Page.Download();
                         if (tries > 1)
                             return;
                         else
                             Load();
-                }
+                    }
 
 
             }

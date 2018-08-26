@@ -20,7 +20,7 @@ namespace HappyPandaXDroid.Custom_Views
         public abstract class HPXCardAdapter : EasyAdapter
         {
             private static Logger logger = LogManager.GetCurrentClassLogger();
-            CancellationTokenSource AdapterCancellationTokenSource = new CancellationTokenSource();
+            public CancellationTokenSource AdapterCancellationTokenSource = new CancellationTokenSource();
             public EventHandler<int> ItemClick;
             protected Core.Gallery.ItemType ItemType;
             public Scenes.ViewScene content;
@@ -74,6 +74,8 @@ namespace HappyPandaXDroid.Custom_Views
                 Task.Run(() =>
                 {
                     UpdateUrls(newItems);
+                    if (AdapterCancellationTokenSource.IsCancellationRequested)
+                        return;
                     if (urls.Count > 0)
                     {
                         foreach (var item in mdata)
@@ -88,7 +90,7 @@ namespace HappyPandaXDroid.Custom_Views
                         }
                     }
                 
-                });
+                }, AdapterCancellationTokenSource.Token);
             }
 
             public void UpdateUrls(List<Core.Gallery.HPXItem> newItems)
@@ -103,6 +105,8 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     var urls = Core.Gallery.GetImage(newItems, ItemType.ToString(),
                         AdapterCancellationTokenSource.Token).Result;
+                    if (AdapterCancellationTokenSource.IsCancellationRequested)
+                        return;
                     if (urls.Count > 0)
                     {
                         foreach(var item in newItems)

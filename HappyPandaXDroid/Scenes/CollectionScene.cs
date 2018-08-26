@@ -48,7 +48,7 @@ namespace HappyPandaXDroid.Scenes
             titleView.Text = Collection.name;
             Glide.With(Context).Load(url).Into(thumb);
             current_query = string.Empty;
-            Refresh();
+            Refresh(0);
         }
 
         public readonly new Core.Gallery.ItemType ItemType = Core.Gallery.ItemType.Gallery;
@@ -59,17 +59,19 @@ namespace HappyPandaXDroid.Scenes
         {
             await Task.Run(() =>
             {
-                Count = Core.App.Server.GetRelatedCount(Collection.id, SceneCancellationTokenSource.Token, Core.Gallery.ItemType.Collection
+                if (!SceneCancellationTokenSource.IsCancellationRequested)
+                    Count = Core.App.Server.GetRelatedCount(Collection.id, SceneCancellationTokenSource.Token, Core.Gallery.ItemType.Collection
                     , Core.Gallery.ItemType.Gallery);
                 var h = new Handler(Looper.MainLooper);
-                h.Post(() => galleries.Text = Count.ToString());
-            });
+                if (!SceneCancellationTokenSource.IsCancellationRequested)
+                    h.Post(() => galleries.Text = Count.ToString());
+            }, SceneCancellationTokenSource.Token);
         }
 
-        public override async void Refresh()
+        public override async void Refresh(int page)
         {
             CurrentList = new List<Core.Gallery.HPXItem>();
-            CurrentPage = 0;
+            CurrentPage = page;
 
             var h = new Handler(Looper.MainLooper);
             if (Core.Net.Connect())
@@ -81,35 +83,40 @@ namespace HappyPandaXDroid.Scenes
                 await Task.Run(async () =>
                 {
                     logger.Info("Refreshing HPContent");
-                    var list = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
-                        Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, 0);
-                    foreach (var item in list)
+                    if (!SceneCancellationTokenSource.IsCancellationRequested)
                     {
-                        item.Image = new Media.Image();
-                    }
-                    CurrentList.AddRange(list);
-                    if (CurrentList == null || CurrentList.Count < 1)
-                    {
+                        var list = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
+                            Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, 0);
+                        if (SceneCancellationTokenSource.IsCancellationRequested)
+                            return;
+                            foreach (var item in list)
+                        {
+                            item.Image = new Media.Image();
+                        }
+                        CurrentList.AddRange(list);
+                        if (CurrentList == null || CurrentList.Count < 1)
+                        {
+                            h.Post(() =>
+                            {
+                                SetMainLoading(false);
+                                SetError(true);
+                            });
+                            return;
+                        }
+                        CurrentPage = 0;
                         h.Post(() =>
                         {
+                            adapter.ResetList();
+                            adapter.NotifyDataSetChanged();
                             SetMainLoading(false);
-                            SetError(true);
+                            if (CurrentList.Count > 0)
+                                mRecyclerView.ScrollToPosition(0);
                         });
-                        return;
+                        GetTotalCount();
+                        mpageSelector = new Custom_Views.PageSelector(this);
+                        logger.Info("HPContent Refresh Successful");
                     }
-                    CurrentPage = 0;
-                    h.Post(() =>
-                    {
-                        adapter.ResetList();
-                        adapter.NotifyDataSetChanged();
-                        SetMainLoading(false);
-                        if (CurrentList.Count > 0)
-                            mRecyclerView.ScrollToPosition(0);
-                    });
-                    GetTotalCount();
-                    mpageSelector = new Custom_Views.PageSelector(this);
-                    logger.Info("HPContent Refresh Successful");
-                });
+                },SceneCancellationTokenSource.Token);
             }
             else
             {

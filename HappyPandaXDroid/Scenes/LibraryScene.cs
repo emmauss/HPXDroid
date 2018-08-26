@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Text;
 
 using Android.App;
@@ -11,6 +12,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using HappyPandaXDroid.Core;
+
 
 namespace HappyPandaXDroid.Scenes
 {
@@ -59,13 +61,34 @@ namespace HappyPandaXDroid.Scenes
 
         public override async void GetTotalCount()
         {
-            Count = await Core.Gallery.GetCount(ItemType, Current_Query, SceneCancellationTokenSource.Token, ViewType);
+            RequestToken token = new RequestToken(SceneCancellationTokenSource.Token);
+            token.FinishedCallback += Token_FinishedCallback;
+            token.FailedCallback += Token_FailedCallback;
+            Core.Gallery.GetCount(ItemType, Current_Query, token, ViewType); 
         }
 
-        public override async void Refresh()
+        private async void Token_FailedCallback(object sender, EventArgs e)
+        {
+            await Task.Delay(2000);
+
+            GetTotalCount();
+        }
+
+        private void Token_FinishedCallback(object sender, EventArgs e)
+        {
+            if (sender is RequestToken token)
+            {
+                if (!token.CancellationToken.IsCancellationRequested)
+                {
+                    Count = (int)token.Result;
+                }
+            }
+        }
+
+        public override async void Refresh(int page)
         {
             CurrentList = new List<Core.Gallery.HPXItem>();
-            CurrentPage = 0;
+            CurrentPage = page;
 
             var h = new Handler(Looper.MainLooper);
             if (Core.Net.Connect())
@@ -76,10 +99,57 @@ namespace HappyPandaXDroid.Scenes
                 });
                 await Task.Run(async () =>
                 {
+                    SceneCancellationTokenSource.Cancel();
+
+                    SceneCancellationTokenSource = new CancellationTokenSource();
+
+                    RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
+
+                    RequestToken.FinishedCallback += RefreshToken_AsyncCallback;
+
+                    RequestToken.FailedCallback += RefreshToken_FailedCallback;
                     logger.Info("Refreshing HPContent");
-                    var list = await Core.Gallery.GetPage(ItemType, 0, SceneCancellationTokenSource.Token, ViewType, Core.App.Settings.Default_Sort,
-                        Core.App.Settings.Sort_Decending, Current_Query);
-                    foreach(var item in list)
+                    Core.Gallery.GetPage(ItemType, 0, RequestToken, ViewType, Core.App.Settings.Default_Sort,
+                        Core.App.Settings.Sort_Decending, Current_Query);                    
+                });
+            }
+            else
+            {
+                h.Post(() =>
+                {
+                    SetError(true);
+                });
+            }
+        }
+
+        private void RefreshToken_FailedCallback(object sender, EventArgs e)
+        {
+            var h = new Handler(Looper.MainLooper);
+
+            if (sender is RequestToken token)
+            {
+                if (!token.CancellationToken.IsCancellationRequested)
+                {
+                    h.Post(() =>
+                    {
+                        SetMainLoading(false);
+                        SetError(true);
+                    });
+                }
+            }
+        }
+
+        private void RefreshToken_AsyncCallback(object sender, EventArgs e)
+        {
+            var h = new Handler(Looper.MainLooper);
+
+            if (sender is RequestToken token)
+            {
+                if (!token.CancellationToken.IsCancellationRequested)
+                {
+                    List<Core.Gallery.HPXItem> list = (List<Core.Gallery.HPXItem>)token.Result;
+
+                    foreach (var item in list)
                     {
                         item.Image = new Media.Image();
                     }
@@ -99,20 +169,28 @@ namespace HappyPandaXDroid.Scenes
                         adapter.ResetList();
                         adapter.NotifyDataSetChanged();
                         SetMainLoading(false);
+
+                        h.Post(() =>
+                        {
+                            mRefreshLayout.HeaderRefreshing = false;
+                            mRefreshLayout.FooterRefreshing = false;
+                        });
+
+                        IsRefreshing = false;
                         if (CurrentList.Count > 0)
                             mRecyclerView.ScrollToPosition(0);
                     });
                     GetTotalCount();
                     mpageSelector = new Custom_Views.PageSelector(this);
                     logger.Info("HPContent Refresh Successful");
-                });
-            }
-            else
-            {
-                h.Post(() =>
-                {
-                    SetError(true);
-                });
+                }
+                else if(token == RequestToken && !IsDestroyed)
+                    h.Post(() =>
+                    {
+                        mRefreshLayout.HeaderRefreshing = false;
+                        mRefreshLayout.FooterRefreshing = false;
+                        IsRefreshing = false;
+                    });
             }
         }
 
@@ -137,28 +215,79 @@ namespace HappyPandaXDroid.Scenes
                 return;
             }
             int lastin = CurrentList.Count - 1;
-            adapter.Add((await Core.Gallery.GetPage(ItemType, CurrentPage + 1, SceneCancellationTokenSource.Token, ViewType, Core.App.Settings.Default_Sort,
-                Core.App.Settings.Sort_Decending, Current_Query)));
-            if (CurrentList.Count > 0)
+
+            SceneCancellationTokenSource.Cancel();
+
+            SceneCancellationTokenSource = new CancellationTokenSource();
+
+            RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
+
+            RequestToken.Args = new List<object>() { lastin };
+
+            RequestToken.FinishedCallback += NextPageToken_AsyncCallback;
+
+            RequestToken.FailedCallback += NextPageToken_FailedCallback;
+
+            Core.Gallery.GetPage(ItemType, CurrentPage + 1, RequestToken, ViewType, Core.App.Settings.Default_Sort,
+                Core.App.Settings.Sort_Decending, Current_Query);
+        }
+
+        private void NextPageToken_FailedCallback(object sender, EventArgs e)
+        {
+            var h = new Handler(Looper.MainLooper);
+
+            if (sender is RequestToken token)
             {
-                h.Post(() =>
+                if (!token.CancellationToken.IsCancellationRequested)
                 {
-                    adapter.NotifyItemRangeInserted(lastin + 1, CurrentList.Count - (lastin + 1));
-
-                    mRefreshLayout.HeaderRefreshing = false;
-                    mRefreshLayout.FooterRefreshing = false;
-                    isLoading = false;
-                    SetBottomLoading(false);
-                    mRecyclerView.RefreshDrawableState();
-
-                });
-                CurrentPage++;
-
-
-
+                    h.Post(() =>
+                    {
+                        mRefreshLayout.HeaderRefreshing = false;
+                        mRefreshLayout.FooterRefreshing = false;
+                        isLoading = false;
+                        SetBottomLoading(false);
+                        Toast.MakeText(this.Context, "Failed to retrieve the next page", ToastLength.Long).Show();
+                    });
+                }
             }
-            logger.Info("Loading Next Page Successful");
+        }
 
+        private void NextPageToken_AsyncCallback(object sender, EventArgs e)
+        {
+            var h = new Handler(Looper.MainLooper);
+
+            if (sender is RequestToken token)
+            {
+                if (!token.CancellationToken.IsCancellationRequested)
+                {
+                    List<Core.Gallery.HPXItem> list = (List<Core.Gallery.HPXItem>)token.Result;
+                    int lastin = 0;
+
+                    if(e is RequestToken.ExtraEventArgs args)
+                    {
+                        if (args.ExtraArgs.Length > 0)
+                            lastin = (int)args.ExtraArgs[0];
+                    }
+
+                    adapter.Add(list);
+
+                    if (CurrentList.Count > 0)
+                    {
+                        h.Post(() =>
+                        {
+                            adapter.NotifyItemRangeInserted(lastin + 1, CurrentList.Count - (lastin + 1));
+
+                            mRefreshLayout.HeaderRefreshing = false;
+                            mRefreshLayout.FooterRefreshing = false;
+                            isLoading = false;
+                            SetBottomLoading(false);
+                            mRecyclerView.RefreshDrawableState();
+
+                        });
+                        CurrentPage++;
+                    }
+                }
+            }
         }
 
         public override async void PreviousPage()
@@ -186,25 +315,68 @@ namespace HappyPandaXDroid.Scenes
                 SetBottomLoading(true);
                 mRefreshLayout.HeaderRefreshing = true;
             });
-            var oldlist = new List<Core.Gallery.HPXItem>(CurrentList);
-            var newitems = await Core.Gallery.GetPage(ItemType, CurrentPage - 1, SceneCancellationTokenSource.Token,
+            //var oldlist = new List<Core.Gallery.HPXItem>(CurrentList);
+
+            SceneCancellationTokenSource.Cancel();
+
+            SceneCancellationTokenSource = new CancellationTokenSource();
+
+            RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
+
+            RequestToken.FinishedCallback += PreviousPageToken_AsyncCallback;
+
+            RequestToken.FailedCallback += PreviousPageToken_FailedCallback;
+
+            Core.Gallery.GetPage(ItemType, CurrentPage - 1, RequestToken,
                 ViewType, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query);
-            int nitems = newitems.Count;
-            adapter.Prepend(newitems);
-            if (nitems > 0)
+        }
+
+        private void PreviousPageToken_FailedCallback(object sender, EventArgs e)
+        {
+            var h = new Handler(Looper.MainLooper);
+
+            if (sender is RequestToken token)
             {
-                h.Post(() =>
+                if (!token.CancellationToken.IsCancellationRequested)
                 {
-                    adapter.NotifyItemRangeInserted(0, 25);
-                    mRefreshLayout.HeaderRefreshing = false;
-                    isLoading = false;
-
-                });
-                CurrentPage--;
+                    h.Post(() =>
+                    {
+                        mRefreshLayout.HeaderRefreshing = false;
+                        mRefreshLayout.FooterRefreshing = false;
+                        isLoading = false;
+                        SetBottomLoading(false);
+                        Toast.MakeText(this.Context, "Failed to retrieve the next page", ToastLength.Long).Show();
+                    });
+                }
             }
-            SetBottomLoading(false);
-            logger.Info("Loading Previous Page Successful");
+        }
 
+        private void PreviousPageToken_AsyncCallback(object sender, EventArgs e)
+        {
+            var h = new Handler(Looper.MainLooper);
+
+            if (sender is RequestToken token)
+            {
+                if (!token.CancellationToken.IsCancellationRequested)
+                {
+                    List<Core.Gallery.HPXItem> newitems = (List<Core.Gallery.HPXItem>)token.Result;
+                    int nitems = newitems.Count;
+                    adapter.Prepend(newitems);
+                    if (nitems > 0)
+                    {
+                        h.Post(() =>
+                        {
+                            adapter.NotifyItemRangeInserted(0, 25);
+                            mRefreshLayout.HeaderRefreshing = false;
+                            isLoading = false;
+
+                        });
+                        CurrentPage--;
+                    }
+                    SetBottomLoading(false);
+                    logger.Info("Loading Previous Page Successful");
+                }
+            }
         }
 
         protected override void SwitchToView(Core.Gallery.ItemType itemType)
@@ -221,7 +393,7 @@ namespace HappyPandaXDroid.Scenes
             adapter.ResetList();
             if (CurrentList.Count == 0)
             {
-                Refresh();
+                Refresh(0);
             }
         }
 

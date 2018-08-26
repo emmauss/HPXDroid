@@ -55,7 +55,7 @@ namespace HappyPandaXDroid
         Core.Gallery.GalleryItem gallery;
         
         public int activityID;
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected async override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
@@ -112,6 +112,9 @@ namespace HappyPandaXDroid
             SupportActionBar.Title = PageList[pageno].name;
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+            Core.Gallery.GalleryReadEvent(gallery.id, cancellationTokenSource.Token);            
         }
 
         public class ItemTouchListener : RecyclerView.SimpleOnItemTouchListener
@@ -580,7 +583,7 @@ namespace HappyPandaXDroid
             public List<Core.Gallery.Page> PageList;
             private static Logger logger = LogManager.GetCurrentClassLogger();
             Context context;
-            CancellationTokenSource AdapterCancellationTokenSource = new CancellationTokenSource();
+            public CancellationTokenSource AdapterCancellationTokenSource = new CancellationTokenSource();
             IOnRecyclerViewItemClickListener mOnItemClickListener;
             public ImageAdapter(List<Core.Gallery.Page> imagelist, Context context)
             {
@@ -621,7 +624,7 @@ namespace HappyPandaXDroid
                 {
                     
                     vh.imageView.OnLoadStart(PageList[position]);
-                });
+                },AdapterCancellationTokenSource.Token);
             }
 
             

@@ -38,18 +38,29 @@ namespace HappyPandaXDroid.Custom_Views
             }
         }
 
-        public PreviewHolder(View itemView, Action<PreviewAdapterClickEventArgs> clickListener,
-                            Action<PreviewAdapterClickEventArgs> longClickListener,Scene scene ) : base(itemView)
+        public PreviewHolder(View itemView,Scene scene ) : base(itemView)
         {
             this.scene = scene;
             preview = itemView;
             img = preview.FindViewById<ImageView>(Resource.Id.preview);
             txt = preview.FindViewById<TextView>(Resource.Id.title);
-            itemView.Click += (sender, e) => clickListener(new PreviewAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-            itemView.LongClick += (sender, e) => longClickListener(new PreviewAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
             Thumb = img;
         }
-       
+
+        public void SetClickEvents(Action<PreviewAdapterClickEventArgs> clickListener,
+                            Action<PreviewAdapterClickEventArgs> longClickListener)
+        {
+            preview.Click += (sender, e) => clickListener(new PreviewAdapterClickEventArgs { View = preview, Position = AdapterPosition });
+            preview.LongClick += (sender, e) => longClickListener(new PreviewAdapterClickEventArgs { View = preview, Position = AdapterPosition });
+        }
+
+        public void RemoveClickEvents(Action<PreviewAdapterClickEventArgs> clickListener,
+                            Action<PreviewAdapterClickEventArgs> longClickListener)
+        {
+            preview.Click -= (sender, e) => clickListener(new PreviewAdapterClickEventArgs { View = preview, Position = AdapterPosition });
+            preview.LongClick -= (sender, e) => longClickListener(new PreviewAdapterClickEventArgs { View = preview, Position = AdapterPosition });
+        }
+
         public void Recycle()
         {
             Glide.With(preview.Context).Clear(img);

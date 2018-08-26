@@ -72,6 +72,10 @@ namespace HappyPandaXDroid.Custom_Views
                 h.Post(() => Glide.With(Thumb.Context).Load(url).Into(Thumb));
                 HPXItem.Image.Uri = url;
             }
+            else
+            {
+
+            }
         }        
     }
 }
