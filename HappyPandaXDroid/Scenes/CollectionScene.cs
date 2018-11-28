@@ -91,7 +91,7 @@ namespace HappyPandaXDroid.Scenes
                             return;
                             foreach (var item in list)
                         {
-                            item.Image = new Media.Image();
+                            item.Thumb = new Media.Image();
                         }
                         CurrentList.AddRange(list);
                         if (CurrentList == null || CurrentList.Count < 1)

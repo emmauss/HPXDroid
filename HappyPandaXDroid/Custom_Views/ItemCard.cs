@@ -160,7 +160,7 @@ namespace HappyPandaXDroid.Custom_Views
                 int item_id = _HPXItem.id;
                 try
                 {
-                    return Core.Gallery.IsItemCached(item_id, "medium", "Gallery");                    
+                    return Core.Gallery.IsItemCached(HPXItem, Core.Gallery.ImageSize.Small);                    
                 }
                 catch (Exception ex)
                 {

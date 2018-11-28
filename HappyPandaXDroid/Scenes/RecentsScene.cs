@@ -231,7 +231,7 @@ namespace HappyPandaXDroid.Scenes
                 if (holder is Custom_Views.CardAdapter.HPXItemHolder vh)
                 {
                     GalleryScene galleryScene = new GalleryScene
-                        (vh.HPXItem as Core.Gallery.GalleryItem, vh.Url);
+                        (vh.HPXItem as Core.Gallery.GalleryItem);
                     var pscene = (((GalleryCardAdapter)parent.GetAdapter()).rscene);
                     pscene.Stage.PushScene(galleryScene);
                 }
@@ -283,8 +283,8 @@ namespace HappyPandaXDroid.Scenes
 
                 foreach (var item in mdata)
                 {
-                    if (item.Image == null)
-                        item.Image = new Core.Media.Image();
+                    if (item.Thumb == null)
+                        item.Thumb = new Core.Media.Image();
                     items.Add(item);
                 }
 
@@ -294,8 +294,8 @@ namespace HappyPandaXDroid.Scenes
 
                 if (items.Count > 0)
                 {
-                    var urls = Core.Gallery.GetImage(items, "Gallery",
-                       CancellationTokenSource.Token).Result;
+                    var urls = Core.Gallery.GetImage(items,Core.Gallery.ItemType.Gallery,CancellationTokenSource.Token)
+                        .Result;
                     if (urls.Count > 0)
                     {
                         foreach (var item in mdata)

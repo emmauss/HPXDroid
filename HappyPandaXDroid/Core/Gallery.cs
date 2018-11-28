@@ -121,15 +121,38 @@ namespace HappyPandaXDroid.Core
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int page;
 
+            public Media.Image Thumb;
             public Media.Image Image;
             public int CommandId;
+
+            public abstract ItemType Type { get; }
+
+            public HPXItem Parent;
+
+            public string BaseId
+            {
+                get
+                {
+                    string bid = string.Empty;
+                    if (Parent != null)
+                    {
+                        bid += Parent.BaseId;
+                    }
+
+                    bid += "- " + id + timestamp;
+
+                    return bid;
+                }
+            }
         }
 
         public class Collection : HPXItem
         {
-            public async Task<string> Download(CancellationToken cancellationToken, string size = "medium")
+            public override ItemType Type => ItemType.Collection;
+
+            public async Task<string> Download(CancellationToken cancellationToken, ImageSize size = ImageSize.Medium)
             {
-                return await GetImage(id, "Gallery", false, cancellationToken, size);
+                return await GetImage(this, false, cancellationToken, size);
             }
         }
 
@@ -183,12 +206,15 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
+            public override ItemType Type => ItemType.Gallery;
 
             public TagList tags;
 
-            public async Task<string> Download(CancellationToken cancellationToken,string size = "medium")
+            public List<Page> PageList;
+
+            public async Task<string> Download(CancellationToken cancellationToken,ImageSize size = ImageSize.Medium)
             {
-                return await GetImage(this.id, "Gallery", false, cancellationToken,size);
+                return await GetImage(this, false, cancellationToken,size);
             }
 
         }
@@ -208,14 +234,16 @@ namespace HappyPandaXDroid.Core
             public bool IsPlaceholder = false;
             public bool MoreExists = false;
 
-            public async Task<string> Download(string size = "original")
+            public override ItemType Type => ItemType.Page;
+
+            public async Task<string> Download(ImageSize size = ImageSize.Original)
             {
-                return await GetImage(this.id, "Page", false, DownloadCancelationToken.Token,size);
+                return await GetImage(this, false, DownloadCancelationToken.Token,size);
             }
 
             public async void DownloadFromQueue()
             {
-                await GetImage(this.id, "Page",false, DownloadCancelationToken.Token,"original");
+                await GetImage(this,false, DownloadCancelationToken.Token,ImageSize.Original);
 
                 RemoveFromQueue();
             }
@@ -227,8 +255,10 @@ namespace HappyPandaXDroid.Core
 
             public void RemoveFromQueue()
             {
-                //DownloadList.(this);
-               CurrentlyDownloading.Remove(this);
+                if (CurrentlyDownloading != null)
+                    if (CurrentlyDownloading.Count > 0)
+                        if (CurrentlyDownloading.Contains(this))
+                            CurrentlyDownloading.Remove(this);
             }
         }
 
@@ -378,7 +408,7 @@ namespace HappyPandaXDroid.Core
                 if (DownloadList.ToList().Find((x) => x.id == page.id) == null)
                 {
                     if (page.id > 0)
-                        if (!IsItemCached(page.id, "original"))
+                        if (!IsItemCached(page, ImageSize.Original))
                             DownloadList.Enqueue(page);
                 }
             StartQueue();
@@ -386,9 +416,13 @@ namespace HappyPandaXDroid.Core
 
         public static void StartQueue()
         {
+            var h = new Handler(Looper.MainLooper);
             if (IsDownloading)
             {
-                Toast.MakeText(Application.Context, "Precaching already running", ToastLength.Short).Show();
+                h.Post(() =>
+                {
+                    Toast.MakeText(Application.Context, "Precaching already running", ToastLength.Short).Show();
+                });
                 return;
             }
 
@@ -397,30 +431,34 @@ namespace HappyPandaXDroid.Core
             {
                 while (DownloadList.TryDequeue(out Page page))
                 {
-                    while (CurrentlyDownloading.Count >= 4)
+                    if (page != null)
                     {
-                        Thread.Sleep(3000);
+                        while (CurrentlyDownloading.Count >= 4)
+                        {
+                            Thread.Sleep(3000);
+                        }
+
+                        if (CurrentlyDownloading.Find(x => x?.id == page.id) != null)
+                            continue;
+
+                        if (!IsDownloading)
+                        {
+                            foreach (var cpage in CurrentlyDownloading)
+                                DownloadList.Enqueue(cpage);
+                            DownloadList.Enqueue(page);
+                            CurrentlyDownloading.Clear();
+                            break;
+                        }
+
+                        if (IsItemCached(page))
+                            continue;
+
+                        CurrentlyDownloading.Add(page);
+
+                        Task.Run(() => page.DownloadFromQueue());
+
+                        Thread.Sleep(1000);
                     }
-
-                    if (CurrentlyDownloading.Find(x => x.id == page.id) != null)
-                        continue;
-
-                    if (!IsDownloading) {
-                        foreach (var cpage in CurrentlyDownloading)
-                            DownloadList.Enqueue(cpage);
-                        DownloadList.Enqueue(page);
-                        CurrentlyDownloading.Clear();
-                        break;
-                    }
-
-                    if (IsItemCached(page.id))
-                        continue;
-
-                    CurrentlyDownloading.Add(page);
-
-                    Task.Run(() => page.DownloadFromQueue());
-
-                    Thread.Sleep(1000);
                 }
 
 
@@ -459,7 +497,7 @@ namespace HappyPandaXDroid.Core
             IsDownloading = false;
         }
 
-        public static async void InitiateImageGeneration(int[] ids, ItemType itemType,string size,CancellationToken cancellationToken)
+        public static async void InitiateImageGeneration(int[] ids, ItemType itemType,ImageSize size,CancellationToken cancellationToken)
         {
             await Task.Delay(10);
             try
@@ -472,8 +510,8 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref funct, "fname", "get_image");
                 JSON.API.PushKey(ref funct, "item_ids", item_ids);
                 JSON.API.PushKey(ref funct, "url", "<bool>true");
-                JSON.API.PushKey(ref funct, "size", size);
-                JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
+                JSON.API.PushKey(ref funct, "size", Enum.GetName(typeof(ImageSize), size));
+                JSON.API.PushKey(ref funct, "item_type", Enum.GetName(typeof(ItemType), itemType));
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
@@ -494,12 +532,12 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static async Task<string> GetImage(int id, string itemType, bool return_url, CancellationToken cancellationToken, string size = "medium")
+        public static async Task<string> GetImage(HPXItem item, bool return_url, CancellationToken cancellationToken, ImageSize size)
         {
             string type = string.Empty;
             try
             {
-                if (id < 1)
+                if (item.id < 1)
                     return type;
 
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -507,10 +545,10 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_image");
-                JSON.API.PushKey(ref funct, "item_ids", "[" + id + "]");
+                JSON.API.PushKey(ref funct, "item_ids", "[" + item.id + "]");
                 JSON.API.PushKey(ref funct, "url", "<bool>true");
-                JSON.API.PushKey(ref funct, "size", size);
-                JSON.API.PushKey(ref funct, "item_type", itemType);
+                JSON.API.PushKey(ref funct, "size", Enum.GetName(typeof(ImageSize), size));
+                JSON.API.PushKey(ref funct, "item_type", Enum.GetName(typeof(ItemType), item.Type));
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
@@ -533,7 +571,7 @@ namespace HappyPandaXDroid.Core
 
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
-                int command_id = App.Server.GetCommandId(id, reply);
+                int command_id = App.Server.GetCommandId(item.id, reply);
                 if (command_id == 0 || command_id == -1)
                     return string.Empty;
                 while (true)
@@ -551,11 +589,11 @@ namespace HappyPandaXDroid.Core
                     else
                         break;
                 }
-                string name = App.Server.HashGenerator(size, itemType, id);
+                string cacheid = App.Server.HashGenerator(item.BaseId, size, item.Type);
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
                 //get value
-                string path = App.Server.GetCommandValue(command_id, id, name, type, return_url,ref cancellationToken);
+                string path = App.Server.GetCommandValue(command_id, item, cacheid, return_url, ref cancellationToken);
                 return path;
 
             }
@@ -567,12 +605,12 @@ namespace HappyPandaXDroid.Core
             catch (Exception ex)
             {
                 logger.Error(ex, "\n Exception Caught In Gallery.GetImage. type = {3}, itemId = {0}, size = {1},\n Message = {2}"
-                     + System.Environment.NewLine + ex.StackTrace, id, size, ex.Message,type);
+                     + System.Environment.NewLine + ex.StackTrace, item.id, size, ex.Message,type);
                 return "fail: server error";
             }
         }
 
-        public static async Task<Dictionary<int, Media.Image>> GetImage(List<HPXItem> items, string itemType, CancellationToken cancellationToken, string size = "medium")
+        public static async Task<Dictionary<int, Media.Image>> GetImage(List<HPXItem> items, ItemType itemType, CancellationToken cancellationToken, ImageSize size = ImageSize.Medium)
         {
             string type = string.Empty;
             List<int> ids = new List<int>();
@@ -588,8 +626,8 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref funct, "fname", "get_image");
                 JSON.API.PushKey(ref funct, "item_ids", "[" + string.Join(",",ids)+ "]");
                 JSON.API.PushKey(ref funct, "url", "<bool>true");
-                JSON.API.PushKey(ref funct, "size", size);
-                JSON.API.PushKey(ref funct, "item_type", itemType);
+                JSON.API.PushKey(ref funct, "size", Enum.GetName(typeof(ImageSize), size));
+                JSON.API.PushKey(ref funct, "item_type", Enum.GetName(typeof(ItemType), itemType));
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
@@ -618,7 +656,7 @@ namespace HappyPandaXDroid.Core
 
                 while (true)
                 {
-                    bool state = App.Server.GetCompleted(out Done,command_ids,items.ToArray(), ref cancellationToken);
+                    bool state = App.Server.GetCompleted(out Done,command_ids,items.ToArray(), ref cancellationToken, size);
                     if(!state)
                         Thread.Sleep(App.Settings.Loop_Delay);
                     else
@@ -627,13 +665,16 @@ namespace HappyPandaXDroid.Core
                 if (cancellationToken.IsCancellationRequested)
                     return new Dictionary<int, Media.Image>();
                 Dictionary<int, Media.Image> images = new Dictionary<int, Media.Image>();
+
                 foreach (var it in items)
                 {
                     foreach (var id in ids)
                     {
                         if (id == it.id)
                         {
-                            images.Add(id, it.Image);
+                            Media.Image image = size == Gallery.ImageSize.Small ? it.Thumb : it.Image;
+
+                            images.Add(id, image);
                             break;
                         }
                     }
@@ -656,14 +697,12 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static bool IsItemCached(int id, string size = "original", string type = "Page")
+        public static bool IsItemCached(HPXItem item, ImageSize size = ImageSize.Original)
         {
             try
             {
-
-                string page_path = Core.App.Settings.cache + Core.App.Server.HashGenerator(size, type, id) + ".jpg";
-                bool check = Core.Media.Cache.IsCached(page_path);
-
+                string cacheid = Core.App.Settings.CachePath + Core.App.Server.HashGenerator(item.BaseId, size, item.Type);
+                bool check = Core.Media.Cache.IsCached(cacheid);
                 return check;
             }
             catch (System.Exception ex)
@@ -674,13 +713,16 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static bool GetCachedPagePath(int id, out string pagePath,string type = "Page" , string size = "original")
+        public static bool GetCachedPagePath(HPXItem item, out string pagePath, ImageSize size = ImageSize.Original)
         {
             pagePath = string.Empty;
             try
             {
-                pagePath = Core.App.Settings.cache + Core.App.Server.HashGenerator(size, type, id) + ".jpg";
-                bool check = Core.Media.Cache.IsCached(pagePath);
+                string cacheid = Core.App.Server.HashGenerator(item.BaseId, size, item.Type);
+                bool check = Core.Media.Cache.IsCached(cacheid);
+
+                if (check)
+                    Media.Cache.TryGetCachedPath(cacheid, out pagePath);
 
                 return check;
             }
@@ -730,6 +772,7 @@ namespace HappyPandaXDroid.Core
                 var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>((string)x.Result);
                 if (obj == null)
                 {
+                    x.Failed = true;
                     return;
                 }
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
@@ -790,7 +833,7 @@ namespace HappyPandaXDroid.Core
                         return;
                     Task.Run(() =>
                     {
-                        InitiateImageGeneration(ids, ItemType.Gallery, "medium", x.CancellationToken);
+                        InitiateImageGeneration(ids, ItemType.Gallery, ImageSize.Small, x.CancellationToken);
                     }, x.CancellationToken);
 
                     x.SetResult(list);
@@ -947,7 +990,7 @@ namespace HappyPandaXDroid.Core
                 int item_id = gallery.id;
                 try
                 {
-                    return Gallery.IsItemCached(gallery.id, "medium", "Gallery");
+                    return Gallery.IsItemCached(gallery, ImageSize.Medium);
                 }
                 catch (Exception ex)
                 {

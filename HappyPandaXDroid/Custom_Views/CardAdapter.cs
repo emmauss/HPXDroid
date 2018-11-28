@@ -54,7 +54,7 @@ namespace HappyPandaXDroid.Custom_Views
                 mdata.AddRange(newItems);
                 foreach (var item in newItems)
                 {
-                    item.Image = new Media.Image();
+                    item.Thumb = new Media.Image();
                 }
                 Task.Run(()=>UpdateUrls(newItems));
             }
@@ -63,7 +63,7 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 foreach (var item in newItems)
                 {
-                    item.Image = new Media.Image();
+                    item.Thumb = new Media.Image();
                 }
                 var backupData = new List<Core.Gallery.HPXItem>(mdata);
                 mdata.Clear();
@@ -99,12 +99,20 @@ namespace HappyPandaXDroid.Custom_Views
                 List<int> ids = new List<int>();
                 foreach (var item in newItems)
                 {
+                    string cacheid = Core.App.Server.HashGenerator(item.BaseId, Core.Gallery.ImageSize.Small, item.Type);
+                    if(Core.Media.Cache.IsCached(cacheid))
+                        if(Core.Media.Cache.TryGetCachedPath
+                            (cacheid, out item.Thumb.Uri))
+                        {
+                            item.Thumb.IsReady = true;
+                            continue;
+                        }
                     ids.Add(item.id);
                 }
                 if (ids.Count > 0)
                 {
-                    var urls = Core.Gallery.GetImage(newItems, ItemType.ToString(),
-                        AdapterCancellationTokenSource.Token).Result;
+                    var urls = Core.Gallery.GetImage(newItems, ItemType,
+                        AdapterCancellationTokenSource.Token, Core.Gallery.ImageSize.Small).Result;
                     if (AdapterCancellationTokenSource.IsCancellationRequested)
                         return;
                     if (urls.Count > 0)
@@ -211,35 +219,17 @@ namespace HappyPandaXDroid.Custom_Views
             public TextView Name { get; set; }
             public TextView Info { get; set; }
 
-            private void Image_Ready(object sender, Media.Image.ImageLoadEvent e)
-            {
-                LoadImage();
-            }
-
+           
             CancellationTokenSource Token { get; set; }
 
             public override Core.Gallery.HPXItem HPXItem { get; set; }
 
-            public HPXItemHolder(View itemView) : base(itemView)
+            public HPXItemHolder(View itemView) : base(itemView, Core.Gallery.ImageSize.Small)
             {
                 Thumb = itemView.FindViewById<ImageView>(Resource.Id.imageView);
                 Name = itemView.FindViewById<TextView>(Resource.Id.name);
                 Info = itemView.FindViewById<TextView>(Resource.Id.info);
                 Token = new CancellationTokenSource();
-            }
-
-            async void LoadImage()
-            {
-                await Task.Delay(1000);
-                var token = CancellationTokenSource.Token;
-                string url = App.Server.GetCommandValue(HPXItem.CommandId, HPXItem.id,
-                    string.Empty, ref token);
-                if (!string.IsNullOrWhiteSpace(url))
-                {
-                    var h = new Handler(Looper.MainLooper);
-                    h.Post(() => Glide.With(Thumb.Context).Load(url).Into(Thumb));
-                    HPXItem.Image.Uri = url;
-                }
             }
 
             public class HPXEvent : EventArgs

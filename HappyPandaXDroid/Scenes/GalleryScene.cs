@@ -32,7 +32,6 @@ namespace HappyPandaXDroid.Scenes
         public LinearLayout TagLayout;
         CardView ActionCard, ContinueCard;
         public CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
-        public string thumb_path;
         public ImageView ThumbView;
         FrameLayout errorFrame;
         public bool isDownloading = false;
@@ -50,7 +49,6 @@ namespace HappyPandaXDroid.Scenes
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
         Helpers.Layouts.ExtraLayoutManager layout;
-        public List<Core.Gallery.Page> pagelist, cachedlist;
         private ImageView mErrorImage;
         View MainView;
 
@@ -60,9 +58,9 @@ namespace HappyPandaXDroid.Scenes
             InitializeViews();
             toolbar.Title = gallery.titles[0].name;
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
-            if (thumb_path != string.Empty)
+            if (gallery.Thumb != null || string.IsNullOrWhiteSpace(gallery.Thumb.Uri))
             {
-                Glide.With(Context).Load(thumb_path).Into(ThumbView); 
+                Glide.With(Context).Load(gallery.Thumb.Uri).Into(ThumbView);
             }
             ParseMeta();
             
@@ -93,10 +91,12 @@ namespace HappyPandaXDroid.Scenes
             return MainView;
         }
 
-        public GalleryScene(Core.Gallery.GalleryItem gallery,string thumb)
+        public GalleryScene(Core.Gallery.GalleryItem gallery)
         {
-            this.gallery = gallery;
-            thumb_path = thumb;
+            if (Core.Media.Cache.TryGetCachedGallery(gallery.BaseId, out Core.Gallery.GalleryItem cachedGallery))
+                this.gallery = cachedGallery;
+            else
+                this.gallery = gallery;
         }
 
         public async void Load()
@@ -113,26 +113,29 @@ namespace HappyPandaXDroid.Scenes
                 RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
 
             if (Core.Net.Connect())
-            {                
-                if (thumb_path==string.Empty)
-                thumb_path = Core.Gallery.GetThumb(gallery,SceneCancellationTokenSource.Token).Result;
+            {
+                if (gallery.Image == null)
+                    gallery.Image = new Media.Image();
+                if (string.IsNullOrWhiteSpace(gallery.Image.Uri))
+                    gallery.Image.Uri = Core.Gallery.GetThumb(gallery, SceneCancellationTokenSource.Token).Result;
 
                 var h = new Handler(Looper.MainLooper);
                 h.Post(() =>
                 {
                     try
                     {
-                        if (thumb_path.Contains("fail"))
+                        if (gallery.Image.Uri.Contains("fail"))
                         {
                             GalleryStatus.Text = "Gallery Not Found";
                             GalleryStatus.Visibility = ViewStates.Visible;
                             Glide.With(Context)
                             .Load(Resource.Drawable.image_failed)
                             .Into(ThumbView);
+                            gallery.Image.Uri = string.Empty;
                         }
                         else
                             Glide.With(Context)
-                                .Load(thumb_path)
+                                .Load(gallery.Image.Uri)
                                 .Into(ThumbView);
                     }
                     catch (Exception ex)
@@ -151,8 +154,11 @@ namespace HappyPandaXDroid.Scenes
                 RequestToken.FinishedCallback += RequestToken_AsyncCallback;
 
                 RequestToken.FailedCallback += RequestToken_FailedCallback;
-                
-                Core.Gallery.GetTags(Core.Gallery.ItemType.Gallery,gallery.id,RequestToken);
+
+                if (gallery.tags == null)
+                    Core.Gallery.GetTags(Core.Gallery.ItemType.Gallery, gallery.id, RequestToken);
+                else
+                    LoadTags();
 
                 Task.Run(() =>
                 {
@@ -160,6 +166,8 @@ namespace HappyPandaXDroid.Scenes
                 }, SceneCancellationTokenSource.Token);
 
                 loaded = true;
+
+                Media.Cache.CacheGallery(gallery);
             }
             else
             {
@@ -191,28 +199,32 @@ namespace HappyPandaXDroid.Scenes
             if (sender is RequestToken token && !token.CancellationToken.IsCancellationRequested && token == RequestToken)
             {
                 gallery.tags = (Core.Gallery.TagList)token.Result;
-                ParseData();
 
-                if (SceneCancellationTokenSource.IsCancellationRequested)
-                    return;
-
-                var h = new Handler(Looper.MainLooper);
-                if (!IsDestroyed)
-                    h.Post(() =>
-                    {
-                        mProgressView.Visibility = ViewStates.Invisible;
-                        MainLayout.Visibility = ViewStates.Visible;
-                        errorFrame.Visibility = ViewStates.Gone;
-                    });
-
+                LoadTags();
             }
+        }
+
+        void LoadTags()
+        {
+            ParseData();
+
+            if (SceneCancellationTokenSource.IsCancellationRequested)
+                return;
+
+            var h = new Handler(Looper.MainLooper);
+            if (!IsDestroyed)
+                h.Post(() =>
+                {
+                    mProgressView.Visibility = ViewStates.Invisible;
+                    MainLayout.Visibility = ViewStates.Visible;
+                    errorFrame.Visibility = ViewStates.Gone;
+                });
         }
 
         protected override void OnSaveViewState(View p0, Bundle p1)
         {
             var bundle = p1;
             bundle.PutString("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
-            bundle.PutString("thumb", thumb_path);
             base.OnSaveViewState(p0, p1);
         }
         
@@ -223,7 +235,6 @@ namespace HappyPandaXDroid.Scenes
             var bundle = p1;
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize
                 <Core.Gallery.GalleryItem>(bundle.GetString("gallery"));
-            thumb_path = bundle.GetString("thumb");
         }
         
         protected override void OnDestroyView(View p0)
@@ -255,11 +266,6 @@ namespace HappyPandaXDroid.Scenes
             GalleryStatus = null;
             ThumbView.SetImageDrawable(null);
             ThumbView = null;
-            if (pagelist != null)
-            {
-                pagelist.Clear();
-                pagelist = null;
-            }
             base.OnDestroyView(p0);
         }
 
@@ -283,10 +289,9 @@ namespace HappyPandaXDroid.Scenes
 
                 h.Post(() =>
                 {
-                    if (gallery.LastPageRead < 1)
-                        ContinueCard.Enabled = false;
-                    else
-                        ContinueCard.Enabled = true;
+                    ContinueCard.Enabled = gallery.LastPageRead >= 1;
+
+                    last_read_page.Text = "Last Read Page: " + (gallery.LastPageRead + 1).ToString();
                 });
                 
             });
@@ -296,30 +301,25 @@ namespace HappyPandaXDroid.Scenes
         protected override void OnStart()
         {
             base.OnStart();
-            if(thumb_path!=string.Empty)
-            Glide.With(Context).Load(thumb_path).Into(ThumbView);
-            if(cachedlist!=null)
-                if(cachedlist.Count>0)
-                {
-                    pagelist = new List<Core.Gallery.Page>(cachedlist);
-                    var lists = SplitPageList();
-                    adapter.SetList(lists);
-                }
+            if (gallery.Thumb != null)
+                if (gallery.Thumb.Uri != string.Empty)
+                    Glide.With(Context).Load(gallery.Thumb.Uri).Into(ThumbView);         
         }
 
         List<List<Core.Gallery.Page>> SplitPageList()
         {
             List<List<Core.Gallery.Page>> pages = new List<List<Core.Gallery.Page>>();
             List<Core.Gallery.Page> current = new List<Core.Gallery.Page>();
-            if (pagelist.Count > 0) 
-            for (int i = 0; i < pagelist.Count; i++)
-            {
-                    if (i % 10 == 0)
-                        current = new List<Core.Gallery.Page>();
-                    current.Add(pagelist[i]);
-                    if (i % 10 == 9 || i == pagelist.Count - 1)
-                        pages.Add(current);
-            }
+            if (gallery.PageList != null)
+                if (gallery.PageList.Count > 0)
+                    for (int i = 0; i < gallery.PageList.Count; i++)
+                    {
+                        if (i % 10 == 0)
+                            current = new List<Core.Gallery.Page>();
+                        current.Add(gallery.PageList[i]);
+                        if (i % 10 == 9 || i == gallery.PageList.Count - 1)
+                            pages.Add(current);
+                    }
 
             return pages;
         }
@@ -403,8 +403,8 @@ namespace HappyPandaXDroid.Scenes
                 Thread.Sleep(100);
                 parent.isDownloading = !parent.isDownloading;
                 var h = new Handler(Looper.MainLooper);
-                if(parent.pagelist!=null)
-                Core.Gallery.QueueDownloads(parent.pagelist);
+                if(parent.gallery.PageList!=null)
+                Core.Gallery.QueueDownloads(parent.gallery.PageList);
                 h.Post(() =>
                 {
                         Toast.MakeText(Android.App.Application.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short).Show();
@@ -449,15 +449,15 @@ namespace HappyPandaXDroid.Scenes
         private void ContinueCard_Click(object sender, EventArgs e)
         {
 
-            if (pagelist == null)
+            if (gallery.PageList == null)
                 return;
-            if (pagelist == null & pagelist.Count < 1)
+            if (gallery.PageList.Count == 0)
                 return;
 
             Intent intent = new Android.Content.Intent(Context, typeof(GalleryViewer));
-            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
+            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery.PageList));
             intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
-            intent.PutExtra("no", gallery.LastPageRead);
+            intent.PutExtra("no", gallery.LastPageRead + 1);
             StartActivity(intent);
         }
 
@@ -465,13 +465,13 @@ namespace HappyPandaXDroid.Scenes
         {
             List<int> pages_ids = new List<int>();
 
-            if (pagelist == null)
+            if (gallery.PageList == null)
                 return;
-            if (pagelist == null & pagelist.Count < 1)
+            if (gallery.PageList.Count == 0)
                 return;
 
             Intent intent = new Android.Content.Intent(Context, typeof(GalleryViewer));
-            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(pagelist));
+            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery.PageList));
             intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
             StartActivity(intent);
         }
@@ -526,30 +526,52 @@ namespace HappyPandaXDroid.Scenes
         void LoadPreviews()
         {
             var h = new Handler(Looper.MainLooper);
+            if(gallery.PageList == null || gallery.PageList.Count == 0)
             try
             {
                 var mdata = new List<Core.Gallery.Page>();
-               
-                    pagelist = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id,SceneCancellationTokenSource.Token,
-                        Core.Gallery.ItemType.Gallery,Core.Gallery.ItemType.Page);
-                h.Post(() =>
-                {
-                    if (SceneCancellationTokenSource.IsCancellationRequested)
-                        return;
-                    pages.Text = pagelist.Count.ToString() + " Pages";
-                    
-                    last_read_page.Text = "Last Read Page: " + (gallery.LastPageRead + 1).ToString();
-                    if (pagelist != null)
+
+                    int count = App.Server.GetRelatedCount(gallery.id, SceneCancellationTokenSource.Token, Core.Gallery.ItemType.Gallery, Core.Gallery.ItemType.Page);
+
+                    if (count > 0)
                     {
-                        var lists = SplitPageList();
-                        adapter.SetList(lists);
+                        gallery.PageList = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(gallery.id, SceneCancellationTokenSource.Token,
+                            Core.Gallery.ItemType.Gallery, Core.Gallery.ItemType.Page, count);
+                        h.Post(() =>
+                        {
+                            if (SceneCancellationTokenSource.IsCancellationRequested)
+                                return;
+
+                            SetPreviews();
+                        });
                     }
-                    
-                });
             }
             catch (Exception ex)
             {
 
+            }
+            else
+            {
+                h.Post(() =>
+                {
+                    if (SceneCancellationTokenSource.IsCancellationRequested)
+                        return;
+
+                    SetPreviews();
+                });
+            }
+            
+        }
+
+        void SetPreviews()
+        {
+            pages.Text = gallery.PageList.Count.ToString() + " Pages";
+
+            last_read_page.Text = "Last Read Page: " + (gallery.LastPageRead + 1).ToString();
+            if (gallery.PageList != null)
+            {
+                var lists = SplitPageList();
+                adapter.SetList(lists);
             }
         }
 

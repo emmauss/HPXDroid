@@ -38,7 +38,7 @@ namespace HappyPandaXDroid.Custom_Views
             }
         }
 
-        public PreviewHolder(View itemView,Scene scene ) : base(itemView)
+        public PreviewHolder(View itemView,Scene scene ) : base(itemView, Core.Gallery.ImageSize.Medium)
         {
             this.scene = scene;
             preview = itemView;

@@ -139,7 +139,7 @@
                 <com.github.clans.fab.Label
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Server WebPort"
+                    android:text="Password"
                     android:textSize="15sp" />
                 <android.support.v4.widget.Space
                     android:layout_width="10dp"

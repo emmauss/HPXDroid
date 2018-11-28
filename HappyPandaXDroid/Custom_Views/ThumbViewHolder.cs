@@ -23,21 +23,23 @@ namespace HappyPandaXDroid.Custom_Views
         public abstract Core.Gallery.HPXItem HPXItem { get; set; }
         public Core.Gallery.ItemType ItemType;
         public ImageView Thumb { get; set; }
+        public Core.Gallery.ImageSize Size { get; set; }
 
         public bool Bound
         {
             set
             {
+                Media.Image image = Size == Core.Gallery.ImageSize.Small ? HPXItem.Thumb : HPXItem.Image;
                 if (value)
                 {
-                    HPXItem.Image.Ready += Image_Ready;
+                    image.Ready += Image_Ready;
                     CancellationTokenSource = new CancellationTokenSource();
-                    if (HPXItem.Image.IsReady)
+                    if (image.IsReady)
                         LoadImage();
                 }
                 else
                 {
-                    HPXItem.Image.Ready -= Image_Ready;
+                    image.Ready -= Image_Ready;
                     CancellationTokenSource.Cancel();
                 }
             }
@@ -51,9 +53,10 @@ namespace HappyPandaXDroid.Custom_Views
         public string Url = string.Empty;
         public int Id = 0;
         CancellationTokenSource Token { get; set; }
-        public ThumbViewHolder(View itemView) : base(itemView)
+        public ThumbViewHolder(View itemView, Core.Gallery.ImageSize size) : base(itemView)
         {
             Token = new CancellationTokenSource();
+            Size = size;
         }
 
         async void LoadImage()
@@ -61,16 +64,19 @@ namespace HappyPandaXDroid.Custom_Views
             await Task.Delay(1000);
             var token = CancellationTokenSource.Token;
             string url = string.Empty;
-            if (string.IsNullOrWhiteSpace(HPXItem.Image.Uri))
-                url = App.Server.GetCommandValue(HPXItem.CommandId, HPXItem.id,
-                    string.Empty, ref token);
+            Media.Image image = Size == Core.Gallery.ImageSize.Small ? HPXItem.Thumb : HPXItem.Image;
+            if (string.IsNullOrWhiteSpace(image.Uri))
+            {
+                string cacheid = Core.App.Server.HashGenerator(HPXItem.BaseId, Size, HPXItem.Type);
+                url = App.Server.GetCommandValue(HPXItem.CommandId, HPXItem,cacheid, false,ref token);
+            }
             else
-                url = HPXItem.Image.Uri;
+                url = image.Uri;
             if (!string.IsNullOrWhiteSpace(url))
             {
                 var h = new Handler(Looper.MainLooper);
                 h.Post(() => Glide.With(Thumb.Context).Load(url).Into(Thumb));
-                HPXItem.Image.Uri = url;
+                image.Uri = url;
             }
             else
             {

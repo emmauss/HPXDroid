@@ -36,7 +36,7 @@ namespace HappyPandaXDroid.Core
 
         public bool Failed { get; set; }
 
-        public List<object> Args { get; set; }
+        public List<int> Args { get; set; }
 
         public RequestToken(CancellationToken cancellationToken)
         {
@@ -68,7 +68,10 @@ namespace HappyPandaXDroid.Core
             if (CancellationToken.IsCancellationRequested)
                 return;
 
-            FinishedCallback?.Invoke(this, new ExtraEventArgs(Args));
+            if (!Failed)
+                FinishedCallback?.Invoke(this, new ExtraEventArgs(Args?.ToArray()));
+            else
+                OnFailed();
         }
 
         public void OnFailed()
@@ -85,9 +88,9 @@ namespace HappyPandaXDroid.Core
 
         public class ExtraEventArgs : EventArgs
         {
-            public object[] ExtraArgs { get; set; }
+            public int[] ExtraArgs { get; set; }
 
-            public ExtraEventArgs(params object[] Args)
+            public ExtraEventArgs(params int[] Args)
             {
                 ExtraArgs = Args;
             }

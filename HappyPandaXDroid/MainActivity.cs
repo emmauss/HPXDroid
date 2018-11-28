@@ -119,8 +119,8 @@ namespace HappyPandaXDroid
         public void CreateFolders()
         {
             Directory.CreateDirectory(Core.App.Settings.basePath);
-            Directory.CreateDirectory(Core.App.Settings.cache);
-            Directory.CreateDirectory(Core.App.Settings.cache + "pages/");
+            Directory.CreateDirectory(Core.App.Settings.CachePath);
+            Directory.CreateDirectory(Core.App.Settings.CachePath + "pages/");
             Directory.CreateDirectory(Core.App.Settings.Log);
         }
         

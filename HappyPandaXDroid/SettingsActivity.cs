@@ -84,9 +84,18 @@ namespace HappyPandaXDroid
                     var h = new Handler(Looper.MainLooper);
                     h.Post(() =>
                     {
+
+                        cachedialog.Title = "Local Cache";
+                        cachedialog.Summary = "Caculating Total cache size";
+                    });
+
+                    double cacheSize = Math.Round((double)(Core.Media.Cache.GetCacheSize()) / (1024 * 1024), 2);
+                    
+                    h.Post(() =>
+                    {
                         
                         cachedialog.Title = "Local Cache";
-                        cachedialog.Summary = Math.Round((double)(Core.Media.Cache.GetCacheSize()) / (1024 * 1024), 2).ToString() + " MB";
+                        cachedialog.Summary = cacheSize.ToString() + " MB";
                     });
                 });
                 cachedialog.OnPositiveClick += Cachedialog_OnPositiveClick;

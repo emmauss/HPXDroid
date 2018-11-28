@@ -36,6 +36,7 @@ namespace HappyPandaXDroid.Core
         {
             public class IntegerObject
             {
+                public int id;
                 public int count = 0;
             }
         }

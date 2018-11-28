@@ -117,7 +117,7 @@ namespace HappyPandaXDroid.Custom_Views
             {
                 if (IsCached)
                 {
-                    Core.Gallery.GetCachedPagePath(Page.id, out page_path, "Page");
+                    Core.Gallery.GetCachedPagePath(Page, out page_path, Core.Gallery.ImageSize.Original);
                     h.Post(async () =>
                     {
                         try
@@ -184,7 +184,7 @@ namespace HappyPandaXDroid.Custom_Views
                 int item_id = Page.id;
                 try
                 {
-                    return Core.Gallery.IsItemCached(Page.id);
+                    return Core.Gallery.IsItemCached(Page);
                 }
                 catch (System.Exception ex)
                 {

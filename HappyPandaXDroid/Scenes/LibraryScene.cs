@@ -42,6 +42,7 @@ namespace HappyPandaXDroid.Scenes
             }
             else
                 toolbar.Title = "Library";
+
             Current_Query = Parse(query, false);
         }
 
@@ -151,7 +152,7 @@ namespace HappyPandaXDroid.Scenes
 
                     foreach (var item in list)
                     {
-                        item.Image = new Media.Image();
+                        item.Thumb = new Media.Image();
                     }
                     CurrentList.AddRange(list);
                     if (CurrentList == null || CurrentList.Count < 1)
@@ -222,7 +223,7 @@ namespace HappyPandaXDroid.Scenes
 
             RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
 
-            RequestToken.Args = new List<object>() { lastin };
+            RequestToken.Args = new List<int>() { lastin };
 
             RequestToken.FinishedCallback += NextPageToken_AsyncCallback;
 
@@ -266,7 +267,15 @@ namespace HappyPandaXDroid.Scenes
                     if(e is RequestToken.ExtraEventArgs args)
                     {
                         if (args.ExtraArgs.Length > 0)
-                            lastin = (int)args.ExtraArgs[0];
+                        {
+                            try
+                            {
+                              lastin = args.ExtraArgs[0];
+                            }catch(Exception ex)
+                            {
+
+                            }
+                        }
                     }
 
                     adapter.Add(list);

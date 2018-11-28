@@ -536,7 +536,7 @@ namespace HappyPandaXDroid.Scenes
                     CurrentList.AddRange(list);
                     foreach (var item in CurrentList)
                     {
-                        item.Image = new Media.Image();
+                        item.Thumb = new Media.Image();
                     }
                 }
             }
@@ -680,7 +680,7 @@ namespace HappyPandaXDroid.Scenes
                     {
                         if (vh.HPXItem is Core.Gallery.GalleryItem gallery)
                         {
-                            var galleryscene = new Scenes.GalleryScene(gallery, string.Empty);
+                            var galleryscene = new Scenes.GalleryScene(gallery);
                             var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
                             pscene.Stage.PushScene(galleryscene);
                         }

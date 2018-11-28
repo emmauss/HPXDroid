@@ -20,7 +20,6 @@ using Android.Support.V4.Widget;
 using Android.Support.Design.Widget;
 using Android.Support.V7.Widget;
 using Android.Support.V7.View;
-using PhotoView = Com.Github.Chrisbanes.Photoview;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Android.Support.V7.App;
 using Java.Lang;
@@ -70,6 +69,7 @@ namespace HappyPandaXDroid
             data = Intent.GetStringExtra("gallery");
             gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(data);
             int pageno = Intent.GetIntExtra("no", 0);
+            pageno = pageno == 0 ? 0 : pageno - 1;
             options = new RequestOptions()
                 .Override(Target.SizeOriginal, Target.SizeOriginal);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
@@ -424,7 +424,8 @@ namespace HappyPandaXDroid
             {
                 ids[i] = pages[i].id;
             }
-            Core.Gallery.InitiateImageGeneration(ids, Core.Gallery.ItemType.Page,"original",ViewerCancellationTokenSource.Token);
+            Core.Gallery.InitiateImageGeneration(ids, Core.Gallery.ItemType.Page,Core.Gallery.ImageSize.Original
+                ,ViewerCancellationTokenSource.Token);
             
         }
 

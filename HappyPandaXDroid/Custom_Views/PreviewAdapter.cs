@@ -57,7 +57,7 @@ namespace HappyPandaXDroid.Custom_Views
             if (items.Count > 0)
             {
                 CancellationToken token = ((Scenes.GalleryScene)previewScene).SceneCancellationTokenSource.Token;
-                var urls = Core.Gallery.GetImage(items, "Page",
+                var urls = Core.Gallery.GetImage(items, Core.Gallery.ItemType.Page,
                     token).Result;
                 if (token.IsCancellationRequested)
                     return;
@@ -226,13 +226,19 @@ namespace HappyPandaXDroid.Custom_Views
                     return;
                 var page = adapter.mdata[pos];
                 CancellationTokenSource token = new CancellationTokenSource();
-                var list = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(e.Gallery.id, token.Token,
-                    Core.Gallery.ItemType.Gallery, Core.Gallery.ItemType.Page);
-                Intent intent = new Intent(ItemView.Context, typeof(GalleryViewer));
-                intent.PutExtra("no", pos);
-                intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(list));
-                intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(e.Gallery));
-                ItemView.Context.StartActivity(intent);
+
+                int count = Core.App.Server.GetRelatedCount(e.Gallery.id, token.Token, Core.Gallery.ItemType.Gallery, Core.Gallery.ItemType.Page);
+
+                if (count > 0)
+                {
+                    var list = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(e.Gallery.id, token.Token,
+                        Core.Gallery.ItemType.Gallery, Core.Gallery.ItemType.Page, count);
+                    Intent intent = new Intent(ItemView.Context, typeof(GalleryViewer));
+                    intent.PutExtra("no", page.number);
+                    intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(list));
+                    intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(e.Gallery));
+                    ItemView.Context.StartActivity(intent);
+                }
             }
 
             void SetColumns()

@@ -101,6 +101,9 @@ namespace HappyPandaXDroid.Core
                     ConnectedClients.Add(client);
                     CreateConnections();
                 }
+
+                Media.Cache.InitializeGalleryCache();
+
                 return Connected;
             }
             catch (SocketException sex)
@@ -292,6 +295,7 @@ namespace HappyPandaXDroid.Core
                     listener.InUse = true;
                 return (string.Empty,succeeded);
             }
+
             listener.client.GetStream().ReadTimeout = 30000;
             listener.client.GetStream().WriteTimeout = 30000;
 
@@ -357,46 +361,48 @@ namespace HappyPandaXDroid.Core
                     return;
                 isRunning = true;
 
-                while (PendingRequests.Count > 0 && isRunning)
+                while ((PendingRequests.Count>0 || FinishedRequests.Count>0) && isRunning)
                 {
                     isRunning = true;
 
-                    PendingRequests.TryDequeue(out var request);
-
-                    if (request.CancellationToken.IsCancellationRequested)
+                    if (PendingRequests.TryDequeue(out var request))
                     {
-                        if (request.Mode == RequestToken.RequestMode.Locked)
-                            request.RequestResetEvent.Set();
-                        continue;
-                    }
 
-                    if (request.IsPaused)
-                    {
-                        PendingRequests.Enqueue(request);
+                        if (request.CancellationToken.IsCancellationRequested)
+                        {
+                            if (request.Mode == RequestToken.RequestMode.Locked)
+                                request.RequestResetEvent.Set();
+                            continue;
+                        }
 
-                        continue;
-                    }
+                        if (request.IsPaused)
+                        {
+                            PendingRequests.Enqueue(request);
 
-                    string response = string.Empty;
-                    bool succeeded = false;
+                            continue;
+                        }
 
-                    try
-                    {
-                        (response, succeeded) = SendPost((string)request.Request, ref request.CancellationToken);
-                        if (!succeeded)
+                        string response = string.Empty;
+                        bool succeeded = false;
+
+                        try
+                        {
+                            (response, succeeded) = SendPost((string)request.Request, ref request.CancellationToken);
+                            if (!succeeded)
+                                request.Failed = true;
+                        }
+                        catch (Exception ex)
+                        {
                             request.Failed = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        request.Failed = true;
-                        succeeded = false;
-                    }
-                    if (!request.Failed)
-                    {
-                        request.SetResult(response);                        
-                    }
+                            succeeded = false;
+                        }
+                        if (!request.Failed)
+                        {
+                            request.SetResult(response);
+                        }
 
-                    FinishRequest(request);
+                        FinishRequest(request);
+                    }
 
                     List<RequestToken> PausedRequests = FinishedRequests.ToList();
 

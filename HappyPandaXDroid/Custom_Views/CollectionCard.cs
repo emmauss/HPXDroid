@@ -82,7 +82,7 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     try
                     {
-                        if(Core.Gallery.GetCachedPagePath(_HPXItem.id, out thumb_path,"Collection", "medium"))
+                        if(Core.Gallery.GetCachedPagePath(_HPXItem, out thumb_path, Core.Gallery.ImageSize.Medium))
                         h.Post(() =>
                         {
                             try

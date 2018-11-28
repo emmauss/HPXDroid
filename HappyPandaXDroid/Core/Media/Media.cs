@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Net.Sockets;
+using System.Net.WebSockets;
+using System.Net;
 using System.Runtime.Serialization;
 
 using Android.App;
@@ -18,6 +21,8 @@ using Android.Support.V4.Widget;
 
 using Com.Bumptech.Glide;
 using Emmaus.Widget;
+using HappyPandaXDroid;
+using HappyPandaXDroid.Core;
 using NLog;
 
 namespace HappyPandaXDroid.Core
@@ -27,14 +32,22 @@ namespace HappyPandaXDroid.Core
         
         public class Cache
         {
+            private static Dictionary<string, Core.Gallery.GalleryItem> GalleryCache { get; set; }
+
             private static Logger logger = LogManager.GetCurrentClassLogger();
-            static bool IsClearing = false;
-            public static bool IsCached(string filepath)
+
+            public static bool IsClearing = false;
+
+            public static bool IsCached(string cacheid)
             {
                 
                 try
                 {
-                    bool check = File.Exists(filepath);
+                    string basepath = System.IO.Path.Combine(App.Settings.CachePath, cacheid);
+
+                    bool imagecheck = File.Exists(basepath);
+
+                    bool metacheck = File.Exists(basepath + ".meta");
                     /*if(check)
                     using (var bit = BitmapFactory.DecodeFile(filepath, new BitmapFactory.Options()))
                     {
@@ -45,7 +58,7 @@ namespace HappyPandaXDroid.Core
                         }
 
                     }*/
-                    return check;
+                    return imagecheck && metacheck;
                 }
                 catch (Exception ex)
                 {
@@ -54,12 +67,76 @@ namespace HappyPandaXDroid.Core
                     return false;
                 }
             }
+
+            public static bool TryGetCachedGallery(string key, out Core.Gallery.GalleryItem gallery)
+            {
+                return GalleryCache.TryGetValue(key, out gallery);
+            }
+
+            public static void CacheGallery(Core.Gallery.GalleryItem gallery)
+            {
+                GalleryCache.TryAdd(gallery.BaseId, gallery);
+            }
+
+            public static void InitializeGalleryCache()
+            {
+                GalleryCache = new Dictionary<string, Gallery.GalleryItem>();
+            }
+
             public static long GetCacheSize()
             {
-                Directory.CreateDirectory(App.Settings.cache);
-                var filelist = new DirectoryInfo(App.Settings.cache).EnumerateFiles("*",SearchOption.AllDirectories);
+                Directory.CreateDirectory(App.Settings.CachePath);
+                var filelist = new DirectoryInfo(App.Settings.CachePath).EnumerateFiles("*",SearchOption.AllDirectories);
                 return filelist.Sum((x) => x.Length);
+            }
 
+            public static bool TryGetCachedPath(string cacheid, out string ImagePath)
+            {
+                ImagePath = string.Empty;
+                if (!IsCached(cacheid))
+                    return (false);
+                else
+                {
+                    string basepath = System.IO.Path.Combine(App.Settings.CachePath, cacheid);
+
+                    ImagePath = basepath;
+
+                    return true;
+                }
+            }
+
+            public static string CachePage(string cacheid, string url, bool ForceOverwrite)
+            {
+                string filename = string.Empty;
+                if (!IsCached(cacheid) & ForceOverwrite)
+                {
+                    filename = System.IO.Path.Combine(App.Settings.CachePath, cacheid);
+
+                    string meta = string.Empty;
+
+                    string extension = url.Substring(url.LastIndexOf("."));
+
+                    using (var client = new WebClient())
+                    {
+                        logger.Info("Downloading URL. URL : {0}\n, Path : {1}", url, filename);
+                        client.DownloadFile(new Uri(url), filename);
+                        logger.Info("Download Complete. URL : {0},\n Path : {1},\n Size: {2}", url, filename, new FileInfo(filename).Length);
+                        File.WriteAllText(filename + ".meta", extension);
+                    }
+                }
+
+                if (TryGetCachedPath(cacheid, out filename))
+                    return filename;
+                else return string.Empty;
+            }
+
+            public static void DeleteCachePage(string cacheid)
+            {
+                string basepath = System.IO.Path.Combine(App.Settings.CachePath, cacheid);
+                if (File.Exists(basepath))
+                    File.Delete(basepath);
+                if (File.Exists(basepath + ".meta"))
+                    File.Delete(basepath + ".meta");
             }
 
             public static async  Task<bool> ClearCache()
@@ -68,17 +145,15 @@ namespace HappyPandaXDroid.Core
                     return false;
                 IsClearing = true;
                 await Task.Delay(1000);
-                var dirlist = new DirectoryInfo(App.Settings.cache).EnumerateDirectories("*",SearchOption.AllDirectories);
-                foreach(var dir in dirlist)
-                {
-                    dir.Delete(true);
-                }
-                var filelist = new DirectoryInfo(App.Settings.cache).EnumerateFiles("*", SearchOption.AllDirectories);
-                foreach (var file in filelist)
-                {
-                    file.Delete();
-                }
+
+                var cachedir = new DirectoryInfo(App.Settings.CachePath);
+
+                cachedir.Delete(true);
+
                 await Task.Delay(1000);
+
+                cachedir.Create();
+
                 IsClearing = false;
                 return true;
             }

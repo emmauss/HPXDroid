@@ -35,7 +35,15 @@ namespace HappyPandaXDroid.Core
             private static Logger logger = LogManager.GetCurrentClassLogger();
             
             public static string basePath = Android.OS.Environment.ExternalStorageDirectory.Path + "/HPX/";
-            public static string cache = basePath + "cache/";
+            public static string CachePath
+            {
+                get
+                {
+                    string Path = basePath + "cache/";
+                    Directory.CreateDirectory(Path);
+                    return Path;
+                }
+            }
             public static string Log = basePath + "log/";
             public static bool Refresh = false;
             private static ISettings AppSettings
@@ -933,11 +941,11 @@ namespace HappyPandaXDroid.Core
                 public string msg;
             }
 
-            public static string GetCommandValue(int command_id, int item_id, string name, string type, bool return_url
+            public static string GetCommandValue(int command_id, Gallery.HPXItem item, string cacheid, bool return_url
                 ,ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command value. commandId={0}, type = {1}, url = {2}, itemID ={3}",
-                    command_id, type, return_url.ToString(), item_id.ToString());
+                    command_id, item.Type, return_url.ToString(), item.id.ToString());
                 string response = CreateCommand("get_command_value", command_id);
                 ManualResetEvent resetEvent = new ManualResetEvent(false);
 
@@ -956,7 +964,6 @@ namespace HappyPandaXDroid.Core
 
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
-                string filename = string.Empty;
                 Gallery.Profile data = new Gallery.Profile();
                 if (cancellationToken.IsCancellationRequested)
                     return string.Empty;
@@ -968,24 +975,15 @@ namespace HappyPandaXDroid.Core
                         var dataobj = JSON.API.GetData(serverobj.data, 0);
                         data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                             .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
-                        
-                        string dir = Settings.cache;                        
-                        if (!Directory.Exists(dir))
-                            Directory.CreateDirectory(dir);                        
-                        filename = dir + name + ".jpg";
+
                         string url = data.data;
                         url = "http://" + App.Settings.Server_IP + ":"+ App.Settings.WebClient_Port + url;
                         if (return_url)
                             return url;
                         if (cancellationToken.IsCancellationRequested)
                             return string.Empty;
-                        using (var client = new WebClient())
-                        {
-                            logger.Info("Downloading URL. URL : {0}\n, Path : {1}", url, filename);
-                            client.DownloadFile(new Uri(url), filename);
-                            logger.Info("Download Complete. URL : {0},\n Path : {1},\n Size: {2}", url, filename, new FileInfo(filename).Length);
-                        }
-                        return filename;
+
+                        return Media.Cache.CachePage(cacheid, url, true);
                     }
                     else return "fail";
                 }
@@ -993,17 +991,16 @@ namespace HappyPandaXDroid.Core
                 {
                     logger.Error(ex, "\n Exception Caught In App.Server.GetCommandValue. Message : " + ex.Message 
                         + System.Environment.NewLine + ex.StackTrace);
-                    if (File.Exists(filename))
-                        File.Delete(filename);
+                    Media.Cache.DeleteCachePage(cacheid);
                     return "fail";
                 }
             }
 
-            public static string GetCommandValue(int command_id, int item_id, string type
+            /*public static string GetCommandValue(int command_id, Gallery.HPXItem item, Gallery.ItemType type
                 , ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command values. commandId={0}, type = {1},  itemIDs =[{2}]",
-                    command_id, type, item_id.ToString());
+                    command_id, type, item.id.ToString());
                 string response = CreateCommand("get_command_value", command_id);
                 ManualResetEvent resetEvent = new ManualResetEvent(false);
 
@@ -1037,9 +1034,11 @@ namespace HappyPandaXDroid.Core
                             .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
 
                         string url = data.data;
-                        url = "http://" + App.Settings.Server_IP + ":" + App.Settings.WebClient_Port + url;
+                        url = "http://" + App.Settings.Server_IP + ":" + App.Settings.WebClient_Port + url;                        
 
-                        return url;
+                        string path = Media.Cache.CachePage(item.BaseId, url, true);
+
+                        return path;
                     }
                     else return string.Empty;
                 }
@@ -1051,7 +1050,7 @@ namespace HappyPandaXDroid.Core
                         File.Delete(filename);
                     return string.Empty;
                 }
-            }
+            }*/
 
             public static Dictionary<int,string> GetCommandValues(int[] command_ids, int[] item_ids, string type,
                 ref CancellationToken cancellationToken)
@@ -1158,7 +1157,8 @@ namespace HappyPandaXDroid.Core
                 return (error);
             }
 
-            public static bool GetCompleted(out List<int> done, List<int> command_ids, Gallery.HPXItem[] hPXItem, ref CancellationToken cancellationToken)
+            public static bool GetCompleted(out List<int> done, List<int> command_ids, Gallery.HPXItem[] hPXItem, ref CancellationToken cancellationToken
+                ,Gallery.ImageSize size)
             {
                 done = new List<int>();
                 List<int> failed = new List<int>();
@@ -1203,10 +1203,11 @@ namespace HappyPandaXDroid.Core
                                 {
                                     if (id == hp.CommandId)
                                     {
-                                        hp.Image.IsReady = true;
+                                        Media.Image image = size == Gallery.ImageSize.Small ? hp.Thumb : hp.Image;
+                                        image.IsReady = true;
                                         Task.Run(() =>
                                         {
-                                            hp.Image.RequestLoad();
+                                            image.RequestLoad();
                                         }, cancellationToken);
                                     }
                                 }
@@ -1269,7 +1270,7 @@ namespace HappyPandaXDroid.Core
             }
 
             public static List<T> GetRelatedItems<T>(int item_id,CancellationToken cancellationToken, Gallery.ItemType itemType
-                , Gallery.ItemType relatedType, int limit = -1, int page = 0)
+                , Gallery.ItemType relatedType, int limit = 100, int page = 0)
             {
                 logger.Info("Get Item. itemId={0}, related_type = {1}, limit = {2}", item_id, relatedType.ToString(), limit);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
@@ -1323,8 +1324,38 @@ namespace HappyPandaXDroid.Core
 
                 }
 
+                if(typeof(T) == typeof(Gallery.Page))
+                {
+                    /* List<Gallery.Page> pagelist = new List<Gallery.Page>();
+
+                     foreach(var p in list)
+                     {
+                         pagelist.Add(p as Gallery.Page);
+
+                         pagelist = pagelist.OrderBy(x => x.number).ToList();
+                     }
+
+                     list.Clear();
+
+                     foreach(var p in pagelist)
+                     {
+                         list.Add((T)Convert.ChangeType(p , typeof(T)));
+                     }*/
+
+                    list.Sort((x, y) => (x as Gallery.Page).number.CompareTo((y as Gallery.Page).number));
+                }
+
                 return list;
             }
+
+            public class ComparePages : IComparer<Gallery.Page>
+            {
+                public int Compare(Gallery.Page x, Gallery.Page y)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
 
             public static int GetRelatedCount(int item_id, CancellationToken cancellationToken, Gallery.ItemType itemType
                 , Gallery.ItemType relatedType)
@@ -1361,8 +1392,19 @@ namespace HappyPandaXDroid.Core
                     return 0;
                 var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
 
-                if (JSON.API.GetData(serverobj.data, 0) is JSON.ServerObjects.IntegerObject countdata)
-                    return countdata.count;
+                var dataf = JSON.API.GetData(serverobj.data, 0);
+
+                /*if (JSON.API.GetData(data, 0) is JSON.ServerObjects.IntegerObject countdata)
+                    return countdata.count;*/
+
+                string data = dataf.ToString();
+
+                data = data.Substring(data.LastIndexOf("count"));
+                data = data.Substring(data.IndexOf(":") + 1);
+                data = data.Substring(0, data.IndexOf("}"));
+
+                if (int.TryParse(data, out int count))
+                    return count;
                 else return 0;
             }
 
@@ -1402,12 +1444,12 @@ namespace HappyPandaXDroid.Core
                 else return "none";
             }
 
-            public static string HashGenerator(string size,string type, int item_id = 0)
+            public static string HashGenerator(string base_id, Gallery.ImageSize size,Gallery.ItemType type)
             {
-                string feed = Info.name;
-                feed += "-" + type;
-                feed += "-" + size;
-                feed += item_id == 0 ? "" : item_id.ToString();
+                string feed = string.Empty;
+                feed += "-" + base_id;
+                feed += "-" + Enum.GetName(typeof(Gallery.ImageSize), size);
+                feed += "-" + Enum.GetName(typeof(Gallery.ItemType), type);
                 byte[] feedbyte = Encoding.Unicode.GetBytes(feed);
                 using (MD5 md5 = MD5.Create())
                 {

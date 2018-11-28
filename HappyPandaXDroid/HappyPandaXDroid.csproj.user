@@ -4,6 +4,6 @@
     <SelectedDevice>NOKIA _XL</SelectedDevice>
     <AndroidDesignerPreferredDevice>Nexus 4</AndroidDesignerPreferredDevice>
     <DefaultDevice>Android_Accelerated_x86_Nougat</DefaultDevice>
-    <AndroidDesignerPreferredTheme>AppTheme</AndroidDesignerPreferredTheme>
+    <AndroidDesignerPreferredTheme>MyTheme</AndroidDesignerPreferredTheme>
   </PropertyGroup>
 </Project>

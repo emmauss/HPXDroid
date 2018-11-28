@@ -43,7 +43,7 @@ namespace HappyPandaXDroid.Core
             {
                 try
                 {
-                    if (source != null & source.Length > 0)
+                    if (source != null && source.Length > 0)
                     {
                         var decompressedstream = new MemoryStream();
                         using (MemoryStream compressedstream = new MemoryStream(source))
@@ -54,6 +54,7 @@ namespace HappyPandaXDroid.Core
                             }
 
                         }
+
                         return decompressedstream.ToArray();
                     }
                     else
