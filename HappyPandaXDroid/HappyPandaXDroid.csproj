@@ -19,9 +19,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <AndroidKeyStore>false</AndroidKeyStore>
-    <AndroidSigningKeyStore>C:\Users\Emmanuel Hansen\AppData\Local\Xamarin\Mono for Android\Keystore\emmaus\emmaus.keystore</AndroidSigningKeyStore>
-    <AndroidSigningStorePass>legendofzelda</AndroidSigningStorePass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
