@@ -24,8 +24,6 @@ namespace HappyPandaXDroid.Core
 {
     class App
     {
-
-
         /// <summary>
         /// This is the Settings static class that can be used in your Core solution or in any
         /// of your client applications. All settings are laid out the same exact way with getters
@@ -909,6 +907,16 @@ namespace HappyPandaXDroid.Core
                 else return -1;
             }
 
+            public static int GetCommandId(string command_response)
+            {
+                var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(command_response);
+                var dataobj = JSON.API.GetData(serverobj.data, 0);
+                var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])
+                    .ToString();
+                string id = data;
+                return int.Parse(id);
+            }
+
             public static int[] GetCommandIds(Gallery.HPXItem[] items, string command_response)
             {
                 List<int> commandIds = new List<int>();
@@ -1030,7 +1038,7 @@ namespace HappyPandaXDroid.Core
 
                     if (cancellationToken.IsCancellationRequested)
                         return false;
-                    int command_id = App.Server.GetCommandId(item.id, reply);
+                    int command_id = App.Server.GetCommandId(reply);
                     if (command_id == 0 || command_id == -1)
                         return false;
                     while (true)
@@ -1048,6 +1056,57 @@ namespace HappyPandaXDroid.Core
                         else
                             break;
                     }
+                    return true;
+
+                }
+                catch (System.Net.Sockets.SocketException sex)
+                {
+                    logger.Error(sex, "\n Exception Caught In Gallery.GetImage.Message {0}\n {1}", sex.Message, sex.StackTrace);
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In App.DeleteItem. type = {2}, itemId = {0}, \n Message = {1}"
+                         + System.Environment.NewLine + ex.StackTrace, item.id, ex.Message, item.Type);
+                    return false;
+                }
+            }
+
+            public static async Task<bool> MoveItemToTrash(HPXItem item, CancellationToken cancellationToken)
+            {
+                try
+                {
+                    List<Tuple<string, string>> main = new List<Tuple<string, string>>();
+                    List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
+                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
+                    JSON.API.PushKey(ref main, "session", App.Server.Info.session);
+                    JSON.API.PushKey(ref funct, "fname", "update_metatags");
+                    JSON.API.PushKey(ref funct, "item_id", "<int>" + item.id);
+                    JSON.API.PushKey(ref funct, "item_type", Enum.GetName(typeof(ItemType), item.Type));
+                    JSON.API.PushKey(ref funct, "metatag", "{ 'trash':true'}");
+                    string response = JSON.API.ParseToString(funct);
+                    JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
+                    response = JSON.API.ParseToString(main);
+                    if (cancellationToken.IsCancellationRequested)
+                        return false;
+                    ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                    RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return false;
+
+                    request.Request = response;
+
+                    request.Queue();
+
+                    request.RequestResetEvent.WaitOne();
+
+                    string reply = (string)request.Result;
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return false;
+
                     return true;
 
                 }

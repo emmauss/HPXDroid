@@ -176,11 +176,18 @@ namespace HappyPandaXDroid.Scenes
 
         protected virtual void Initialize()
         {
-            searchView = MainView.FindViewById<FloatingSearchView>(Resource.Id.search);
-            searchView.AttachNavigationDrawerToMenuButton(((HPXSceneActivity)Context).navDrawer);
-            searchView.SearchAction += SearchView_SearchAction;
-            searchView.InflateOverflowMenu(Resource.Menu.gallerySearch);
-            searchView.MenuItemClick += SearchView_MenuItemClick;
+            try
+            {
+                searchView = MainView.FindViewById<FloatingSearchView>(Resource.Id.search);
+                searchView.AttachNavigationDrawerToMenuButton(((HPXSceneActivity)Context).navDrawer);
+                searchView.SearchAction += SearchView_SearchAction;
+                searchView.InflateOverflowMenu(Resource.Menu.gallerySearch);
+                searchView.MenuItemClick += SearchView_MenuItemClick;
+                searchView.SetSearchHint(title);
+            }catch(Exception ex)
+            {
+
+            }
             collectionAdapter = new Custom_Views.CardAdapter.CollectionCardAdapter(this.Context, this);
             galleryAdapter = new Custom_Views.CardAdapter.GalleryCardAdapter(this.Context,this);
 
@@ -241,7 +248,6 @@ namespace HappyPandaXDroid.Scenes
             if (string.IsNullOrWhiteSpace(title))
                 title = "Search";
 
-            searchView.SetSearchHint(title);
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");

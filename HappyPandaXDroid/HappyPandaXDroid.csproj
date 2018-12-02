@@ -372,9 +372,6 @@
     <AndroidResource Include="Resources\layout\Gallery_Details_Layout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\HPContent.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
     <AndroidResource Include="Resources\layout\layout_error.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -388,9 +385,6 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\HPXStage.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\LibraryScene.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\RecentsScene.axml">

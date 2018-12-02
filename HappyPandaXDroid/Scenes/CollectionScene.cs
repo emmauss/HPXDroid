@@ -39,6 +39,7 @@ namespace HappyPandaXDroid.Scenes
         protected override void Initialize()
         {
             base.Initialize();
+            RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
             //toolbar.Title = Collection.name;
             //initialize header
             titleView = MainView.FindViewById<TextView>(Resource.Id.title);
@@ -85,7 +86,7 @@ namespace HappyPandaXDroid.Scenes
                     logger.Info("Refreshing HPContent");
                     if (!SceneCancellationTokenSource.IsCancellationRequested)
                     {
-                        var list = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
+                        var list = App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
                             Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, 0);
                         if (SceneCancellationTokenSource.IsCancellationRequested)
                             return;

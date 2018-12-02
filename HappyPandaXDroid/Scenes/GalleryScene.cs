@@ -435,7 +435,8 @@ namespace HappyPandaXDroid.Scenes
 
             public bool OnMenuItemClick(IMenuItem item)
             {
-               
+               parent.mDeleteDialog.Show(((HPXSceneActivity)parent.MainView.Context).FragmentManager, "DeleteGallery");
+
                 return true;
             }
         }
@@ -452,40 +453,50 @@ namespace HappyPandaXDroid.Scenes
                 //close dialog
             }
 
-            public void OnDialogPositiveClick(DialogFragment dialog)
+            public async void OnDialogPositiveClick(DialogFragment dialog)
             {
-                if(dialog is Custom_Views.DeleteDialog dd)
+                bool succeed = false;
+                if (dialog is Custom_Views.DeleteDialog dd)
                 {
                     if (dd.ShouldTrashed)
                     {
+                        succeed = await App.Server.DeleteItem(parent.gallery, parent.SceneCancellationTokenSource.Token);
 
+                        var h = new Handler(Looper.MainLooper);
+                        h.Post(() =>
+                        {
+                            if (succeed)
+                            {
+                                Toast.MakeText(parent.Context, "Gallery sent to trash", ToastLength.Short).Show();
+                            }
+                            else
+                            {
+                                Toast.MakeText(parent.Context, "Gallery Deletion Failed", ToastLength.Short).Show();
+                            }
+                        });
                     }
                     else
                     {
-                        bool succeed = false;
-                        Task.Run(async () =>
+                        succeed = await App.Server.DeleteItem(parent.gallery, parent.SceneCancellationTokenSource.Token);
+
+                        var h = new Handler(Looper.MainLooper);
+                        h.Post(() =>
                         {
-                            succeed = await App.Server.DeleteItem(parent.gallery, parent.SceneCancellationTokenSource.Token);
-
-                            var h = new Handler(Looper.MainLooper);
-                            h.Post(() =>
+                            if (succeed)
                             {
-                                if (succeed)
-                                {
-                                    Toast.MakeText(parent.Context, "Gallery Deletion Succeeded", ToastLength.Short).Show();
+                                Toast.MakeText(parent.Context, "Gallery Deletion Succeeded", ToastLength.Short).Show();
 
-                                    if(parent.Stage.TopScene is  GalleryScene scene)
-                                    {
-                                        parent.Stage.PopTopScene();
-                                    }
-
-                                    Media.Cache.RemoveGallery(parent.gallery);
-                                }
-                                else
+                                if (parent.Stage.TopScene is GalleryScene scene)
                                 {
-                                    Toast.MakeText(parent.Context,"Gallery Deletion Failed", ToastLength.Short).Show();
+                                    parent.Stage.PopTopScene();
                                 }
-                            });
+
+                                Media.Cache.RemoveGallery(parent.gallery);
+                            }
+                            else
+                            {
+                                Toast.MakeText(parent.Context, "Gallery Deletion Failed", ToastLength.Short).Show();
+                            }
                         });
                     }
                 }

@@ -58,8 +58,32 @@
                         android:layout_marginRight="@dimen/keyline_margin"
                         android:singleLine="true" />
                 </LinearLayout>
-                <include
-                    layout="@layout/HPContent" />
+				<FrameLayout
+    android:layout_width="match_parent"
+        android:layout_height="match_parent"
+			android:layout_marginTop="@dimen/mtrl_toolbar_default_height"
+			>
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="80dp"
+        android:indeterminate="true"
+        android:id="@+id/progress_view" />
+    <include
+        layout="@layout/layout_error" />
+    <com.hippo.refreshlayout.RefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/refresh_layout">
+        <EasyRecyclerView.EasyRecyclerView
+            android:id="@+id/recyclerView"
+            android:scrollbars="vertical"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.hippo.refreshlayout.RefreshLayout>
+  </FrameLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
