@@ -17,18 +17,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using ProgressView = XamarinBindings.MaterialProgressBar;
 using RefreshLayout = Com.Hippo.Refreshlayout;
+using FloatingSearchViews;
+using FloatingSearchViews.Utils;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using HappyPandaXDroid.Core;
 
 namespace HappyPandaXDroid.Scenes
 {
-    public abstract class ViewScene : HPXScene, Android.Support.V7.Widget.SearchView.IOnQueryTextListener
+    public abstract class ViewScene : HPXScene
     {
         public abstract Core.Gallery.ViewType ViewType { get;}
-        protected Toolbar toolbar;
+        protected FloatingSearchView searchView;
         Clans.Fab.FloatingActionMenu fam;
         public string title;
-        AppBarLayout appBarLayout;
         bool isGrid = false;
         protected static Logger logger = LogManager.GetCurrentClassLogger();
         protected Clans.Fab.FloatingActionButton mRefreshFab;
@@ -140,8 +141,8 @@ namespace HappyPandaXDroid.Scenes
         }
 
         protected string current_query = string.Empty;
-        public String Current_Query
-        {
+        public string CurrentQuery => Parse(searchView.Query, false);
+        /*{
             get
             {
                 return current_query;
@@ -157,7 +158,7 @@ namespace HappyPandaXDroid.Scenes
                     toolbar.Title = Parse(current_query, true);
                 Refresh(0);
             }
-        }
+        }*/
         public DialogEventListener dialogeventlistener;
 
         protected override void OnCreate(Bundle p0)
@@ -167,7 +168,7 @@ namespace HappyPandaXDroid.Scenes
 
         protected override View OnCreateView(LayoutInflater p0, ViewGroup p1)
         {
-            MainView = p0.Inflate(Resource.Layout.LibraryScene, p1, false);
+            MainView = p0.Inflate(Resource.Layout.viewScene, p1, false);
             Initialize();
 
             return MainView;
@@ -175,10 +176,11 @@ namespace HappyPandaXDroid.Scenes
 
         protected virtual void Initialize()
         {
-            toolbar = MainView.FindViewById<Toolbar>(Resource.Id.toolbar);
-
-            appBarLayout = MainView.FindViewById<AppBarLayout>(Resource.Id.appbar);
-            appBarLayout.Drag += AppBarLayout_Drag;
+            searchView = MainView.FindViewById<FloatingSearchView>(Resource.Id.search);
+            searchView.AttachNavigationDrawerToMenuButton(((HPXSceneActivity)Context).navDrawer);
+            searchView.SearchAction += SearchView_SearchAction;
+            searchView.InflateOverflowMenu(Resource.Menu.gallerySearch);
+            searchView.MenuItemClick += SearchView_MenuItemClick;
             collectionAdapter = new Custom_Views.CardAdapter.CollectionCardAdapter(this.Context, this);
             galleryAdapter = new Custom_Views.CardAdapter.GalleryCardAdapter(this.Context,this);
 
@@ -233,13 +235,72 @@ namespace HappyPandaXDroid.Scenes
                     Resource.Color.loading_indicator_orange,
                     Resource.Color.loading_indicator_red);
 
-
+            
             SetMainLoading(true);
 
+            if (string.IsNullOrWhiteSpace(title))
+                title = "Search";
+
+            searchView.SetSearchHint(title);
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");
             
+        }
+
+        private void SearchView_MenuItemClick(object sender, FloatingSearchView.MenuItemClickEventArgs e)
+        {
+            var menuItem = e.MenuItem;
+
+            switch (menuItem.ItemId)
+            {
+                case Resource.Id.addsearch:
+                    var button = (ImageButton)menuItem.ActionView;
+
+                    button.LongClick += Button_LongClick;
+                    button.Click += Button_Click;
+                    break;
+                case Resource.Id.sort:
+                    menuItem.SetOnMenuItemClickListener(new SortMenuClickListener(this));
+                    break;
+                case Resource.Id.sort_direction:
+                    menuItem.SetOnMenuItemClickListener(new SortMenuClickListener(this));
+                    break;
+            }
+        }
+
+        private void SearchView_SearchAction(object sender, FloatingSearchView.SearchActionEventArgs e)
+        {
+            Refresh(0);
+        }
+
+        class MenuClickListener : Java.Lang.Object,FloatingSearchView.IOnMenuItemClickListener
+        {
+            ViewScene parent;
+
+            public MenuClickListener(ViewScene parent) : base()
+            {
+                this.parent = parent;
+            }
+
+            public void OnActionMenuItemSelected(IMenuItem menuItem)
+            {
+                switch (menuItem.ItemId)
+                {
+                    case Resource.Id.addsearch:
+                        var button = (ImageButton)menuItem.ActionView;
+
+                        button.LongClick += parent.Button_LongClick;
+                        button.Click += parent.Button_Click;
+                        break;
+                    case Resource.Id.sort:
+                        menuItem.SetOnMenuItemClickListener(new SortMenuClickListener(parent));
+                        break;
+                    case Resource.Id.sort_direction:
+                        menuItem.SetOnMenuItemClickListener(new SortMenuClickListener(parent));
+                        break;
+                }
+            }
         }
 
         private void MRefreshLayout_FooterRefresh(object sender, EventArgs e)
@@ -290,7 +351,7 @@ namespace HappyPandaXDroid.Scenes
 
         public ViewScene(string title, string query) : base()
         {
-            this.title = title;            
+            this.title = title;
         }
 
         private void AppBarLayout_Drag(object sender, View.DragEventArgs e)
@@ -756,10 +817,11 @@ namespace HappyPandaXDroid.Scenes
         {
             if (RequestToken != null)
                 RequestToken.IsPaused = true;
+            Util.CloseSoftKeyboard((HPXSceneActivity)Context);
             base.OnPause();
             // SceneCancellationTokenSource = new CancellationTokenSource();
         }
-        public class DialogEventListener : Custom_Views.PageSelector.INoticeDialogListener
+        public class DialogEventListener : Custom_Views.INoticeDialogListener
         {
             ViewScene parent;
             public DialogEventListener(ViewScene parent)
@@ -948,7 +1010,6 @@ namespace HappyPandaXDroid.Scenes
             adapter?.Clear();            
             MainView = null;
             fam = null;
-            appBarLayout = null;
             mJumpFab = null;
             mRefreshFab = null;
             Dispose();
@@ -994,73 +1055,22 @@ namespace HappyPandaXDroid.Scenes
 
             return res;
         }
+        
 
-
-
-        public bool OnQueryTextSubmit(string query)
-        {
-
-            //SupportActionBar.InvalidateOptionsMenu();
-            toolbar.Title = query;
-            logger.Info("Search query submit , query ={0}", query);
-            Current_Query = Parse(query, false);
-            if (search != null)
-                search.ActionView.ClearFocus();
-
-            return true;
-        }
-
-
-
-        Android.Support.V7.Widget.SearchView searchView;
-        IMenuItem search;
-        public void OnCreateOptionsMenu()
-        {
-            toolbar.InflateMenu(Resource.Menu.gallerySearch);
-
-            search = toolbar.Menu.FindItem(Resource.Id.search);
-
-            searchView = (Android.Support.V7.Widget.SearchView)search.ActionView;
-            searchView.SetOnQueryTextListener(this);
-            searchView.SetQuery(Parse(Current_Query,true), false);
-            var layoutParams = new Android.Support.V7.Widget.ActionMenuView.LayoutParams
-                (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
-            searchView.LayoutParameters = layoutParams;
-            var butitem = toolbar.Menu.FindItem(Resource.Id.addsearch);
-            var button = (ImageButton)butitem.ActionView;
-
-            button.LongClick += Button_LongClick;
-            button.Click += Button_Click;
-
-            button.SetBackgroundColor(new Color(0, 0, 0, 0));
-            button.SetImageResource(Resource.Drawable.ic_add_white_24dp);
-            button.LayoutParameters = layoutParams;
-            
-            var sortitem = toolbar.Menu.FindItem(Resource.Id.sort);
-            var sortdirection = toolbar.Menu.FindItem(Resource.Id.sort_direction);
-            sortdirection.SetIcon(Resource.Drawable.ic_filter_list_white_24dp);
-            sortitem.SetIcon(Resource.Drawable.ic_sort_white_24dp);    
-
-            List<string> sortlist = new List<string>(Enum.GetNames(typeof(Core.Gallery.Sort)));
-            
-            sortdirection.SetOnMenuItemClickListener(new SortMenuClickListener(this));
-            sortitem.SetOnMenuItemClickListener(new SortMenuClickListener(this));
-        }
-
-    private void Button_Click(object sender, EventArgs e)
+    public void Button_Click(object sender, EventArgs e)
         {
             Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(this, "search");
             listDialog.Show(((HPXSceneActivity)MainView.Context).FragmentManager, "Quick Search");
 
         }
 
-        private void Button_LongClick(object sender, View.LongClickEventArgs e)
+        public void Button_LongClick(object sender, View.LongClickEventArgs e)
         {
             if (!string.IsNullOrEmpty(current_query))
             {
                 Android.Support.V7.App.AlertDialog.Builder alertDialog = new Android.Support.V7.App.AlertDialog.Builder(Context);
                 alertDialog.SetTitle("Add quickserch query");
-                alertDialog.SetMessage("Do you want to add `" + Parse(Current_Query,true) + "` to quick search?");
+                alertDialog.SetMessage("Do you want to add `" + Parse(CurrentQuery,true) + "` to quick search?");
                 alertDialog.SetPositiveButton("Yes", new DialogInterface(this));
                 alertDialog.SetNegativeButton("No", new DialogInterface(this));
                 alertDialog.Show();
@@ -1074,7 +1084,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 if((DialogButtonType)which == DialogButtonType.Positive)
                 {
-                    Core.Media.QuickSearch.AddToQuickSearch(Parse(LibraryScene.Current_Query,true));
+                    Core.Media.QuickSearch.AddToQuickSearch(Parse(LibraryScene.CurrentQuery,true));
                     Toast.MakeText(LibraryScene.Context, "Added to Quick Search", ToastLength.Short).Show();
                 }
             }

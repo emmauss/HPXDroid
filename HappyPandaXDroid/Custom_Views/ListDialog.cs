@@ -119,7 +119,7 @@ namespace HappyPandaXDroid.Custom_Views
                 case "search":
                     if (MainList.ChoiceMode != ChoiceMode.Multiple)
                     {
-                        mscene.Current_Query = Scenes.ViewScene.Parse(item,false);
+                        //mscene.Current_Query = Scenes.ViewScene.Parse(item,false);
                         Dismiss();
                     }
                     break;

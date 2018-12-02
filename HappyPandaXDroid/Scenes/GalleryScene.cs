@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Support.V7.App;
 using Android.Runtime;
 using Android.Views;
+using Android.Support.Design.Chip;
 using Android.Widget;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ using Com.Hippo.Stage;
 
 namespace HappyPandaXDroid.Scenes
 {
-    class GalleryScene : HPXScene
+    public class GalleryScene : HPXScene
     { 
         private TextView mErrorText;
         public TextView title, category, read_action,
@@ -35,10 +36,13 @@ namespace HappyPandaXDroid.Scenes
         public ImageView ThumbView;
         FrameLayout errorFrame;
         public bool isDownloading = false;
+        public DialogEventListener dialogeventlistener;
         Custom_Views.TagsAdapter tagsAdapter;
         public Core.Gallery.GalleryItem gallery;
         Emmaus.Widget.RecyclerViewPager previewpager;
         ProgressView.MaterialProgressBar mProgressView;
+        Chip categoryChip;
+        Custom_Views.DeleteDialog mDeleteDialog;
         LinearLayout MainLayout;
         AppBarLayout AppBarLayout;
         Android.Support.V7.Widget.Toolbar toolbar;
@@ -88,6 +92,8 @@ namespace HappyPandaXDroid.Scenes
             });
             Thread thread = new Thread(start);
             thread.Start();
+            dialogeventlistener = new DialogEventListener(this);
+            mDeleteDialog = new Custom_Views.DeleteDialog(this);
             return MainView;
         }
 
@@ -266,6 +272,7 @@ namespace HappyPandaXDroid.Scenes
             GalleryStatus = null;
             ThumbView.SetImageDrawable(null);
             ThumbView = null;
+            categoryChip = null;
             base.OnDestroyView(p0);
         }
 
@@ -366,7 +373,8 @@ namespace HappyPandaXDroid.Scenes
             adapter = new Custom_Views.PreviewPagerAdapter(Context,this);
             mProgressView.Visibility = ViewStates.Visible;
             previewpager.SetAdapter(new Emmaus.Widget.RecyclerViewPagerAdapter(previewpager,adapter));
-            
+            categoryChip = MainView.FindViewById<Chip>(Resource.Id.category);
+            categoryChip.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
             layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
             layout.SetExtraLayoutSpace(100);
             previewpager.SetLayoutManager(layout);
@@ -378,6 +386,9 @@ namespace HappyPandaXDroid.Scenes
 
             var menuItem = toolbar.Menu.FindItem(Resource.Id.download);
             menuItem.SetOnMenuItemClickListener(new DownloadMenuItemClickListener(this));
+
+            menuItem = toolbar.Menu.FindItem(Resource.Id.delete);
+            menuItem.SetOnMenuItemClickListener(new DeleteMenuItemClickListener(this));
         }
 
         class DownloadMenuItemClickListener : Java.Lang.Object,IMenuItemOnMenuItemClickListener
@@ -410,8 +421,75 @@ namespace HappyPandaXDroid.Scenes
                         Toast.MakeText(Android.App.Application.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short).Show();
                 });
             }
+        }
 
-            
+        class DeleteMenuItemClickListener : Java.Lang.Object, IMenuItemOnMenuItemClickListener
+        {
+            GalleryScene parent;
+            List<Core.Gallery.Page> downloadList = new List<Core.Gallery.Page>();
+
+            public DeleteMenuItemClickListener(GalleryScene scene)
+            {
+                parent = scene;
+            }
+
+            public bool OnMenuItemClick(IMenuItem item)
+            {
+               
+                return true;
+            }
+        }
+
+        public class DialogEventListener : Custom_Views.INoticeDialogListener
+        {
+            GalleryScene parent;
+            public DialogEventListener(GalleryScene parent)
+            {
+                this.parent = parent;
+            }
+            public void OnDialogNegativeClick(DialogFragment dialog)
+            {
+                //close dialog
+            }
+
+            public void OnDialogPositiveClick(DialogFragment dialog)
+            {
+                if(dialog is Custom_Views.DeleteDialog dd)
+                {
+                    if (dd.ShouldTrashed)
+                    {
+
+                    }
+                    else
+                    {
+                        bool succeed = false;
+                        Task.Run(async () =>
+                        {
+                            succeed = await App.Server.DeleteItem(parent.gallery, parent.SceneCancellationTokenSource.Token);
+
+                            var h = new Handler(Looper.MainLooper);
+                            h.Post(() =>
+                            {
+                                if (succeed)
+                                {
+                                    Toast.MakeText(parent.Context, "Gallery Deletion Succeeded", ToastLength.Short).Show();
+
+                                    if(parent.Stage.TopScene is  GalleryScene scene)
+                                    {
+                                        parent.Stage.PopTopScene();
+                                    }
+
+                                    Media.Cache.RemoveGallery(parent.gallery);
+                                }
+                                else
+                                {
+                                    Toast.MakeText(parent.Context,"Gallery Deletion Failed", ToastLength.Short).Show();
+                                }
+                            });
+                        });
+                    }
+                }
+            }
         }
 
         private void ErrorFrame_Click(object sender, EventArgs e)
@@ -479,7 +557,8 @@ namespace HappyPandaXDroid.Scenes
         public void ParseMeta()
         {
             title.Text = gallery.titles[0].name;
-
+            categoryChip.Text = Core.Gallery.Categories[gallery.category_id].name;
+            language.Text = Core.Gallery.Languages[gallery.language_id].name;
             //category.Text = "place_holder";
 
         }
@@ -618,8 +697,7 @@ namespace HappyPandaXDroid.Scenes
                                 name = namespaceName,
                                 tags = tags
                             };
-                            taglists.Add(tagnamespace);
-                            
+                            taglists.Add(tagnamespace);                            
                         }
                     }
                 }

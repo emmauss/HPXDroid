@@ -1,15 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:happypandaxdroid="http://schemas.android.com/apk/res-auto Jump ">
-
-  <item android:id="@+id/search"
-      happypandaxdroid:icon="@drawable/ic_search"
-      android:title="Search"
-      happypandaxdroid:showAsAction="ifRoom|withText"
-      happypandaxdroid:actionViewClass="android.support.v7.widget.SearchView"/>
   <item android:id="@+id/addsearch"
       happypandaxdroid:icon="@drawable/ic_sort_black_24dp"
-      android:title="Quick Search"
+      android:title="Save Search Query"
         happypandaxdroid:actionViewClass="android.widget.ImageButton"
         android:tag="search"
       happypandaxdroid:showAsAction="always"/>
@@ -21,6 +15,6 @@ xmlns:happypandaxdroid="http://schemas.android.com/apk/res-auto Jump ">
   <item android:id="@+id/sort_direction"
         android:tag="dir"
       happypandaxdroid:icon="@drawable/ic_filter_list_black_24dp"
-      android:title="Sort Order"
+      android:title="Sort In"
       happypandaxdroid:showAsAction="ifRoom"/>
 </menu>

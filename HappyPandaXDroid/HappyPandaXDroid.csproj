@@ -25,7 +25,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
-    <DebugType>Full</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -45,6 +45,7 @@
     <LangVersion>latest</LangVersion>
     <AndroidSupportedAbis />
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -73,6 +74,9 @@
   <ItemGroup>
     <Reference Include="FloatingActionButton-Xamarin, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FAB.XamarinAndroid.1.6.4.0\lib\MonoAndroid50\FloatingActionButton-Xamarin.dll</HintPath>
+    </Reference>
+    <Reference Include="FloatingSearchView, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.FloatingSearchView.2.1.1\lib\MonoAndroid\FloatingSearchView.dll</HintPath>
     </Reference>
     <Reference Include="Glide, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Glide.Xamarin.4.1.1\lib\MonoAndroid10\Glide.dll</HintPath>
@@ -216,6 +220,9 @@
     <Reference Include="Xamarin.Android.Support.ViewPager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Support.ViewPager.28.0.0-preview8\lib\monoandroid90\Xamarin.Android.Support.ViewPager.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Android.ViewPropertyObjectAnimator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.ViewPropertyObjectAnimator.1.2.0\lib\MonoAndroid\Xamarin.Android.ViewPropertyObjectAnimator.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Bindings.MaterialProgressBar, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Bindings.MaterialProgressBar.1.1.7\lib\MonoAndroid\Xamarin.Bindings.MaterialProgressBar.dll</HintPath>
     </Reference>
@@ -230,6 +237,7 @@
     <Compile Include="Custom_Views\AutoWrapLayout.cs" />
     <Compile Include="Custom_Views\ImageViewHolder.cs" />
     <Compile Include="Custom_Views\OptionDialogPreference.cs" />
+    <Compile Include="Custom_Views\DeleteDialog.cs" />
     <Compile Include="Custom_Views\PageSelector.cs" />
     <Compile Include="Custom_Views\PreviewAdapter.cs" />
     <Compile Include="Custom_Views\PreviewHolder.cs" />
@@ -303,6 +311,14 @@
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\ic_import_contacts.xml" />
     <AndroidResource Include="Resources\layout\CollectionSceneLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\DeleteDialog.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\searchview.xml" />
+    <AndroidResource Include="Resources\layout\viewScene.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <TransformFile Include="Resources\menu\sortDirectionMenu.xml">
@@ -807,10 +823,6 @@
     <ProjectReference Include="..\external\Stage\Stage.csproj">
       <Project>{00c8482d-4401-4724-bfd0-26f87aa3f9c3}</Project>
       <Name>Stage</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sketch\Sketch.csproj">
-      <Project>{113fb6a7-d102-40c4-80bc-d65e7414ff67}</Project>
-      <Name>Sketch</Name>
     </ProjectReference>
     <ProjectReference Include="AndroidBindings\Binding_SubsamplingScaleImageView\Binding_SubsamplingScaleImageView.csproj">
       <Project>{063CBDBF-87C0-4E58-9DC2-966E7D908043}</Project>

@@ -3,14 +3,14 @@
   <style name="MyTheme" parent="MyTheme.Base">
   </style>
   <!-- Base theme applied no matter what API -->
-  <style name="MyTheme.Base" parent="AppTheme.Dark">
+  <style name="MyTheme.Base" parent="Theme.MaterialComponents.Bridge">
     <!--If you are using revision 22.1 please use just windowNoTitle. Without android:-->
     <item name="windowNoTitle">true</item>
     <!--We will be using the toolbar so no need to show ActionBar-->
     <item name="windowActionBar">false</item>
     <!-- Set theme colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
     <!-- colorPrimary is used for the default action bar background -->
-    <item name="colorPrimary">#00C500</item>
+    <item name="colorPrimary">#00ffffff</item>
     <!-- colorPrimaryDark is used for the status bar -->
     <item name="colorPrimaryDark">#1976D2</item>
     <!-- colorAccent is used as the default value for colorControlActivated
@@ -55,13 +55,22 @@
         <item name="android:maxLines">1</item>
     </style>
 
-  <style name="MyTheme.Splash" parent ="Theme.AppCompat.NoActionBar">
+  <style name="MyTheme.Splash" parent ="Theme.MaterialComponents.Bridge">
     <item name="android:windowBackground">@drawable/splash</item>
     <item name="android:windowNoTitle">true</item>
     <item name="android:windowFullscreen">true</item>
   </style>
+
+  <style name="SearchView">
+    <item name="floatingSearch_backgroundColor">@color/background_dark</item>
+    <item name="floatingSearch_viewSearchInputTextColor">#FFFFFF</item>
+    <item name="floatingSearch_hintTextColor">#EEEEEE</item>
+    <item name="floatingSearch_clearBtnColor">#FFFFFF</item>
+    <item name="floatingSearch_leftActionColor">#FFFFFF</item>
+    <item name="floatingSearch_menuItemIconColor">#FFFFFF</item>
+  </style>
   
-<style name="PopupMenuStyle" parent="Theme.AppCompat.Light">
+<style name="PopupMenuStyle" parent="Theme.MaterialComponents.Bridge">
      <item name="android:background">@android:color/black</item>
 </style>
 

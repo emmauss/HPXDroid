@@ -33,8 +33,7 @@ namespace HappyPandaXDroid.Scenes
             mToggleFab.SetImageResource(Resource.Drawable.ic_list_white);
             mToggleFab.SetOnClickListener(fabclick);
             base.Initialize();
-            OnCreateOptionsMenu();
-            if (query.Trim() != string.Empty)
+            /*if (query.Trim() != string.Empty)
             {
 
                 toolbar.Title = title.Replace("__namespace__:", "misc:");
@@ -43,13 +42,15 @@ namespace HappyPandaXDroid.Scenes
             else
                 toolbar.Title = "Library";
 
-            Current_Query = Parse(query, false);
+            Current_Query = Parse(query, false);*/
+            searchView.SetSearchText(query);
+            Refresh(0);
         }
 
         protected override void OnSaveViewState(View p0, Bundle p1)
         {
             var bundle = p1;
-            bundle.PutString("query", Current_Query);
+            bundle.PutString("query", CurrentQuery);
             base.OnSaveViewState(p0, p1);
         }
 
@@ -65,7 +66,7 @@ namespace HappyPandaXDroid.Scenes
             RequestToken token = new RequestToken(SceneCancellationTokenSource.Token);
             token.FinishedCallback += Token_FinishedCallback;
             token.FailedCallback += Token_FailedCallback;
-            Core.Gallery.GetCount(ItemType, Current_Query, token, ViewType); 
+            Core.Gallery.GetCount(ItemType, CurrentQuery, token, ViewType); 
         }
 
         private async void Token_FailedCallback(object sender, EventArgs e)
@@ -111,7 +112,7 @@ namespace HappyPandaXDroid.Scenes
                     RequestToken.FailedCallback += RefreshToken_FailedCallback;
                     logger.Info("Refreshing HPContent");
                     Core.Gallery.GetPage(ItemType, 0, RequestToken, ViewType, Core.App.Settings.Default_Sort,
-                        Core.App.Settings.Sort_Decending, Current_Query);                    
+                        Core.App.Settings.Sort_Decending, CurrentQuery);                    
                 });
             }
             else
@@ -230,7 +231,7 @@ namespace HappyPandaXDroid.Scenes
             RequestToken.FailedCallback += NextPageToken_FailedCallback;
 
             Core.Gallery.GetPage(ItemType, CurrentPage + 1, RequestToken, ViewType, Core.App.Settings.Default_Sort,
-                Core.App.Settings.Sort_Decending, Current_Query);
+                Core.App.Settings.Sort_Decending, CurrentQuery);
         }
 
         private void NextPageToken_FailedCallback(object sender, EventArgs e)
@@ -337,7 +338,7 @@ namespace HappyPandaXDroid.Scenes
             RequestToken.FailedCallback += PreviousPageToken_FailedCallback;
 
             Core.Gallery.GetPage(ItemType, CurrentPage - 1, RequestToken,
-                ViewType, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, Current_Query);
+                ViewType, Core.App.Settings.Default_Sort, Core.App.Settings.Sort_Decending, CurrentQuery);
         }
 
         private void PreviousPageToken_FailedCallback(object sender, EventArgs e)

@@ -15,6 +15,8 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics.Drawables;
+using Android.Graphics;
 using NLog;
 using Newtonsoft.Json;
 
@@ -28,6 +30,9 @@ namespace HappyPandaXDroid.Core
         public static ConcurrentQueue<Page> DownloadList = new ConcurrentQueue<Page>();
         private static List<Page> CurrentlyDownloading = new List<Page>();
         private static bool IsDownloading = false;
+        public static Color[] CategoryColors = new Color[] { };
+        public static Dictionary<int, Category> Categories { get; set; }
+        public static Dictionary<int, Language> Languages { get; set; }
         public enum ImageSize
         {
             Big = 400,
@@ -100,6 +105,38 @@ namespace HappyPandaXDroid.Core
             bool trash;
         }
 
+        static Gallery()
+        {
+            RefreshServerMeta();
+        }
+
+        public static void RefreshServerMeta()
+        {
+            var categories = GetCategories(new CancellationTokenSource().Token).Result;
+            Categories = new Dictionary<int, Category>();
+            foreach (var category in categories)
+            {
+                Categories.Add(category.id, category);
+            }
+
+            var languages = GetLanguages(new CancellationTokenSource().Token).Result;
+            Languages = new Dictionary<int, Language>();
+            foreach (var language in languages)
+            {
+                Languages.Add(language.id, language);
+            }
+        }
+
+        public class Category : HPXItem
+        {
+            public override ItemType Type => ItemType.Category;
+        }
+
+        public class Language : HPXItem
+        {
+            public override ItemType Type => ItemType.Language;
+        }
+
         public abstract class HPXItem
         {
             public GalleryItem[] galleries;
@@ -164,7 +201,7 @@ namespace HappyPandaXDroid.Core
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int taggable_id;
             public string last_read;
-            public string language_id;
+            public int language_id;
             public List<Artist> artists;
             public List<Page> pages;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -711,6 +748,140 @@ namespace HappyPandaXDroid.Core
 
                 return false;
             }
+        }
+
+        public static async Task<List<Category>> GetCategories(CancellationToken cancellationToken)
+        {
+            await Task.Delay(10);
+            List<Tuple<string, string>> main = new List<Tuple<string, string>>();
+            List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
+            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
+            JSON.API.PushKey(ref main, "session", App.Server.Info.session);
+            JSON.API.PushKey(ref funct, "fname", "get_items");
+            JSON.API.PushKey(ref funct, "item_type", Enum.GetName(typeof(ItemType), ItemType.Category));
+
+            string response = JSON.API.ParseToString(funct);
+            JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
+            response = JSON.API.ParseToString(main);
+            if (cancellationToken.IsCancellationRequested)
+                return new List<Category>();
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+            RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+                return new List<Category>();
+
+            request.Request = response;
+
+            request.Queue();
+
+            request.RequestResetEvent.WaitOne();
+
+            string reply = (string)request.Result;
+
+            var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>((string)request.Result);
+            if (obj == null)
+            {
+                request.Failed = true;
+                return new List<Category>();
+            }
+            var array = obj.data as Newtonsoft.Json.Linq.JArray;
+            List<Category> list = new List<Category>();
+            if (request.CancellationToken.IsCancellationRequested)
+                return new List<Category>();
+            try
+            {
+                if (array != null & array.Count > 0)
+                {
+                    var data = array[0].ToObject<JSON.DataObject>();
+                    var rdata = data.data as Newtonsoft.Json.Linq.JArray;
+
+                    var arry = rdata.ToArray();
+                    foreach (var token in arry)
+                    {
+                        if (token.Values<Category>() != null)
+                        {
+                            var item = token.ToObject<Category>();
+                            if (item != null && item.id > 0)
+                                list.Add(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return list;
+        }
+
+        public static async Task<List<Language>> GetLanguages(CancellationToken cancellationToken)
+        {
+            await Task.Delay(10);
+            List<Tuple<string, string>> main = new List<Tuple<string, string>>();
+            List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
+            JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
+            JSON.API.PushKey(ref main, "session", App.Server.Info.session);
+            JSON.API.PushKey(ref funct, "fname", "get_items");
+            JSON.API.PushKey(ref funct, "item_type", Enum.GetName(typeof(ItemType), ItemType.Language));
+
+            string response = JSON.API.ParseToString(funct);
+            JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
+            response = JSON.API.ParseToString(main);
+            if (cancellationToken.IsCancellationRequested)
+                return new List<Language>();
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+            RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+                return new List<Language>();
+
+            request.Request = response;
+
+            request.Queue();
+
+            request.RequestResetEvent.WaitOne();
+
+            string reply = (string)request.Result;
+
+            var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>((string)request.Result);
+            if (obj == null)
+            {
+                request.Failed = true;
+                return new List<Language>();
+            }
+            var array = obj.data as Newtonsoft.Json.Linq.JArray;
+            List<Language> list = new List<Language>();
+            if (request.CancellationToken.IsCancellationRequested)
+                return new List<Language>();
+            try
+            {
+                if (array != null & array.Count > 0)
+                {
+                    var data = array[0].ToObject<JSON.DataObject>();
+                    var rdata = data.data as Newtonsoft.Json.Linq.JArray;
+
+                    var arry = rdata.ToArray();
+                    foreach (var token in arry)
+                    {
+                        if (token.Values<Language>() != null)
+                        {
+                            var item = token.ToObject<Language>();
+                            if (item != null && item.id > 0)
+                                list.Add(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return list;
         }
 
         public static bool GetCachedPagePath(HPXItem item, out string pagePath, ImageSize size = ImageSize.Original)

@@ -36,7 +36,8 @@ namespace HappyPandaXDroid.Core
             {
                 var pinger = new System.Net.NetworkInformation.Ping();
 
-                if (pinger.Send(App.Settings.Server_IP).Status == System.Net.NetworkInformation.IPStatus.Success)
+                var status = pinger.Send(App.Settings.Server_IP).Status;
+                if (status == System.Net.NetworkInformation.IPStatus.Success)
                 {
                     return true;
                 }

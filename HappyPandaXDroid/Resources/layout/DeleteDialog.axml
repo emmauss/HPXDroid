@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.DialogTitle
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Jump To"
+        android:padding="10dp"
+        android:id="@+id/dialogTitle1" />
+	<TextView
+		android:id="@+id/dialogSummary"
+		android:minWidth="25px"
+        android:minHeight="25px"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+	/>
+    <CheckBox
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:text = "Send to Trash"
+        android:id="@+id/trashCheckBox">
+    </CheckBox>
+</LinearLayout>

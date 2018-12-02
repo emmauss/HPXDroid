@@ -78,6 +78,11 @@ namespace HappyPandaXDroid.Core
                 GalleryCache.TryAdd(gallery.BaseId, gallery);
             }
 
+            public static void RemoveGallery(Core.Gallery.GalleryItem gallery)
+            {
+                GalleryCache.Remove(gallery.BaseId);
+            }
+
             public static void InitializeGalleryCache()
             {
                 GalleryCache = new Dictionary<string, Gallery.GalleryItem>();

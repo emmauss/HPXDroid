@@ -1,6 +1,10 @@
 ﻿using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V7.Widget;
+using Android.Support.Design.Chip;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
@@ -175,6 +179,7 @@ namespace HappyPandaXDroid.Custom_Views
                             if (gallery.artists.Count > 0)
                                 if (gallery.artists[0].Names.Count > 0)
                                     vh.Info.Text = gallery.artists[0].Names[0].name;
+                            vh.Category.Text = Core.Gallery.Categories[gallery.category_id].name;
                         }
                         else
                          if (mdata[position] is Core.Gallery.Collection collection)
@@ -218,7 +223,7 @@ namespace HappyPandaXDroid.Custom_Views
             
             public TextView Name { get; set; }
             public TextView Info { get; set; }
-
+            public Chip Category { get; set; }
            
             CancellationTokenSource Token { get; set; }
 
@@ -229,6 +234,8 @@ namespace HappyPandaXDroid.Custom_Views
                 Thumb = itemView.FindViewById<ImageView>(Resource.Id.imageView);
                 Name = itemView.FindViewById<TextView>(Resource.Id.name);
                 Info = itemView.FindViewById<TextView>(Resource.Id.info);
+                Category = itemView.FindViewById<Chip>(Resource.Id.category);
+                Category.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
                 Token = new CancellationTokenSource();
             }
 

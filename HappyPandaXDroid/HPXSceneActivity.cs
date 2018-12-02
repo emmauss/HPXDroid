@@ -28,7 +28,7 @@ namespace HappyPandaXDroid
     {
         Director director;
         Stage stage;
-        DrawerLayout navDrawer;
+        public DrawerLayout navDrawer;
         StageLayout stageLayout;
         private static Logger logger = LogManager.GetCurrentClassLogger();
 

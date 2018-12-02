@@ -6,6 +6,7 @@ using System.IO;
 using System.Drawing;
 
 using Android;
+using Android.Support.Design.Chip;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -35,6 +36,7 @@ namespace HappyPandaXDroid.Custom_Views
         protected View itemCard;
         protected ImageView img;
         protected TextView text;
+        protected Chip categoryChip;
         protected bool loaded = false;
         protected TextView text2;
         protected Core.Gallery.HPXItem _HPXItem;
@@ -122,6 +124,7 @@ namespace HappyPandaXDroid.Custom_Views
             Name = FindViewById<TextView>(Resource.Id.textViewholder);
             Artist = FindViewById<TextView>(Resource.Id.textViewholder2);
             img = FindViewById<ImageView>(Resource.Id.imageView);
+            categoryChip = FindViewById<Chip>(Resource.Id.category);
             Clickable = true;
         }
 

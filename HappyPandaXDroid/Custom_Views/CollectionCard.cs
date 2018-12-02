@@ -36,6 +36,7 @@ namespace HappyPandaXDroid.Custom_Views
         {
             base.Initialize();
             Artist.Visibility = Android.Views.ViewStates.Gone;
+            categoryChip.Visibility = Android.Views.ViewStates.Gone;
         }
 
         public override async void Refresh()

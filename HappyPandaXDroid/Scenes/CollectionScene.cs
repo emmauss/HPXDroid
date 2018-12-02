@@ -39,7 +39,7 @@ namespace HappyPandaXDroid.Scenes
         protected override void Initialize()
         {
             base.Initialize();
-            toolbar.Title = Collection.name;
+            //toolbar.Title = Collection.name;
             //initialize header
             titleView = MainView.FindViewById<TextView>(Resource.Id.title);
             // category = MainView.FindViewById<TextView>(Resource.Id.category);
