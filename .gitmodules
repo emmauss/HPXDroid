@@ -2,10 +2,14 @@
 	path = external/RecyclerViewPager-Xamarin
 	url = https://github.com/emmauss/RecyclerViewPager-Xamarin.git
 
-[submodule "external/RefreshLayout-Xamarin"]
-	path = external/RefreshLayout-Xamarin
-	url = https://github.com/emmauss/RefreshLayout-Xamarin.git
-
 [submodule "external/EasyRecyclerView"]
 	path = external/EasyRecyclerView	
 	url = https://github.com/emmauss/EasyRecyclerView.git
+
+[submodule "external/RefreshLayoutBinding"]
+	path = external/RefreshLayoutBinding	
+	url = https://github.com/emmauss/RefreshLayoutBinding.git
+
+[submodule "external/StageBinding"]
+	path = external/Stage	
+	url = https://github.com/emmauss/StageBinding.git
