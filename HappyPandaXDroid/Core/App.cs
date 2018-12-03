@@ -32,18 +32,40 @@ namespace HappyPandaXDroid.Core
         public static class Settings
         {
             private static Logger logger = LogManager.GetCurrentClassLogger();
-            
-            public static string basePath = Android.OS.Environment.ExternalStorageDirectory.Path + "/HPX/";
+
+            static string basePath = null;
+            public static string BasePath
+            {
+                get
+                {
+                    if (basePath == null)
+                    {
+                        var state = Android.OS.Environment.ExternalStorageState;
+
+                        if (state != null && state == "mounted")
+                        {
+                            basePath = Android.OS.Environment.ExternalStorageDirectory.Path + "/HPX/";
+                        }
+                        else
+                        {
+                            basePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                        }
+                    }
+
+                    return basePath;
+                }
+            }
+
             public static string CachePath
             {
                 get
                 {
-                    string Path = basePath + "cache/";
+                    string Path = BasePath + "cache/";
                     Directory.CreateDirectory(Path);
                     return Path;
                 }
             }
-            public static string Log = basePath + "log/";
+            public static string Log = BasePath + "log/";
             public static bool Refresh = false;
             private static ISettings AppSettings
             {
@@ -185,7 +207,7 @@ namespace HappyPandaXDroid.Core
             {
                 get
                 {
-                    var set = AppSettings.GetValueOrDefault("enable_debugging", false);
+                    var set = AppSettings.GetValueOrDefault("enable_debugging", true);
                     return set;
                 }
                 set

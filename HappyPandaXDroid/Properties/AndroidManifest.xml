@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="emmaus.HPXDroid" android:versionCode="14000" android:versionName="1.4.0" android:installLocation="preferExternal" android:configChanges="keyboardHidden|orientation">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="emmaus.HPXDroid" android:versionCode="14007" android:versionName="1.4.0-7" android:installLocation="preferExternal" android:configChanges="keyboardHidden|orientation">
 	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="28" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

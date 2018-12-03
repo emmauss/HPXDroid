@@ -185,7 +185,7 @@ namespace HappyPandaXDroid.Core
         public class Recents
         {
             public static List<Gallery.GalleryItem> RecentList = new List<Gallery.GalleryItem>();
-            static string recentsPath = App.Settings.basePath + "recents";
+            static string recentsPath = App.Settings.BasePath + "recents";
 
             public static void LoadRecents()
             {
@@ -262,7 +262,7 @@ namespace HappyPandaXDroid.Core
         public class QuickSearch
         {
             public static List<string> Searches = new List<string>();
-            static string recentsPath = App.Settings.basePath + "searches";
+            static string recentsPath = App.Settings.BasePath + "searches";
 
             public static void LoadSearches()
             {

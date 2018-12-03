@@ -77,8 +77,8 @@ namespace HappyPandaXDroid
             Task.Run(() =>
             {
                 InitLogging();
-                if (!File.Exists(Core.App.Settings.basePath + ".nomedia"))
-                    File.Create(Core.App.Settings.basePath + ".nomedia");
+                if (!File.Exists(Core.App.Settings.BasePath + ".nomedia"))
+                    File.Create(Core.App.Settings.BasePath + ".nomedia");
                 Task.Run(() => Core.Media.Recents.LoadRecents());
                 Task.Run(() => Core.Media.QuickSearch.LoadSearches());
             });
@@ -118,7 +118,7 @@ namespace HappyPandaXDroid
 
         public void CreateFolders()
         {
-            Directory.CreateDirectory(Core.App.Settings.basePath);
+            Directory.CreateDirectory(Core.App.Settings.BasePath);
             Directory.CreateDirectory(Core.App.Settings.CachePath);
             Directory.CreateDirectory(Core.App.Settings.CachePath + "pages/");
             Directory.CreateDirectory(Core.App.Settings.Log);
@@ -128,6 +128,9 @@ namespace HappyPandaXDroid
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (System.Exception)e.ExceptionObject;
+
+            SaveCrashDetails(ex);
+
             logger.Fatal(ex, "Fatal Exception Thrown : " + ex.Message + System.Environment.NewLine + ex.StackTrace);
             Process.KillProcess(Process.MyPid());
         }
@@ -135,7 +138,21 @@ namespace HappyPandaXDroid
         //ui thread unhandled exception handler
         private void AndroidEnvironment_UnhandledExceptionRaiser(object sender, RaiseThrowableEventArgs e)
         {
+            SaveCrashDetails(e.Exception);
+
             logger.Fatal(e.Exception, "Fatal Exception Thrown : "+ e.Exception.Message + System.Environment.NewLine + e.Exception.StackTrace);
+        }
+
+        public void SaveCrashDetails(Exception ex)
+        {
+            Directory.CreateDirectory(Core.App.Settings.BasePath);
+
+            var crashPath = Path.Combine(Core.App.Settings.BasePath, "crash.txt");
+
+            string crashLog = ex.Message;
+            crashLog += "\n" + ex.StackTrace;
+
+            File.WriteAllText(crashPath, crashLog);
         }
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
