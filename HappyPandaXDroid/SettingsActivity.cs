@@ -79,7 +79,7 @@ namespace HappyPandaXDroid
 
                 sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
                 cachedialog = (Custom_Views.OptionDialogPreference)FindPreference("cachedialog");
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     var h = new Handler(Looper.MainLooper);
                     h.Post(() =>
@@ -89,7 +89,9 @@ namespace HappyPandaXDroid
                         cachedialog.Summary = "Caculating Total cache size";
                     });
 
-                    double cacheSize = Math.Round((double)(Core.Media.Cache.GetCacheSize()) / (1024 * 1024), 2);
+                    var size = await Core.Media.Cache.GetCacheSize();
+
+                    double cacheSize = Math.Round((double)size / (1024 * 1024), 2);
                     
                     h.Post(() =>
                     {
@@ -100,7 +102,6 @@ namespace HappyPandaXDroid
                 });
                 cachedialog.OnPositiveClick += Cachedialog_OnPositiveClick;
                 server.OnPreferenceClickListener = new Clistener();
-
             }
 
             public void SetParent(AppCompatActivity app)
@@ -137,7 +138,7 @@ namespace HappyPandaXDroid
                 {
                     if (await Core.Media.Cache.ClearCache())
                     {
-                        string size = Math.Round((double)(Core.Media.Cache.GetCacheSize()) / (1024 * 1024), 2).ToString() + " MB";
+                        string size = Math.Round((double)( await Core.Media.Cache.GetCacheSize()) / (1024 * 1024), 2).ToString() + " MB";
                         
                         h.Post(() =>
                         {

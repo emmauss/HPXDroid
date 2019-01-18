@@ -88,7 +88,7 @@ namespace HappyPandaXDroid.Core
                 GalleryCache = new Dictionary<string, Gallery.GalleryItem>();
             }
 
-            public static long GetCacheSize()
+            public static async Task<long> GetCacheSize()
             {
                 Directory.CreateDirectory(App.Settings.CachePath);
                 var filelist = new DirectoryInfo(App.Settings.CachePath).EnumerateFiles("*",SearchOption.AllDirectories);

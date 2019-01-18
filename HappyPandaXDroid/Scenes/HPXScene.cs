@@ -28,7 +28,8 @@ namespace HappyPandaXDroid.Scenes
 
         protected override void OnDestroyView(View p0)
         {
-            RequestToken.IsPaused = false;
+            if (RequestToken != null)
+                RequestToken.IsPaused = false;
             RequestToken = null;
             base.OnDestroyView(p0);
         }

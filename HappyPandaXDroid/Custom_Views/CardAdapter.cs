@@ -34,8 +34,6 @@ namespace HappyPandaXDroid.Custom_Views
                 ItemClick?.Invoke(this, position);
             }
 
-            public Scene scene;
-
             List<Core.Gallery.HPXItem> mdata;
             public Dictionary<int,Media.Image> UrlList;
             Android.Content.Context mcontext;
@@ -160,7 +158,9 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     hold.Bound = false;
                     hold.Url = string.Empty;
-                    hold.Cancel();
+
+                    if (!content.IsDestroyed && !content.IsActivityDestroyed)
+                        hold.Cancel();
                 }
             }
 

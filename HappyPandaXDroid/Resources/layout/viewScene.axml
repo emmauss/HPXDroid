@@ -6,9 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/safeCoordinatorLayout1">
-	<RelativeLayout
+	<FrameLayout
     android:layout_width="match_parent"
         android:layout_height="match_parent">
+		<com.arlib.floatingsearchview.FloatingSearchView
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+			style="@style/SearchView"
+                app:floatingSearch_searchBarMarginLeft="@dimen/search_view_inset"
+                app:floatingSearch_searchBarMarginTop="@dimen/search_view_inset"
+                app:floatingSearch_searchBarMarginRight="@dimen/search_view_inset"
+                app:floatingSearch_suggestionsListAnimDuration="250"
+                app:floatingSearch_showSearchKey="true"
+                app:floatingSearch_leftActionMode="showHamburger"
+                app:floatingSearch_close_search_on_keyboard_dismiss="true"/>
 		<FrameLayout
     android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,27 +48,7 @@
             android:layout_height="match_parent" />
     </com.hippo.refreshlayout.RefreshLayout>
   </FrameLayout>
-	<android.support.design.widget.AppBarLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-		<com.arlib.floatingsearchview.FloatingSearchView
-   xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-			style="@style/SearchView"
-                app:floatingSearch_searchBarMarginLeft="@dimen/search_view_inset"
-                app:floatingSearch_searchBarMarginTop="@dimen/search_view_inset"
-                app:floatingSearch_searchBarMarginRight="@dimen/search_view_inset"
-                app:floatingSearch_suggestionsListAnimDuration="250"
-                app:floatingSearch_showSearchKey="true"
-                app:floatingSearch_leftActionMode="showHamburger"
-                app:floatingSearch_close_search_on_keyboard_dismiss="true"/>
-			</android.support.design.widget.AppBarLayout>
-		</RelativeLayout>
+		</FrameLayout>
 	<com.github.clans.fab.FloatingActionMenu
   android:layout_width="wrap_content"
   android:layout_height="wrap_content"
