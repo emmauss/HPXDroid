@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+                 xmlns:package="http://schemas.android.com/apk/lib/emmaus.HPXDroid"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/keyline_margin"
+    android:divider="@drawable/spacer_keyline"
+    android:showDividers="middle">
+
+  <Emmaus.Widget.RecyclerViewPager
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/gallerypager"
+            package:rvp_triggerOffset="0.1"
+            package:rvp_singlePageFling="true"
+            android:clipToPadding="false" />
+
+</LinearLayout>

@@ -544,8 +544,9 @@ namespace HappyPandaXDroid.Scenes
                 return;
 
             Intent intent = new Android.Content.Intent(Context, typeof(GalleryViewer));
-            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery.PageList));
-            intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
+
+            IO.Parcel.PushParcel(gallery);
+
             intent.PutExtra("no", gallery.LastPageRead + 1);
             StartActivity(intent);
         }
@@ -560,8 +561,7 @@ namespace HappyPandaXDroid.Scenes
                 return;
 
             Intent intent = new Android.Content.Intent(Context, typeof(GalleryViewer));
-            intent.PutExtra("page", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery.PageList));
-            intent.PutExtra("gallery", Core.JSON.Serializer.SimpleSerializer.Serialize(gallery));
+            IO.Parcel.PushParcel(gallery);
             StartActivity(intent);
         }
 
@@ -683,9 +683,9 @@ namespace HappyPandaXDroid.Scenes
         
         void ParseTags()
         {
-            if (!IsTagAvailable())
-                return;
             no_tags.Visibility = ViewStates.Gone;
+            bool tagsAvailable = IsTagAvailable();
+
             ((Custom_Views.TagsAdapter)tagRecyclerView.GetAdapter()).SetList(new List<Core.Gallery.TagNamespace>());
 
             {
@@ -713,14 +713,25 @@ namespace HappyPandaXDroid.Scenes
                     }
                 }
 
+                if (!tagsAvailable)
+                {
+                    taglists = new List<Core.Gallery.TagNamespace>();
+                    var tag = new Core.Gallery.TagNamespace()
+                    {
+                        name = "tag",
+
+                        tags = new List<Core.Gallery.TagItem>(){ new Core.Gallery.TagItem() { name = "none" } }
+                    };
+
+                    taglists.Add(tag);
+                }
+
                 if(taglists.Count>0)
                 {
                     tagsAdapter.SetList(taglists);
                 }
 
             }
-
-            
             TagLayout.Visibility = ViewStates.Visible;
 
         }

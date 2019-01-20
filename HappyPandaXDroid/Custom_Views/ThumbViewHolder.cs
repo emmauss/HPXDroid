@@ -29,18 +29,24 @@ namespace HappyPandaXDroid.Custom_Views
         {
             set
             {
-                Media.Image image = Size == Core.Gallery.ImageSize.Small ? HPXItem.Thumb : HPXItem.Image;
-                if (value)
+                try
                 {
-                    image.Ready += Image_Ready;
-                    CancellationTokenSource = new CancellationTokenSource();
-                    if (image.IsReady)
-                        LoadImage();
-                }
-                else
+                    Media.Image image = Size == Core.Gallery.ImageSize.Small ? HPXItem.Thumb : HPXItem.Image;
+                    if (value)
+                    {
+                        image.Ready += Image_Ready;
+                        CancellationTokenSource = new CancellationTokenSource();
+                        if (image.IsReady)
+                            LoadImage();
+                    }
+                    else
+                    {
+                        image.Ready -= Image_Ready;
+                        CancellationTokenSource.Cancel();
+                    }
+                }catch(Exception ex)
                 {
-                    image.Ready -= Image_Ready;
-                    CancellationTokenSource.Cancel();
+
                 }
             }
         }

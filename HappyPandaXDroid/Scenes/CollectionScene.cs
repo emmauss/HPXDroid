@@ -1,121 +1,233 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Android.App;
-using Android.Content;
+﻿using Android.App;
 using Android.OS;
+using Android.Content;
+using Android.Support.V7.App;
 using Android.Runtime;
 using Android.Views;
+using Android.Support.Design.Chip;
 using Android.Widget;
+using System.Threading;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Android.Support.V4.Widget;
+using Android.Support.Design.Widget;
+using Android.Support.V7.Widget;
+using Android.Support.V7.View;
 using Com.Bumptech.Glide;
 using HappyPandaXDroid.Core;
+using Com.Bumptech.Glide.Request;
+using ProgressView = XamarinBindings.MaterialProgressBar;
+using NLog;
+using Android.Content.Res;
+using Com.Hippo.Stage;
+using V7 = Android.Support.V7.Widget;
+using Com.Bumptech.Glide;
+using HappyPandaXDroid.Core;
+using Android.Content.Res;
 
 namespace HappyPandaXDroid.Scenes
 {
-    class CollectionScene : ViewScene
+    class CollectionScene : HPXScene
     {
-        TextView titleView, galleries;
+        private TextView mErrorText;
+        public TextView title, galleries;
+        public CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
+        FrameLayout errorFrame;
+        Emmaus.Widget.RecyclerViewPager galleryPager;
+        ProgressView.MaterialProgressBar mProgressView;
+        Chip categoryChip;
+        LinearLayout MainLayout;
+        AppBarLayout AppBarLayout;
+        Custom_Views.CollectionPagerAdapter adapter;
+        bool loaded = false;
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        public bool IsRunning = true;
+        Helpers.Layouts.ExtraLayoutManager layout;
+        V7.Toolbar toolbar;
         ImageView thumb;
         Core.Gallery.Collection Collection;
         string url;
-        public CollectionScene(Core.Gallery.Collection collection,string url) : base(collection.name, null)
+        string collectionTitle;
+        int count;
+        View MainView;
+
+        List<Core.Gallery.HPXItem> Galleries { get; set; }
+
+        public CollectionScene(Core.Gallery.Collection collection,string url)
         {
             Collection = collection;
-            title = collection.name;
+            collectionTitle = collection.name;
             this.url = url;
         }
 
         protected override View OnCreateView(LayoutInflater p0, ViewGroup p1)
         {
-            MainView = p0.Inflate(Resource.Layout.CollectionSceneLayout, p1, false);
+            MainView = p0.Inflate(Resource.Layout.CollectionScene, p1, false);
             Initialize();
 
             return MainView;
         }
 
-        protected override void Initialize()
+        protected void Initialize()
         {
-            base.Initialize();
+            InitializeViews();
+            
             RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
-            //toolbar.Title = Collection.name;
+            toolbar.Title = Collection.name;
             //initialize header
-            titleView = MainView.FindViewById<TextView>(Resource.Id.title);
-            // category = MainView.FindViewById<TextView>(Resource.Id.category);
-            galleries = MainView.FindViewById<TextView>(Resource.Id.pages);
-            thumb = MainView.FindViewById<ImageView>(Resource.Id.thumb);
-            titleView.Text = Collection.name;
-            Glide.With(Context).Load(url).Into(thumb);
-            current_query = string.Empty;
-            Refresh(0);
+            
+            title.Text = Collection.name;
+            Glide.With(Context).Load(Collection.Thumb.Uri).Into(thumb);
+            categoryChip.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
+            categoryChip.Text = Core.Gallery.Categories[Collection.category_id].name;
+            Task.Run(() =>Refresh(0));
         }
 
-        public readonly new Core.Gallery.ItemType ItemType = Core.Gallery.ItemType.Gallery;
-
-        public override Core.Gallery.ViewType ViewType => Core.Gallery.ViewType.Library;
-
-        public override async void GetTotalCount()
+        void InitializeViews()
         {
-            await Task.Run(() =>
-            {
-                if (!SceneCancellationTokenSource.IsCancellationRequested)
-                    Count = Core.App.Server.GetRelatedCount(Collection.id, SceneCancellationTokenSource.Token, Core.Gallery.ItemType.Collection
+            title = MainView.FindViewById<TextView>(Resource.Id.title);
+            galleries = MainView.FindViewById<TextView>(Resource.Id.galleries);
+            thumb = MainView.FindViewById<ImageView>(Resource.Id.thumb);
+            toolbar = MainView.FindViewById<V7.Toolbar>(Resource.Id.toolbar);
+            categoryChip = MainView.FindViewById<Chip>(Resource.Id.category);
+            mProgressView = MainView.FindViewById<ProgressView.MaterialProgressBar>(Resource.Id.progress_view);
+            mProgressView.Visibility = ViewStates.Visible;
+            MainLayout = MainView.FindViewById<LinearLayout>(Resource.Id.below_header);
+            errorFrame = MainView.FindViewById<FrameLayout>(Resource.Id.error_frame);
+            errorFrame.Visibility = ViewStates.Gone;
+            MainLayout.Visibility = ViewStates.Gone;
+            galleryPager = MainView.FindViewById<Emmaus.Widget.RecyclerViewPager>(Resource.Id.gallerypager);
+            toolbar = MainView.FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            mErrorText = MainView.FindViewById<TextView>(Resource.Id.error_text);
+            adapter = new Custom_Views.CollectionPagerAdapter(Context, this);
+            mProgressView.Visibility = ViewStates.Visible;
+            galleryPager.SetAdapter(new Emmaus.Widget.RecyclerViewPagerAdapter(galleryPager, adapter));
+            categoryChip = MainView.FindViewById<Chip>(Resource.Id.category);
+            categoryChip.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
+            layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
+            layout.SetExtraLayoutSpace(100);
+            galleryPager.SetLayoutManager(layout);
+        }
+
+        public void GetTotalCount()
+        {
+            if (!SceneCancellationTokenSource.IsCancellationRequested)
+                    count = Core.App.Server.GetRelatedCount(Collection.id, SceneCancellationTokenSource.Token, Core.Gallery.ItemType.Collection
                     , Core.Gallery.ItemType.Gallery);
                 var h = new Handler(Looper.MainLooper);
+            try
+            {
                 if (!SceneCancellationTokenSource.IsCancellationRequested)
-                    h.Post(() => galleries.Text = Count.ToString());
-            }, SceneCancellationTokenSource.Token);
+                    h.Post(() => galleries.Text = count.ToString());
+            }catch(Exception ex)
+            {
+
+            }
         }
 
-        public override async void Refresh(int page)
+        public async void Refresh(int page)
         {
-            CurrentList = new List<Core.Gallery.HPXItem>();
-            CurrentPage = page;
+            Galleries = new List<Core.Gallery.HPXItem>();
+
+            if (Collection.Thumb == null)
+                Collection.Thumb = new Media.Image();
+            if (string.IsNullOrWhiteSpace(Collection.Thumb.Uri))
+                Collection.Thumb.Uri = Core.Gallery.GetThumb(Collection, SceneCancellationTokenSource.Token).Result;
 
             var h = new Handler(Looper.MainLooper);
+            h.Post(() =>
+            {
+                try
+                {
+                    if (Collection.Thumb.Uri.Contains("fail"))
+                    {
+                        Glide.With(Context)
+                        .Load(Resource.Drawable.image_failed)
+                        .Into(thumb);
+                        Collection.Thumb.Uri = string.Empty;
+                    }
+                    else
+                        Glide.With(Context)
+                            .Load(Collection.Thumb.Uri)
+                            .Into(thumb);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In GalleryActivity.Oncreate.");
+                }
+            });
+
+            if (SceneCancellationTokenSource.IsCancellationRequested)
+                return;
+
+            GetTotalCount();
+
             if (Core.Net.Connect())
             {
                 h.Post(() =>
                 {
-                    SetMainLoading(true);
+                    mProgressView.Visibility = ViewStates.Visible;
                 });
                 await Task.Run(async () =>
                 {
                     logger.Info("Refreshing HPContent");
                     if (!SceneCancellationTokenSource.IsCancellationRequested)
                     {
-                        var list = App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
-                            Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, 0);
-                        if (SceneCancellationTokenSource.IsCancellationRequested)
-                            return;
+                        try
+                        {
+                            var list = App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
+                                Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, count, 0);
+                            if (SceneCancellationTokenSource.IsCancellationRequested)
+                                return;
                             foreach (var item in list)
-                        {
-                            item.Thumb = new Media.Image();
-                        }
-                        CurrentList.AddRange(list);
-                        if (CurrentList == null || CurrentList.Count < 1)
-                        {
+                            {
+                                item.Thumb = new Media.Image();
+                            }
+                            Galleries.AddRange(list);
+                            if (Galleries == null || Galleries.Count < 1)
+                            {
+                                h.Post(() =>
+                                {
+                                    mProgressView.Visibility = ViewStates.Gone;
+                                    errorFrame.Visibility = ViewStates.Visible;
+                                });
+                                return;
+                            }
+
+                            var pages = new List<List<Core.Gallery.HPXItem>>();
+
+                            int i = 0;
+
+                            var currentList = new List<Core.Gallery.HPXItem>();
+
+                            while (i < Galleries.Count)
+                            {
+                                if (i % 20 == 0)
+                                {
+                                    currentList = new List<Core.Gallery.HPXItem>();
+
+                                    pages.Add(currentList);
+                                }
+
+                                currentList.Add(Galleries[i]);
+
+                                i++;
+                            }
+
                             h.Post(() =>
                             {
-                                SetMainLoading(false);
-                                SetError(true);
+                                adapter.SetList(pages);
+                                adapter.NotifyDataSetChanged();
+                                mProgressView.Visibility = ViewStates.Gone;
                             });
-                            return;
-                        }
-                        CurrentPage = 0;
-                        h.Post(() =>
+                            logger.Info("HPContent Refresh Successful");
+
+                        }catch(Exception ex)
                         {
-                            adapter.ResetList();
-                            adapter.NotifyDataSetChanged();
-                            SetMainLoading(false);
-                            if (CurrentList.Count > 0)
-                                mRecyclerView.ScrollToPosition(0);
-                        });
-                        GetTotalCount();
-                        mpageSelector = new Custom_Views.PageSelector(this);
-                        logger.Info("HPContent Refresh Successful");
+
+                        }
                     }
                 },SceneCancellationTokenSource.Token);
             }
@@ -123,102 +235,18 @@ namespace HappyPandaXDroid.Scenes
             {
                 h.Post(() =>
                 {
-                    SetError(true);
+                    mProgressView.Visibility = ViewStates.Gone;
+                    errorFrame.Visibility = ViewStates.Visible;
                 });
             }
         }
 
-        public override async void NextPage()
+        public override void OnConfigurationChanged(Configuration newConfig)
         {
-            isLoading = true;
-            logger.Info("Loading Next Page");
-            var h = new Handler(Looper.MainLooper);
-            if ((CurrentPage + 1) >= (Count / 25))
-            {
-                h.Post(() =>
-                {
-                    Toast to = Toast.MakeText(this.Context, "Reached end of library", ToastLength.Short);
-                    to.SetGravity(GravityFlags.Bottom, 0, 10);
-
-                    to.Show();
-                    SetBottomLoading(false);
-                    mRefreshLayout.HeaderRefreshing = false;
-                    mRefreshLayout.FooterRefreshing = false;
-                    isLoading = false;
-                });
-                return;
-            }
-            int lastin = CurrentList.Count - 1;
-            var list = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
-                        Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, CurrentPage+1);
-            adapter.Add(new List<Core.Gallery.HPXItem>(list));
-            if (CurrentList.Count > 0)
-            {
-                h.Post(() =>
-                {
-                    adapter.NotifyItemRangeInserted(lastin + 1, CurrentList.Count - (lastin + 1));
-
-                    mRefreshLayout.HeaderRefreshing = false;
-                    mRefreshLayout.FooterRefreshing = false;
-                    isLoading = false;
-                    SetBottomLoading(false);
-                    mRecyclerView.RefreshDrawableState();
-
-                });
-                CurrentPage++;
-
-
-
-            }
-            logger.Info("Loading Next Page Successful");
-
+            layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
+            layout.SetExtraLayoutSpace(300);
+            galleryPager.SetLayoutManager(layout);
+            galleryPager.GetRecycledViewPool().Clear();
         }
-
-        public override async void PreviousPage()
-        {
-            isLoading = true;
-            logger.Info("Loading Previous Page");
-            var h = new Handler(Looper.MainLooper);
-            if (CurrentPage <= 0)
-            {
-                h.Post(() =>
-                {
-                    SetBottomLoading(false);
-                });
-                return;
-            }
-            if (mRefreshLayout.FooterRefreshing)
-            {
-                logger.Info("Refresh Operation already in progress");
-                isLoading = false;
-                return;
-            }
-
-            h.Post(() =>
-            {
-                SetBottomLoading(true);
-                mRefreshLayout.HeaderRefreshing = true;
-            });
-            var oldlist = new List<Core.Gallery.HPXItem>(CurrentList);
-            var newitems = Core.App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
-                        Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 50, CurrentPage - 1);
-            int nitems = newitems.Count;
-            adapter.Prepend(new List<Core.Gallery.HPXItem>(newitems));
-            if (nitems > 0)
-            {
-                h.Post(() =>
-                {
-                    adapter.NotifyItemRangeInserted(0, 25);
-                    mRefreshLayout.HeaderRefreshing = false;
-                    isLoading = false;
-
-                });
-                CurrentPage--;
-            }
-            SetBottomLoading(false);
-            logger.Info("Loading Previous Page Successful");
-
-        }
-
     }
 }

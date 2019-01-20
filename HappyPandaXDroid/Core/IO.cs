@@ -16,6 +16,33 @@ namespace HappyPandaXDroid.Core
 {
     public class IO
     {
+        public static class Parcel
+        {
+            private static Stack<object> parcels;
+
+            static Parcel()
+            {
+                parcels = new Stack<object>();
+            }
+
+            public static void PushParcel(object parcel)
+            {
+                lock (parcels)
+                {
+                    parcels.Push(parcel);
+                }
+            }
+
+            public static object PopParcel()
+            {
+                lock (parcels)
+                {
+                    return parcels.Pop();
+                }
+            }
+
+        }
+
         public class Compression
         {
             public static byte[] Compress(byte[] source)

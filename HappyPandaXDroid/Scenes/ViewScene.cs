@@ -251,7 +251,6 @@ namespace HappyPandaXDroid.Scenes
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");
-            
         }
 
         private void SearchView_MenuItemClick(object sender, FloatingSearchView.MenuItemClickEventArgs e)
@@ -373,8 +372,6 @@ namespace HappyPandaXDroid.Scenes
             var display = window.DefaultDisplay;
             if (isGrid)
             {
-
-
                 var metrics = new DisplayMetrics();
                 display.GetMetrics(metrics);
 

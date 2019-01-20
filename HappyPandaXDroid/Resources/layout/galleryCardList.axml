@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:maxLines="4"
+                android:maxLines="3"
                 android:minLines="1"
                 android:id="@+id/name"
                 android:layout_gravity="center_horizontal"

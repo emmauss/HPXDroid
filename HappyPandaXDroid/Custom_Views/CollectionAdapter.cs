@@ -11,21 +11,24 @@ using System.Threading.Tasks;
 using System.Threading;
 using Com.Bumptech.Glide;
 
+using HPXHolder = HappyPandaXDroid.Custom_Views.CardAdapter.HPXItemHolder;
+
 namespace HappyPandaXDroid.Custom_Views
 {
-    class PreviewAdapter : RecyclerView.Adapter
+    class CollectionAdapter : RecyclerView.Adapter
     {
-        public event EventHandler<PreviewAdapterClickEventArgs> ItemClick;
-        public event EventHandler<PreviewAdapterClickEventArgs> ItemLongClick;
+        public event EventHandler<CollectionAdapterClickEventArgs> ItemClick;
+        public event EventHandler<CollectionAdapterClickEventArgs> ItemLongClick;
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        public List<Core.Gallery.Page> mdata;
+        public List<Core.Gallery.HPXItem> mdata;
         Dictionary<int, Core.Media.Image> URLlist;
         Android.Content.Context mcontext;
         int columns = 1;
-        Scene previewScene;
-        public PreviewAdapter(Context context, Scene scene)
+        Scene collectionScene;
+
+        public CollectionAdapter(Context context, Scene scene)
         {
-            previewScene = scene;
+            collectionScene = scene;
             mcontext = context;
             URLlist = new Dictionary<int, Core.Media.Image>();
         }
@@ -35,19 +38,19 @@ namespace HappyPandaXDroid.Custom_Views
             get { return mdata == null ? 0 : mdata.Count; }
         }
 
-        public async void SetList(List<Core.Gallery.Page> PageList)
+        public async void SetList(List<Core.Gallery.HPXItem> GalleryList)
         {
-            mdata = new List<Core.Gallery.Page>();
-            foreach (var page in PageList)
+            mdata = new List<Core.Gallery.HPXItem>();
+            foreach (var page in GalleryList)
                 page.Image = new Core.Media.Image();
-            if (PageList != null)
+            if (GalleryList != null)
             {
-                mdata.AddRange(PageList);
-                await Task.Run(() => { UpdateUrls(PageList); });
+                mdata.AddRange(GalleryList);
+                await Task.Run(() => { UpdateUrls(GalleryList); });
             }
         }
 
-        public void UpdateUrls(List<Core.Gallery.Page> newList)
+        public void UpdateUrls(List<Core.Gallery.HPXItem> newList)
         {
             var items = new List<Core.Gallery.HPXItem>();
             foreach (var item in newList)
@@ -56,8 +59,8 @@ namespace HappyPandaXDroid.Custom_Views
             }
             if (items.Count > 0)
             {
-                CancellationToken token = ((Scenes.GalleryScene)previewScene).SceneCancellationTokenSource.Token;
-                var urls = Core.Gallery.GetImage(items, Core.Gallery.ItemType.Page,
+                CancellationToken token = ((Scenes.GalleryScene)collectionScene).SceneCancellationTokenSource.Token;
+                var urls = Core.Gallery.GetImage(items, Core.Gallery.ItemType.Gallery,
                     token).Result;
                 if (token.IsCancellationRequested)
                     return;
@@ -78,28 +81,25 @@ namespace HappyPandaXDroid.Custom_Views
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            Custom_Views.PreviewHolder vh = holder as Custom_Views.PreviewHolder;
+            HPXHolder vh = holder as HPXHolder;
             var page = mdata[position];
             if (vh != null)
             {
-                vh.RemoveClickEvents(OnClick, OnLongClick);
-                vh.SetClickEvents(OnClick, OnLongClick);
-                vh.page = page;
+                vh.Id = mdata[position].id;
+                if (mdata[position] is Core.Gallery.GalleryItem gallery)
+                {
+                    vh.HPXItem = gallery;
+                    vh.Name.Text = gallery.titles[0].name;
+                    if (gallery.artists.Count > 0)
+                        if (gallery.artists[0].Names.Count > 0)
+                            vh.Info.Text = gallery.artists[0].Names[0].name;
+                }
+
+                vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
+
                 vh.Bound = true;
 
             }
-            /*Task.Run(async () =>
-            {
-                try
-                {
-                    await vh.LoadPreview(page);
-                }
-                catch (System.Exception ex)
-                {
-                    logger.Error(ex, "\n Exception Caught In GalleryActivity.PreviewAdaptor.OnBindViewHolder.");
-                }
-
-            });*/
         }
 
         
@@ -107,39 +107,38 @@ namespace HappyPandaXDroid.Custom_Views
         public override void OnViewRecycled(Java.Lang.Object holder)
         {
             base.OnViewRecycled(holder);
-            var hold = holder as PreviewHolder;
-            if (hold != null)
+            if (holder is HPXHolder hold)
             {
-                hold.RemoveClickEvents(OnClick, OnLongClick);
-                hold.Recycle();
                 hold.Bound = false;
+                hold.Url = string.Empty;
+
+                if (!collectionScene.IsDestroyed && !collectionScene.IsActivityDestroyed)
+                    hold.Cancel();
             }
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            View itemview = LayoutInflater.From(parent.Context)
-                .Inflate(Resource.Layout.preview_template, parent, false);
-            Custom_Views.PreviewHolder vh = new Custom_Views.PreviewHolder(itemview, previewScene);
+            View itemview = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.galleryCardList, null);
+            HPXHolder vh = new HPXHolder(itemview);
             return vh;
         }
 
-        void OnClick(PreviewAdapterClickEventArgs args)
+        void OnClick(CollectionAdapterClickEventArgs args)
         {
-            args.Gallery = ((Scenes.GalleryScene)previewScene).gallery;
             ItemClick?.Invoke(this, args);
         }
-        void OnLongClick(PreviewAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
+        void OnLongClick(CollectionAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
     }
 
 
-    public class PreviewPagerAdapter : RecyclerView.Adapter
+    public class CollectionPagerAdapter : RecyclerView.Adapter
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        public List<List<Core.Gallery.Page>> mdata;
+        public List<List<Core.Gallery.HPXItem>> mdata;
         Android.Content.Context mcontext;
         Scene previewScene;
-        public PreviewPagerAdapter(Context context, Scene scene)
+        public CollectionPagerAdapter(Context context, Scene scene)
         {
             previewScene = scene;
             mcontext = context;
@@ -150,9 +149,9 @@ namespace HappyPandaXDroid.Custom_Views
             get { return mdata == null ? 0 : mdata.Count; }
         }
 
-        public void SetList(List<List<Core.Gallery.Page>> PageList)
+        public void SetList(List<List<Core.Gallery.HPXItem>> PageList)
         {
-            mdata = new List<List<Core.Gallery.Page>>();
+            mdata = new List<List<Core.Gallery.HPXItem>>();
             if (PageList != null)
             {
                 mdata.AddRange(PageList);
@@ -196,55 +195,37 @@ namespace HappyPandaXDroid.Custom_Views
         }
 
 
+
+
         class PageHolder : RecyclerView.ViewHolder
         {
             RecyclerView view;
-            List<Core.Gallery.Page> previews;
-            PreviewAdapter adapter;
+            List<Core.Gallery.HPXItem> previews;
+            CollectionAdapter adapter;
             int columns = 1;
             Scene parentscene;
             public PageHolder(View ItemView, Scene scene) : base(ItemView)
             {
                 view = ItemView.FindViewById<RecyclerView>(Resource.Id.recyclerView);
                 parentscene = scene;
-                adapter = new PreviewAdapter(ItemView.Context, scene);
+                adapter = new CollectionAdapter(ItemView.Context, scene);
                 adapter.ItemClick += Adapter_ItemClick;
                 view.SetAdapter(adapter);
+
                 SetColumns();
                 var layout = new Helpers.Layouts.ExtraGridLayoutManager(ItemView.Context, columns);
                 view.SetLayoutManager(layout);
             }
 
-            private void Adapter_ItemClick(object sender, PreviewAdapterClickEventArgs e)
+            private void Adapter_ItemClick(object sender, CollectionAdapterClickEventArgs e)
             {
-                int pos = e.Position;
-                List<int> pages_ids = new List<int>();
-
-                if (previews == null)
-                    return;
-                if (previews.Count < 1)
-                    return;
-                var page = adapter.mdata[pos];
-                CancellationTokenSource token = new CancellationTokenSource();
-
-                int count = Core.App.Server.GetRelatedCount(e.Gallery.id, token.Token, Core.Gallery.ItemType.Gallery, Core.Gallery.ItemType.Page);
-
-                if (count > 0)
-                {
-                    var list = Core.App.Server.GetRelatedItems<Core.Gallery.Page>(e.Gallery.id, token.Token,
-                        Core.Gallery.ItemType.Gallery, Core.Gallery.ItemType.Page, count);
-                    if (list.Count > 0)
-                        e.Gallery.PageList = list;
-                    Intent intent = new Intent(ItemView.Context, typeof(GalleryViewer));
-                    intent.PutExtra("no", page.number);
-                    Core.IO.Parcel.PushParcel(e.Gallery);
-                    ItemView.Context.StartActivity(intent);
-                }
+                Scenes.GalleryScene galleryScene = new Scenes.GalleryScene
+                    (e.Gallery);
+                parentscene.Stage.PushScene(galleryScene);
             }
 
             void SetColumns()
             {
-
                 var windo = parentscene.Context.GetSystemService(Context.WindowService);
                 var window = windo.JavaCast<IWindowManager>();
                 var display = window.DefaultDisplay;
@@ -258,7 +239,7 @@ namespace HappyPandaXDroid.Custom_Views
 
             }
 
-            public void SetList(List<Core.Gallery.Page> list)
+            public void SetList(List<Core.Gallery.HPXItem> list)
             {
                 previews = list;
                 adapter.SetList(list);
@@ -269,7 +250,7 @@ namespace HappyPandaXDroid.Custom_Views
 
             public void Recycle()
             {
-                adapter.SetList(new List<Core.Gallery.Page>());
+                adapter.SetList(new List<Core.Gallery.HPXItem>());
                 adapter.NotifyDataSetChanged();
                 view.GetRecycledViewPool().Clear();
             }
@@ -279,7 +260,7 @@ namespace HappyPandaXDroid.Custom_Views
     }
 
 
-        public class PreviewAdapterClickEventArgs : EventArgs
+        public class CollectionAdapterClickEventArgs : EventArgs
         {
             public View View { get; set; }
             public int Position { get; set; }

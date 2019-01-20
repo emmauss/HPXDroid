@@ -1410,6 +1410,9 @@ namespace HappyPandaXDroid.Core
 
                 var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
 
+                if (obj == null)
+                    return default(T);
+
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
                 
                     var data = array[0].ToObject<JSON.DataObject>();
@@ -1455,11 +1458,13 @@ namespace HappyPandaXDroid.Core
                     return new List<T>();
 
                 string countstring = response;
-                var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
-                var array = obj.data as Newtonsoft.Json.Linq.JArray;
+
                 List<T> list = new List<T>();
+
                 try
                 {
+                    var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
+                    var array = obj.data as Newtonsoft.Json.Linq.JArray;
                     if (array != null & array.Count > 0)
                     {
                         var data = array[0].ToObject<JSON.DataObject>();
@@ -1475,22 +1480,6 @@ namespace HappyPandaXDroid.Core
 
                 if(typeof(T) == typeof(Gallery.Page))
                 {
-                    /* List<Gallery.Page> pagelist = new List<Gallery.Page>();
-
-                     foreach(var p in list)
-                     {
-                         pagelist.Add(p as Gallery.Page);
-
-                         pagelist = pagelist.OrderBy(x => x.number).ToList();
-                     }
-
-                     list.Clear();
-
-                     foreach(var p in pagelist)
-                     {
-                         list.Add((T)Convert.ChangeType(p , typeof(T)));
-                     }*/
-
                     list.Sort((x, y) => (x as Gallery.Page).number.CompareTo((y as Gallery.Page).number));
                 }
 
@@ -1542,9 +1531,6 @@ namespace HappyPandaXDroid.Core
                 var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
 
                 var dataf = JSON.API.GetData(serverobj.data, 0);
-
-                /*if (JSON.API.GetData(data, 0) is JSON.ServerObjects.IntegerObject countdata)
-                    return countdata.count;*/
 
                 string data = dataf.ToString();
 

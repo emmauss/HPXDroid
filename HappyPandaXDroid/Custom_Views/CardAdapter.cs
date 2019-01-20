@@ -179,7 +179,6 @@ namespace HappyPandaXDroid.Custom_Views
                             if (gallery.artists.Count > 0)
                                 if (gallery.artists[0].Names.Count > 0)
                                     vh.Info.Text = gallery.artists[0].Names[0].name;
-                            vh.Category.Text = Core.Gallery.Categories[gallery.category_id].name;
                         }
                         else
                          if (mdata[position] is Core.Gallery.Collection collection)
@@ -190,6 +189,8 @@ namespace HappyPandaXDroid.Custom_Views
                                     vh.Info.Text = collection.galleries.Length + " galler" + 
                                     (collection.galleries.Length>1?"ies":"y");
                         }
+
+                        vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
 
                         vh.Bound = true;
                     }

@@ -237,6 +237,7 @@
     <Compile Include="Custom_Views\DeleteDialog.cs" />
     <Compile Include="Custom_Views\PageSelector.cs" />
     <Compile Include="Custom_Views\PreviewAdapter.cs" />
+    <Compile Include="Custom_Views\CollectionAdapter.cs" />
     <Compile Include="Custom_Views\PreviewHolder.cs" />
     <Compile Include="Custom_Views\RoundSideRectDrawable.cs" />
     <Compile Include="Custom_Views\SafeCoordinatorLayout.cs" />
@@ -316,6 +317,18 @@
     </AndroidResource>
     <AndroidResource Include="Resources\layout\searchview.xml" />
     <AndroidResource Include="Resources\layout\viewScene.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\CollectionScene.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\collection_header.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\collection_galleries.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
     <TransformFile Include="Resources\menu\sortDirectionMenu.xml">
@@ -815,9 +828,9 @@
       <Project>{00c8482d-4401-4724-bfd0-26f87aa3f9c3}</Project>
       <Name>Stage</Name>
     </ProjectReference>
-    <ProjectReference Include="AndroidBindings\Binding_SubsamplingScaleImageView\Binding_SubsamplingScaleImageView.csproj">
-      <Project>{063CBDBF-87C0-4E58-9DC2-966E7D908043}</Project>
-      <Name>Binding_SubsamplingScaleImageView</Name>
+    <ProjectReference Include="..\SubsamplingScaleImageView\SubsamplingScaleImageView.csproj">
+      <Project>{1576b239-b46b-4df3-85c0-072d55143f18}</Project>
+      <Name>SubsamplingScaleImageView</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

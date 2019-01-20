@@ -60,14 +60,12 @@ namespace HappyPandaXDroid
 
             // Create your application here
             SetContentView(Resource.Layout.GalleryLayout);
-
-            string data = Intent.GetStringExtra("page");
-            PageList = Core.JSON.Serializer.SimpleSerializer.Deserialize<List<Core.Gallery.Page>>(data);
             logger.Info("Initializing Gallery Viewer");
-            Task.Run(() => InitPageGen());
 
-            data = Intent.GetStringExtra("gallery");
-            gallery = Core.JSON.Serializer.SimpleSerializer.Deserialize<Core.Gallery.GalleryItem>(data);
+            gallery = Core.IO.Parcel.PopParcel() as Core.Gallery.GalleryItem;
+
+            PageList = gallery.PageList;
+            Task.Run(() => InitPageGen());
             int pageno = Intent.GetIntExtra("no", 0);
             pageno = pageno == 0 ? 0 : pageno - 1;
             options = new RequestOptions()

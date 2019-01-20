@@ -338,6 +338,7 @@ namespace HappyPandaXDroid.Scenes
                         if (gallery.artists.Count > 0)
                             if (gallery.artists[0].Names.Count > 0)
                                 vh.Info.Text = gallery.artists[0].Names[0].name;
+                        vh.Category.Text = Core.Gallery.Categories[gallery.category_id].name;
                     }
                 }
                 catch (Exception ex)
