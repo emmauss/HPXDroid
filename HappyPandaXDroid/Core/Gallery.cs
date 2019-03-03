@@ -20,6 +20,8 @@ using Android.Graphics;
 using NLog;
 using Newtonsoft.Json;
 
+using static HappyPandaXDroid.Core.App.Server;
+
 
 namespace HappyPandaXDroid.Core
 {
@@ -244,6 +246,9 @@ namespace HappyPandaXDroid.Core
             public MetaTag metaTags;
             public Title preferred_title;
 
+            [JsonIgnore()]
+            AutoResetEvent AutoResetEvent { get; set; }// = new AutoResetEvent(true);
+
             int lastPageRead =-1;
 
             public int LastPageRead
@@ -265,6 +270,11 @@ namespace HappyPandaXDroid.Core
 
             public List<Page> PageList;
 
+
+            public void Wait()
+            {
+                AutoResetEvent.WaitOne(5000);
+            }
         }
         
         public class Page : HPXItem
@@ -284,14 +294,25 @@ namespace HappyPandaXDroid.Core
 
             public override ItemType Type => ItemType.Page;
 
-            public async Task<string> Download(ImageSize size = ImageSize.Original)
+            public string Download(ImageSize size = ImageSize.Original)
             {
-                return await GetImage(this, false, DownloadCancelationToken.Token,size);
+                lock (this)
+                {
+                    if (!GetCachedPagePath(this, out string path, size))
+                    {
+                        path = GetImage(this, false, DownloadCancelationToken.Token, size).GetAwaiter().GetResult();
+                    }
+
+                    return path;
+                }
             }
 
-            public async void DownloadFromQueue()
+            public void DownloadFromQueue()
             {
-                await GetImage(this,false, DownloadCancelationToken.Token,ImageSize.Original);
+                lock (this)
+                {
+                    GetImage(this, false, DownloadCancelationToken.Token, ImageSize.Original).Wait();
+                }
 
                 RemoveFromQueue();
             }
@@ -500,7 +521,7 @@ namespace HappyPandaXDroid.Core
                 {
                     if (page != null)
                     {
-                        while (CurrentlyDownloading.Count >= 4)
+                        while (CurrentlyDownloading.Count >= 5)
                         {
                             Thread.Sleep(3000);
                         }
@@ -620,15 +641,16 @@ namespace HappyPandaXDroid.Core
                     return string.Empty;
                 while (true)
                 {
-                    string state = App.Server.GetCommandState(command_id,ref cancellationToken);
+                    var state = App.Server.GetCommandState(command_id, ref cancellationToken);
                     if (cancellationToken.IsCancellationRequested)
-                        return string.Empty;
-                    if (state.Contains("error"))
-                        return "fail: server error";
-                    if (state.Contains("failed") || state.Contains("out_of_service") 
-                        || state.Contains("stopped"))
-                        return "fail: command error";
-                    if (!state.Contains("finished"))
+                        return "Request Cancelled";
+                    if (state == CommandState.Error)
+                        return "failed: server error";
+                    if (state == CommandState.Failed)
+                        return "failed: Command Failed";
+                    if (state == CommandState.Stopped)
+                        StartCommand(command_id, cancellationToken);
+                    else if (state != CommandState.Finished)
                         Thread.Sleep(App.Settings.Loop_Delay);
                     else
                         break;

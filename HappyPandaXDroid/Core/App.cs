@@ -716,6 +716,20 @@ namespace HappyPandaXDroid.Core
 
         public class Server
         {
+            public enum CommandState
+            {
+
+                Failed = 6,
+                Finished = 4,
+                InQueue = 2,
+                InService = 1,
+                OutOfService = 0,
+                Started = 3,
+                Stopped = 5,
+                None=7,
+                Error=8,
+            }
+
             private static Logger logger = LogManager.GetCurrentClassLogger();
             public static ServerInfo Info = new ServerInfo();
             public class ServerInfo
@@ -756,7 +770,7 @@ namespace HappyPandaXDroid.Core
 
             }
 
-            public static string StartCommand(int command_id,CancellationToken cancellationToken)
+            public static CommandState StartCommand(int command_id,CancellationToken cancellationToken)
             {
                 logger.Info("Start Command. commandId={0}", command_id);
                 string response = CreateCommand("start_command", command_id);
@@ -766,7 +780,7 @@ namespace HappyPandaXDroid.Core
                 RequestToken request = new RequestToken(resetEvent, cancellationToken);
 
                 if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
+                    return  CommandState.None;
 
                 request.Request = response;
 
@@ -777,30 +791,27 @@ namespace HappyPandaXDroid.Core
                 response = (string)request.Result;
 
                 if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
+                    return CommandState.None;
 
-                string state = string.Empty;
-                if (GetError(response) == "none")
+                 string error = GetError(response);
+                if (error == "none")
                 {
-
                     var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
                     var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                         .ToString();
-                    state =data;
-                    if (state.Contains("started"))
-                        return "started";
-                    else
-                        return "failed";
+                    var commandState = (CommandState)Enum.Parse(typeof(CommandState),data,true);
+                    logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, commandState);
+                    return commandState;
                 }
                 else
                 {
                     logger.Info("Command Failed. \n Error: \n {0}", response + "\n");
-                    return (GetError(response));
+                    return CommandState.Error;
                 }
             }
 
-            public static string StopCommand(int command_id,CancellationToken cancellationToken)
+            public static CommandState StopCommand(int command_id,CancellationToken cancellationToken)
             {
                 logger.Info("Stop Command. commandId={0}", command_id);
                 string response = CreateCommand("stop_command", command_id);
@@ -810,7 +821,7 @@ namespace HappyPandaXDroid.Core
                 RequestToken request = new RequestToken(resetEvent, cancellationToken);
 
                 if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
+                    return CommandState.None;
 
                 request.Request = response;
 
@@ -821,29 +832,27 @@ namespace HappyPandaXDroid.Core
                 response = (string)request.Result;
 
                 if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
+                    return CommandState.None;
 
-                string state = string.Empty;
-                if (GetError(response) == "none")
+                string error = GetError(response);
+                if (error == "none")
                 {
                     var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
                     var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                         .ToString();
-                    state = data;
-                    if (state.Contains("stopped"))
-                        return "stopped";
-                    else
-                        return "failed";
+                    var commandState = (CommandState)Enum.Parse(typeof(CommandState), data, true);
+                    logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, commandState);
+                    return commandState;
                 }
                 else
                 {
                     logger.Info("Command Failed. \n Error: \n {0}", response + "\n");
-                    return (GetError(response));
+                    return CommandState.Error;
                 }
             }
 
-            public static string UndoCommand(int command_id, CancellationToken cancellationToken)
+            public static CommandState UndoCommand(int command_id, CancellationToken cancellationToken)
             {
 
                 string response = CreateCommand("undo_command", command_id);
@@ -853,7 +862,7 @@ namespace HappyPandaXDroid.Core
                 RequestToken request = new RequestToken(resetEvent, cancellationToken);
 
                 if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
+                    return CommandState.None;
 
                 request.Request = response;
 
@@ -864,21 +873,24 @@ namespace HappyPandaXDroid.Core
                 response = (string)request.Result;
 
                 if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
-                string state = string.Empty;
-                if (GetError(response) == "none")
+                    return CommandState.None;
+
+                string error = GetError(response);
+                if (error == "none")
                 {
                     var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
                     var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                         .ToString();
-                    state = data;
-                    if (state.Contains("s"))
-                        return state;
-                    else
-                        return "failed";
+                    var commandState = (CommandState)Enum.Parse(typeof(CommandState), data, true);
+                    logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, commandState);
+                    return commandState;
                 }
-                else return (GetError(response));
+                else
+                {
+                    logger.Info("Command Failed. \n Error: \n {0}", response + "\n");
+                    return CommandState.Error;
+                }
             }
 
             static string CreateCommand(string key, int command_id)
@@ -1065,15 +1077,16 @@ namespace HappyPandaXDroid.Core
                         return false;
                     while (true)
                     {
-                        string state = App.Server.GetCommandState(command_id, ref cancellationToken);
+                        var state = App.Server.GetCommandState(command_id, ref cancellationToken);
                         if (cancellationToken.IsCancellationRequested)
                             return false;
-                        if (state.Contains("error"))
+                        if (state  == CommandState.Error)
                             return false;
-                        if (state.Contains("failed") || state.Contains("out_of_service")
-                            || state.Contains("stopped"))
+                        if (state == CommandState.Failed)
                             return false;
-                        if (!state.Contains("finished"))
+                        if (state == CommandState.Stopped)
+                            StartCommand(command_id, cancellationToken);
+                        else if (state!= CommandState.Finished)
                             Thread.Sleep(App.Settings.Loop_Delay);
                         else
                             break;
@@ -1268,7 +1281,7 @@ namespace HappyPandaXDroid.Core
                 return urls;
             }
 
-            public static string GetCommandState(int command_id,ref CancellationToken cancellationToken)
+            public static CommandState GetCommandState(int command_id,ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command State. commandId={0}", command_id);
 
@@ -1278,7 +1291,7 @@ namespace HappyPandaXDroid.Core
                 RequestToken request = new RequestToken(resetEvent, cancellationToken);
 
                 if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
+                    return CommandState.None;
 
                 request.Request = response;
 
@@ -1289,8 +1302,8 @@ namespace HappyPandaXDroid.Core
                 response = (string)request.Result;
 
                 if (cancellationToken.IsCancellationRequested)
-                    return string.Empty;
-                string state = string.Empty;
+                    return CommandState.None;
+                CommandState commandState = CommandState.OutOfService;
                 string error = GetError(response);
                 if (error == "none")
                 {
@@ -1298,12 +1311,12 @@ namespace HappyPandaXDroid.Core
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
                     var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                         .ToString();
-                    state = data;
-                    logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, state);
-                    return state;
+                    commandState = (CommandState)Enum.Parse(typeof(CommandState),data,true);
+                    logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, commandState);
+                    return commandState;
                 }
                 logger.Info("Get Command State Successful. commandId={0}, \n error={1}", command_id, error);
-                return (error);
+                return (CommandState.None);
             }
 
             public static bool GetCompleted(out List<int> done, List<int> command_ids, Gallery.HPXItem[] hPXItem, ref CancellationToken cancellationToken
@@ -1343,9 +1356,11 @@ namespace HappyPandaXDroid.Core
                         int id = command_ids[i];
                         var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[id.ToString()]
                         .ToString();
+
+                        var cState = (CommandState)Enum.Parse(typeof(CommandState), data, true);
                         if (!done.Contains(id))
                         {
-                            if (data.ToLower() == "finished")
+                            if (cState == CommandState.Finished)
                             {
                                 done.Add(id);
                                 foreach (var hp in hPXItem)
@@ -1362,8 +1377,7 @@ namespace HappyPandaXDroid.Core
                                 }
                             }
                             else
-                              if (data.ToLower().Contains("fail") || data.ToLower().Contains("stopped")
-                                || data.ToLower().Contains("out_of_service"))
+                              if (cState == CommandState.Failed)
                                 failed.Add(id);
                         }
                     }
@@ -1585,7 +1599,7 @@ namespace HappyPandaXDroid.Core
                 feed += "-" + base_id;
                 feed += "-" + Enum.GetName(typeof(Gallery.ImageSize), size);
                 feed += "-" + Enum.GetName(typeof(Gallery.ItemType), type);
-                byte[] feedbyte = Encoding.Unicode.GetBytes(feed);
+                byte[] feedbyte = Encoding.Unicode.GetBytes(feed);/*
                 using (MD5 md5 = MD5.Create())
                 {
                     byte[] hash = md5.ComputeHash(feedbyte);
@@ -1595,7 +1609,9 @@ namespace HappyPandaXDroid.Core
                         builder.Append(b.ToString("x2").ToLower());
 
                     return builder.ToString();
-                }
+                }*/
+
+                return Convert.ToBase64String(feedbyte, Base64FormattingOptions.None);
             }
         }
     } 

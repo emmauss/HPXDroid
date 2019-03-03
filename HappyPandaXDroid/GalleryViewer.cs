@@ -262,7 +262,6 @@ namespace HappyPandaXDroid
             options = null;
             if (PageList != null)
             {
-                PageList.Clear();
                 page_number = null;
             }
             FilterSlider = null;
@@ -567,7 +566,7 @@ namespace HappyPandaXDroid
                         {
                             var holder = (ImageViewHolder)galleryPager.FindViewHolderForLayoutPosition(pos);
                             holder.imageView.Loaded = false;
-                            holder.imageView.Refresh(true);
+                            Task.Run(()=>holder.imageView.Refresh(true));
                         }
                     }
                     return true;

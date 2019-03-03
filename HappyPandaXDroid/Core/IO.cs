@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.IO.Compression;
+//using System.IO.Compression;
+
+using ICSharpCode.SharpZipLib.GZip;
 
 using Android.App;
 using Android.Content;
@@ -52,7 +54,7 @@ namespace HappyPandaXDroid.Core
                     byte[] result = null;
                     using(MemoryStream memcopy = new MemoryStream())
                     {
-                        using (GZipStream gzip = new GZipStream(memcopy,CompressionLevel.Optimal))
+                        using (GZipOutputStream gzip = new GZipOutputStream(memcopy))
                         {
                             gzip.Write(source, 0, source.Length);
                         }
@@ -75,7 +77,7 @@ namespace HappyPandaXDroid.Core
                         var decompressedstream = new MemoryStream();
                         using (MemoryStream compressedstream = new MemoryStream(source))
                         {
-                            using (GZipStream gzip = new GZipStream(compressedstream, CompressionMode.Decompress))
+                            using (GZipInputStream gzip = new GZipInputStream(compressedstream))
                             {
                                 gzip.CopyTo(decompressedstream);
                             }

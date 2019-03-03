@@ -570,8 +570,6 @@ namespace HappyPandaXDroid.Scenes
             title.Text = gallery.titles[0].name;
             categoryChip.Text = Core.Gallery.Categories[gallery.category_id].name;
             language.Text = Core.Gallery.Languages[gallery.language_id].name;
-            //category.Text = "place_holder";
-
         }
 
         async void ParseData()

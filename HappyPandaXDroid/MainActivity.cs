@@ -98,22 +98,16 @@ namespace HappyPandaXDroid
 
         public static void InitLogging()
         {
-            
-            if (Core.App.Settings.Logging_Enabled)
-                {
-                    LogManager.Configuration = new LoggingConfiguration();
-                    NLog.Targets.FileTarget target = new NLog.Targets.FileTarget("log");
-                    string logfile = Core.App.Settings.Log + DateTime.Now.ToShortDateString().Replace("/", "-") + " - "
-                        + DateTime.Now.ToShortTimeString().Replace(":", ".") + " - log.txt";
-                    target.FileName = logfile;
-                    target.FileNameKind = NLog.Targets.FilePathKind.Absolute;
-                    LogManager.Configuration.AddTarget(target);
+            LogManager.Configuration = new LoggingConfiguration();
+            NLog.Targets.FileTarget target = new NLog.Targets.FileTarget("log");
+            string logfile = Core.App.Settings.Log + DateTime.Now.ToShortDateString().Replace("/", "-") + " - "
+                + DateTime.Now.ToShortTimeString().Replace(":", ".") + " - log.txt";
+            target.FileName = logfile;
+            target.FileNameKind = NLog.Targets.FilePathKind.Absolute;
+            LogManager.Configuration.AddTarget(target);
 
-                    LogManager.Configuration.AddRuleForAllLevels(target);
-                    LogManager.ReconfigExistingLoggers();
-
-                }
-           
+            LogManager.Configuration.AddRuleForAllLevels(target);
+            LogManager.ReconfigExistingLoggers();
         }
 
         public void CreateFolders()

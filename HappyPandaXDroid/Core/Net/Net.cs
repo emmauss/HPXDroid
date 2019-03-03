@@ -209,19 +209,48 @@ namespace HappyPandaXDroid.Core
         static byte[] Receive(NetworkStream stream)
         {
             List<byte> payload = new List<byte>();
-            byte[] res = new byte[4];
-            stream.Read(res, 0, res.Length);
-            payload.AddRange(res);
+            byte[] res = new byte[1024 * 1024 * 10];
+            int read = stream.Read(res, 0, res.Length);
+            for (int i = 0; i < read; i++)
+                payload.Add(res[i]);
             res = new byte[512];
+            byte[] eof = Encoding.ASCII.GetBytes("<EOF>");
+
+            Thread.Sleep(App.Settings.Loop_Delay);
+
             while (stream.DataAvailable)
             {
-
-                stream.Read(res, 0, res.Length);
-                payload.AddRange(TrimEnd(res));
+                read = stream.Read(res, 0, res.Length);
+                for (int i = 0; i < read; i++)
+                    payload.Add(res[i]);
                 Array.Clear(res, 0, res.Length);
-                Thread.Sleep(100);
+                Thread.Sleep(App.Settings.Loop_Delay);
             }
-            byte[] decom = TrimEOF(payload.ToArray());
+
+            if (payload.Count == 0)
+            {
+
+            }
+
+            byte[] decom = payload.ToArray();
+
+            if (!Encoding.ASCII.GetString(decom).Contains("<EOF>"))
+            {
+
+            }
+            else
+            {
+                int index = payload.LastIndexOf(Encoding.ASCII.GetBytes("<")[0]);
+                if(index < 10)
+                {
+
+                }
+                Array.Resize(ref decom, index);
+            }
+            if(decom.Length == 0)
+            {
+
+            }
             decom = IO.Compression.Decompress(decom);
             return decom;
         }

@@ -62,7 +62,6 @@ namespace HappyPandaXDroid.Custom_Views
 
         private void Img_ImageLoadError(object sender, SubsamplingScaleImageView.ImageLoadErrorEventArgs e)
         {
-
             Task.Run(() =>
             {
                 if (File.Exists(page_path))
@@ -79,7 +78,6 @@ namespace HappyPandaXDroid.Custom_Views
         }
         public void Refresh(bool delete = false)
         {
-
             if (Page != null)
             {
                 if (delete)
@@ -94,6 +92,7 @@ namespace HappyPandaXDroid.Custom_Views
 
         public async void OnLoadStart(Core.Gallery.Page page)
         {
+            var h = new Handler(Looper.MainLooper);
             try
             {
                 ImageCancellationTokenSource.Cancel();
@@ -103,10 +102,18 @@ namespace HappyPandaXDroid.Custom_Views
             }
             catch (System.Exception ex)
             {
-
+                h.Post(async () =>
+                {
+                    img.SetImage(ImageSource.InvokeResource(Resource.Drawable.image_failed));
+                });
             }
 
 
+            if(string.IsNullOrWhiteSpace(page_path))
+                h.Post(async () =>
+                {
+                    img.SetImage(ImageSource.InvokeResource(Resource.Drawable.image_failed));
+                });
         }
 
         async void Load()
@@ -143,13 +150,13 @@ namespace HappyPandaXDroid.Custom_Views
                     while (!IsCached)
                     {
 
-                        bool exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Page, Page.id, ImageCancellationTokenSource.Token);
+                        /*bool exists = await Core.Gallery.IsSourceExist(Core.Gallery.ItemType.Page, Page.id, ImageCancellationTokenSource.Token);
                         if (!exists)
                         {
                             return;
-                        }
+                        }*/
                         tries++;
-                        page_path = await Page.Download();
+                        page_path = Page.Download();
                         if (tries > 1)
                             return;
                         else

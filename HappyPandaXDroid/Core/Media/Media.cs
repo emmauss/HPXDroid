@@ -113,7 +113,7 @@ namespace HappyPandaXDroid.Core
             public static string CachePage(string cacheid, string url, bool ForceOverwrite)
             {
                 string filename = string.Empty;
-                if (!IsCached(cacheid) & ForceOverwrite)
+                if (!IsCached(cacheid) || ForceOverwrite)
                 {
                     filename = System.IO.Path.Combine(App.Settings.CachePath, cacheid);
 
