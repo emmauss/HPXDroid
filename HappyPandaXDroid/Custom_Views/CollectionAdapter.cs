@@ -55,25 +55,33 @@ namespace HappyPandaXDroid.Custom_Views
             var items = new List<Core.Gallery.HPXItem>();
             foreach (var item in newList)
             {
+                string cacheid = Core.App.Server.HashGenerator(item.BaseId, Core.Gallery.ImageSize.Small, item.Type);
+                if (Core.Media.Cache.TryGetCachedPath
+                    (cacheid, out item.Thumb.Uri))
+                {
+                    item.Thumb.IsReady = true;
+                    continue;
+                }
                 items.Add(item);
             }
             if (items.Count > 0)
             {
-                CancellationToken token = ((Scenes.GalleryScene)collectionScene).SceneCancellationTokenSource.Token;
+                CancellationToken token = ((Scenes.CollectionScene)collectionScene).SceneCancellationTokenSource.Token;
                 var urls = Core.Gallery.GetImage(items, Core.Gallery.ItemType.Gallery,
-                    token).Result;
+                    token, Core.Gallery.ImageSize.Small).Result;
                 if (token.IsCancellationRequested)
                     return;
                 if (urls.Count > 0)
                 {
                     foreach (var item in newList)
                     {
-                        if (!URLlist.ContainsKey(item.id))
-                        {
-                            URLlist.Add(item.id, urls[item.id]);
-                        }
-                        else
-                            URLlist[item.id] = urls[item.id];
+                        if (urls.ContainsKey(item.id))
+                            if (!URLlist.ContainsKey(item.id))
+                            {
+                                URLlist.Add(item.id, urls[item.id]);
+                            }
+                            else
+                                URLlist[item.id] = urls[item.id];
                     }
                 }
             }
@@ -89,7 +97,7 @@ namespace HappyPandaXDroid.Custom_Views
                 if (mdata[position] is Core.Gallery.GalleryItem gallery)
                 {
                     vh.HPXItem = gallery;
-                    vh.Name.Text = gallery.titles[0].name;
+                    vh.Name.Text = gallery.preferred_title.name;
                     if (gallery.artists.Count > 0)
                         if (gallery.artists[0].Names.Count > 0)
                             vh.Info.Text = gallery.artists[0].Names[0].name;
@@ -229,13 +237,18 @@ namespace HappyPandaXDroid.Custom_Views
                 var windo = parentscene.Context.GetSystemService(Context.WindowService);
                 var window = windo.JavaCast<IWindowManager>();
                 var display = window.DefaultDisplay;
+                var rotation = display.Rotation;
+                switch (rotation)
+                {
+                    case SurfaceOrientation.Rotation0:
+                    case SurfaceOrientation.Rotation270:
+                        columns = 1;
+                        break;
+                    default:
+                        columns = 2;
+                        break;
 
-
-                var metrics = new DisplayMetrics();
-                display.GetMetrics(metrics);
-
-                float dpwidth = metrics.WidthPixels / metrics.Density;
-                columns = (int)dpwidth / 180; ;
+                }
 
             }
 

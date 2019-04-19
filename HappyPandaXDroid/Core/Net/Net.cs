@@ -57,6 +57,7 @@ namespace HappyPandaXDroid.Core
             public TcpClient client;
             public Client()
             {
+                string port = App.Settings.Server_Port;
                 client = new TcpClient(App.Settings.Server_IP, int.Parse(App.Settings.Server_Port));
                 string response = Connect(this);
                 if (response != "fail")
@@ -216,21 +217,18 @@ namespace HappyPandaXDroid.Core
             res = new byte[512];
             byte[] eof = Encoding.ASCII.GetBytes("<EOF>");
 
-            Thread.Sleep(App.Settings.Loop_Delay);
+            if (!SequenceExists(payload.ToArray(), eof))
+                while (true)
+                {
+                    read = stream.Read(res, 0, res.Length);
+                    for (int i = 0; i < read; i++)
+                        payload.Add(res[i]);
+                    Array.Clear(res, 0, res.Length);
 
-            while (stream.DataAvailable)
-            {
-                read = stream.Read(res, 0, res.Length);
-                for (int i = 0; i < read; i++)
-                    payload.Add(res[i]);
-                Array.Clear(res, 0, res.Length);
-                Thread.Sleep(App.Settings.Loop_Delay);
-            }
-
-            if (payload.Count == 0)
-            {
-
-            }
+                    if (SequenceExists(payload.ToArray(), eof))
+                        break;
+                    Thread.Sleep(App.Settings.Loop_Delay / 2);
+                }
 
             byte[] decom = payload.ToArray();
 
@@ -253,6 +251,28 @@ namespace HappyPandaXDroid.Core
             }
             decom = IO.Compression.Decompress(decom);
             return decom;
+        }
+
+        public static bool SequenceExists<T>(T[] array, T[] match)
+        {
+            if (match.Length > array.Length)
+                return false;
+
+            int matchIndex = 0;
+            for(int i = 0; i<array.Length; i++)
+            {
+                if (array[i].Equals(match[matchIndex]))
+                {
+                    matchIndex++;
+
+                    if (matchIndex >= match.Length)
+                        return true;
+                }
+                else
+                    matchIndex = 0;
+            }
+
+            return false;
         }
 
         static byte[] TrimEnd(byte[] payload)

@@ -144,6 +144,28 @@ namespace HappyPandaXDroid.Core
                     File.Delete(basepath + ".meta");
             }
 
+            public static void DeleteCache(Gallery.GalleryItem gallery)
+            {
+                if(gallery.PageList!=null && gallery.PageList.Count > 0)
+                {
+                    foreach(var page in gallery.PageList)
+                    {
+                        foreach (var size in Enum.GetValues(typeof(Gallery.ItemType)))
+                        {
+                            var cacheID = App.Server.HashGenerator(page.BaseId, (Gallery.ImageSize)size, Gallery.ItemType.Page);
+
+                            try
+                            {
+                                DeleteCachePage(cacheID);
+                            }catch(Exception ex)
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
+
             public static async  Task<bool> ClearCache()
             {
                 if (IsClearing)
@@ -170,6 +192,7 @@ namespace HappyPandaXDroid.Core
             public bool IsUrl;
             public bool IsReady { get; set; }
             public event EventHandler<ImageLoadEvent> Ready;
+            public bool Requested { get; set; }
 
             public class ImageLoadEvent : EventArgs
             {
@@ -178,6 +201,7 @@ namespace HappyPandaXDroid.Core
 
             public void RequestLoad()
             {
+                Requested = true;
                 Ready.Invoke(null, null);
             }
         }

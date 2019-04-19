@@ -334,7 +334,7 @@ namespace HappyPandaXDroid.Scenes
                         var gallery = (Core.Gallery.GalleryItem)mdata[position];
                         vh.HPXItem = gallery;
                         vh.Bound = true;
-                        vh.Name.Text = gallery.titles[0].name;
+                        vh.Name.Text = gallery.preferred_title.name;
                         if (gallery.artists.Count > 0)
                             if (gallery.artists[0].Names.Count > 0)
                                 vh.Info.Text = gallery.artists[0].Names[0].name;

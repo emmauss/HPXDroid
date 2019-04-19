@@ -167,4 +167,11 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:id="@+id/loginButton" />
+	<me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingTop="40dp"
+        android:indeterminate="true"
+        android:id="@+id/progress_view" />
 </LinearLayout>

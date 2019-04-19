@@ -44,6 +44,9 @@ namespace HappyPandaXDroid.Scenes
         Chip categoryChip;
         Custom_Views.DeleteDialog mDeleteDialog;
         LinearLayout MainLayout;
+        LinearLayout ArtistLayout;
+        LinearLayout GroupLayout;
+        LinearLayout ParodyLayout;
         AppBarLayout AppBarLayout;
         Android.Support.V7.Widget.Toolbar toolbar;
         TextView GalleryStatus;
@@ -60,7 +63,7 @@ namespace HappyPandaXDroid.Scenes
         {
             MainView = p0.Inflate(Resource.Layout.Gallery_Details_Layout, p1, false);
             InitializeViews();
-            toolbar.Title = gallery.titles[0].name;
+            toolbar.Title = gallery.preferred_title.name;
             logger.Info("Initializing Gallery Detail. GalleryId ={0}", gallery.id);
             if (gallery.Thumb != null || string.IsNullOrWhiteSpace(gallery.Thumb.Uri))
             {
@@ -153,7 +156,62 @@ namespace HappyPandaXDroid.Scenes
                 if (SceneCancellationTokenSource.IsCancellationRequested)
                     return;
 
-                
+                h.Post(() =>
+                {
+                    pages.Text = gallery.last_page?.number + $" Page{(gallery.last_page.number > 1 ? "s" : "")}";
+
+                    if (gallery.artists?.Count > 0)
+                    {
+                        ArtistLayout.Visibility = ViewStates.Visible;
+                        ArtistLayout.Orientation = Android.Widget.Orientation.Horizontal;
+                        foreach (var artist in gallery.artists)
+                        {
+                            Chip chip = new Chip(Context);
+                            //int color = Context.Resources.GetColor(Resource.Color.purple_a700);
+                            chip.SetChipBackgroundColorResource(Resource.Color.loading_indicator_blue);
+                            chip.Text = artist.preferred_name.name;
+                            chip.Click += Chip_Click;
+                            chip.Tag = "artist";
+
+                            ArtistLayout.AddView(chip);
+                        }
+                    }
+
+                    if (gallery.circles?.Count > 0)
+                    {
+                        GroupLayout.Visibility = ViewStates.Visible;
+                        GroupLayout.Orientation = Android.Widget.Orientation.Horizontal;
+                        foreach (var circle in gallery.circles)
+                        {
+                            Chip chip = new Chip(Context);
+                            //int color = Context.Resources.GetColor(Resource.Color.purple_a700);
+                            chip.SetChipBackgroundColorResource(Resource.Color.light_green_600);
+                            chip.Text = circle.name;
+                            chip.Click += Chip_Click;
+                            chip.Tag = "group";
+
+                            GroupLayout.AddView(chip);
+                        }
+                    }
+
+                    if (gallery.parodies?.Count > 0)
+                    {
+                        ParodyLayout.Visibility = ViewStates.Visible;
+                        ParodyLayout.Orientation = Android.Widget.Orientation.Horizontal;
+                        foreach (var parody in gallery.parodies)
+                        {
+                            Chip chip = new Chip(Context);
+                            //int color = Context.Resources.GetColor(Resource.Color.purple_a700);
+                            chip.SetChipBackgroundColorResource(Resource.Color.purple_500);
+                            chip.Text = parody.preferred_name.name;
+                            chip.Click += Chip_Click;
+                            chip.Tag = "parody";
+
+                            ArtistLayout.AddView(chip);
+                        }
+                    }
+                });
+
 
                 RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
 
@@ -178,6 +236,17 @@ namespace HappyPandaXDroid.Scenes
             else
             {
                 loaded = false;
+            }
+        }
+
+        private void Chip_Click(object sender, EventArgs e)
+        {
+            if(sender is Chip chip)
+            {
+                string query = chip.Tag + ":" + chip.Text;
+
+                LibraryScene scene = new LibraryScene(query, query);
+                Stage.PushScene(scene);
             }
         }
 
@@ -333,11 +402,17 @@ namespace HappyPandaXDroid.Scenes
 
         void InitializeViews()
         {
-
             mProgressView = MainView.FindViewById<ProgressView.MaterialProgressBar>(Resource.Id.progress_view);
             mProgressView.Visibility = ViewStates.Visible;
             MainLayout = MainView.FindViewById<LinearLayout>(Resource.Id.below_header);
+            GroupLayout = MainView.FindViewById<LinearLayout>(Resource.Id.groups);
+            ArtistLayout = MainView.FindViewById<LinearLayout>(Resource.Id.artists);
+            ParodyLayout = MainView.FindViewById<LinearLayout>(Resource.Id.parodies);
             errorFrame = MainView.FindViewById<FrameLayout>(Resource.Id.error_frame);
+
+            GroupLayout.Visibility = ViewStates.Gone;
+            ArtistLayout.Visibility = ViewStates.Gone;
+            ParodyLayout.Visibility = ViewStates.Gone;
             errorFrame.Visibility = ViewStates.Gone;
             errorFrame.Click += ErrorFrame_Click;
             MainLayout.Visibility = ViewStates.Gone;
@@ -378,6 +453,8 @@ namespace HappyPandaXDroid.Scenes
             layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
             layout.SetExtraLayoutSpace(100);
             previewpager.SetLayoutManager(layout);
+
+            toolbar.Title = gallery.preferred_title.name;
         }
 
         public void OnCreateOptionsMenu()
@@ -414,8 +491,13 @@ namespace HappyPandaXDroid.Scenes
                 Thread.Sleep(100);
                 parent.isDownloading = !parent.isDownloading;
                 var h = new Handler(Looper.MainLooper);
-                if(parent.gallery.PageList!=null)
-                Core.Gallery.QueueDownloads(parent.gallery.PageList);
+                if (parent.gallery.PageList != null)
+                {
+                    var list = new List<Core.Gallery.HPXItem>();
+                    foreach (var item in parent.gallery.PageList)
+                        list.Add((Core.Gallery.HPXItem)item);
+                    Core.Gallery.QueueDownloads(list);
+                }
                 h.Post(() =>
                 {
                         Toast.MakeText(Android.App.Application.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short).Show();
@@ -435,7 +517,7 @@ namespace HappyPandaXDroid.Scenes
 
             public bool OnMenuItemClick(IMenuItem item)
             {
-               parent.mDeleteDialog.Show(((HPXSceneActivity)parent.MainView.Context).FragmentManager, "DeleteGallery");
+               parent.mDeleteDialog.Show(((HPXSceneActivity)parent.MainView.Context).SupportFragmentManager, "DeleteGallery");
 
                 return true;
             }
@@ -448,19 +530,19 @@ namespace HappyPandaXDroid.Scenes
             {
                 this.parent = parent;
             }
-            public void OnDialogNegativeClick(DialogFragment dialog)
+            public void OnDialogNegativeClick(Android.Support.V4.App.DialogFragment dialog)
             {
                 //close dialog
             }
 
-            public async void OnDialogPositiveClick(DialogFragment dialog)
+            public async void OnDialogPositiveClick(Android.Support.V4.App.DialogFragment dialog)
             {
                 bool succeed = false;
                 if (dialog is Custom_Views.DeleteDialog dd)
                 {
                     if (dd.ShouldTrashed)
                     {
-                        succeed = await App.Server.DeleteItem(parent.gallery, parent.SceneCancellationTokenSource.Token);
+                        succeed = await App.Server.SendItemToTrash(parent.gallery, parent.SceneCancellationTokenSource.Token);
 
                         var h = new Handler(Looper.MainLooper);
                         h.Post(() =>
@@ -567,7 +649,7 @@ namespace HappyPandaXDroid.Scenes
 
         public void ParseMeta()
         {
-            title.Text = gallery.titles[0].name;
+            title.Text = gallery.preferred_title.name;
             categoryChip.Text = Core.Gallery.Categories[gallery.category_id].name;
             language.Text = Core.Gallery.Languages[gallery.language_id].name;
         }
@@ -653,8 +735,7 @@ namespace HappyPandaXDroid.Scenes
 
         void SetPreviews()
         {
-            pages.Text = gallery.PageList.Count.ToString() + " Pages";
-
+            
             last_read_page.Text = "Last Read Page: " + (gallery.LastPageRead + 1).ToString();
             if (gallery.PageList != null)
             {

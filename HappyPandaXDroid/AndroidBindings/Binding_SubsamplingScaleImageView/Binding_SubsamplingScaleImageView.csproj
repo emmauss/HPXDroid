@@ -12,7 +12,7 @@
     <RootNamespace>Binding_SubsamplingScaleImageView</RootNamespace>
     <AssemblyName>Binding_SubsamplingScaleImageView</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

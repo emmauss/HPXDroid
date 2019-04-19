@@ -1,5 +1,7 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
 using Android.Runtime;
@@ -20,7 +22,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace HappyPandaXDroid
 {
-    [Activity(Label = "HPXDroid", MainLauncher = true, Theme = "@style/MyTheme.Splash", NoHistory =true,
+    [Activity(Label = "HPXDroid", MainLauncher = true, NoHistory =true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation 
         | Android.Content.PM.ConfigChanges.ScreenSize , ScreenOrientation =Android.Content.PM.ScreenOrientation.Portrait)]
     public class MainActivity : AppCompatActivity
@@ -36,6 +38,9 @@ namespace HappyPandaXDroid
             //set unhandled exception handler
             AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironment_UnhandledExceptionRaiser;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
+            SetContentView(Resource.Layout.Main);
             
             await Load();
             var intent = new Intent();
@@ -88,7 +93,7 @@ namespace HappyPandaXDroid
                     Core.Net.Connect();
                     
                 }
-            CreateFolders();
+            RequestPermissions();
             return true;
         }
 
@@ -100,8 +105,10 @@ namespace HappyPandaXDroid
         {
             LogManager.Configuration = new LoggingConfiguration();
             NLog.Targets.FileTarget target = new NLog.Targets.FileTarget("log");
-            string logfile = Core.App.Settings.Log + DateTime.Now.ToShortDateString().Replace("/", "-") + " - "
-                + DateTime.Now.ToShortTimeString().Replace(":", ".") + " - log.txt";
+            var now = DateTime.Now;
+            string logfile = Path.Combine(Core.App.Settings.Log, $"{now.Year} - {now.Month} - {now.Day} -- {now.ToShortTimeString()} - log.txt".Replace(":","."));
+         /*   string logfile = Core.App.Settings.Log + DateTime.Now.ToShortDateString().Replace("/", "-") + " - "
+                + DateTime.Now.ToShortTimeString().Replace(":", ".") + " - log.txt";*/
             target.FileName = logfile;
             target.FileNameKind = NLog.Targets.FilePathKind.Absolute;
             LogManager.Configuration.AddTarget(target);
@@ -117,7 +124,35 @@ namespace HappyPandaXDroid
             Directory.CreateDirectory(Core.App.Settings.CachePath + "pages/");
             Directory.CreateDirectory(Core.App.Settings.Log);
         }
-        
+
+        public void RequestPermissions()
+        {
+            if(Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            {
+                if (!CheckPermission(Manifest.Permission.ReadExternalStorage) || !CheckPermission(Manifest.Permission.WriteExternalStorage))
+                {
+                    RequestPermissions(new string[] { Manifest.Permission.ReadExternalStorage,
+                                         Manifest.Permission.WriteExternalStorage}, 0);
+                }
+                else
+                    CreateFolders();
+            }
+
+
+            bool CheckPermission(string permission)
+            {
+                return CheckSelfPermission(permission) == Android.Content.PM.Permission.Granted;
+            }
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+        {
+            if(grantResults[0] == Permission.Granted)
+            {
+                CreateFolders();
+            }
+        }
+
         //bg thread unhandled exception handler
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {

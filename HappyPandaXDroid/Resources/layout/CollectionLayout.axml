@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:collection="http://schemas.android.com/apk/res-auto"
+    xmlns:package="http://schemas.android.com/apk/lib/emmaus.HPXDroid"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:scrollbars = "none"
+        >
+        <LinearLayout
+            android:layout_margin= "@dimen/keyline_margin"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+                <LinearLayout
+                android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_gravity = "end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:id="@+id/thumb"
+                            android:layout_width="170dp"
+                            android:scaleType="fitCenter"
+                            android:minHeight="250dp"
+                            android:adjustViewBounds="true"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/keyline_margin"
+                            android:layout_marginLeft="@dimen/keyline_margin"
+                            android:layout_marginBottom="@dimen/keyline_margin" />
+                    </LinearLayout>
+                    <LinearLayout
+                android:orientation="vertical"
+                        android:gravity = "right"
+                        android:layout_gravity = "right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+                        <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/keyline_margin"
+                        android:layout_marginRight="@dimen/keyline_margin"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/text_little_large"
+                        android:maxLines="5"
+                        android:ellipsize="end" />
+                        <android.support.design.chip.Chip
+                        android:id="@+id/category"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/keyline_margin"
+          android:layout_marginLeft="@dimen/keyline_margin"
+          android:layout_marginRight="@dimen/keyline_margin"
+          android:clickable ="false"
+          />
+                        <TextView
+                        android:id="@+id/galleries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text=""
+                        android:layout_marginLeft="@dimen/keyline_margin"
+                        android:layout_marginRight="@dimen/keyline_margin"
+                        android:singleLine="true" />
+            </LinearLayout>
+                    </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop = "@dimen/keyline_margin"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+                    <include
+                        layout="@layout/layout_error" />
+                    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="50dp"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:id="@+id/progress_view" />
+                    <LinearLayout
+                    android:id ="@+id/main_Layout"
+                    android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+                    <TextView
+                        android:text ="Galleries"
+                        android:textSize = "@dimen/abc_text_size_menu_material"
+                        android:layout_marginBottom ="@dimen/keyline_margin"
+                        android:layout_width="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity = "center_horizontal"
+                        android:layout_height="wrap_content" />
+                        <Emmaus.Widget.RecyclerViewPager
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/gallerypager"
+            package:rvp_triggerOffset="0.1"
+            package:rvp_singlePageFling="true"
+            android:clipToPadding="false" />
+                    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/page_button"
+                        android:layout_gravity = "center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                        collection:srcCompat= "@drawable/v_plus_dark_x24"
+                        android:layout_margin = "@dimen/keyline_margin"
+                        android:text = "Show more..."/>
+                    </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

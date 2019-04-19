@@ -55,6 +55,7 @@ namespace HappyPandaXDroid.Custom_Views
         {
             view = Inflate(this.Context, Resource.Layout.ImageLayout, this);
             img = FindViewById<SubsamplingScaleImageView>(Resource.Id.image);
+            img.ZoomEnabled = true;
             img.Visibility = ViewStates.Visible;
             img.ImageLoadError += Img_ImageLoadError;
             img.SetMinimumDpi(240);

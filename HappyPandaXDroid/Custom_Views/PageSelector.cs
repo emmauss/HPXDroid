@@ -10,11 +10,12 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Android.Support;
 using NLog;
 
 namespace HappyPandaXDroid.Custom_Views
 {
-    public class PageSelector : DialogFragment
+    public class PageSelector : Android.Support.V4.App.DialogFragment
     {
         public int PageCount = 0;
         public int PageSelected = 0;
@@ -25,19 +26,8 @@ namespace HappyPandaXDroid.Custom_Views
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public override Dialog OnCreateDialog(Bundle savedInstanceState)
         {
-            builder = new AlertDialog.Builder(Activity);
-            mDialogListener = mscene.dialogeventlistener;
-            builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));
-            builder.SetNegativeButton("Cancel", new ClickListener(mDialogListener, this));
-
-            LayoutInflater inflater = mscene.Activity.LayoutInflater;
-            View pageseletor = inflater.Inflate(Resource.Layout.PageSelector,null);
-            PageInput = pageseletor.FindViewById<EditText>(Resource.Id.setpage);
-            FloatingTextLayout = pageseletor
-                .FindViewById<Android.Support.Design.Widget.TextInputLayout>(Resource.Id.textInputLayout1);
-            PageCount = (int)Math.Ceiling((double)mscene.Count / 50);
-            FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
-            builder.SetView(pageseletor);
+            if (builder == null)
+                CreateDialogBuilder();
             AlertDialog dialog = builder.Create();
             return dialog;
         }
@@ -75,6 +65,23 @@ namespace HappyPandaXDroid.Custom_Views
 
         public INoticeDialogListener mDialogListener;
 
+        void CreateDialogBuilder()
+        {
+            builder = new AlertDialog.Builder(Activity);
+            mDialogListener = mscene.dialogeventlistener;
+            builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));
+            builder.SetNegativeButton("Cancel", new ClickListener(mDialogListener, this));
+
+            LayoutInflater inflater = mscene.Activity.LayoutInflater;
+            View pageseletor = inflater.Inflate(Resource.Layout.PageSelector, null);
+            PageInput = pageseletor.FindViewById<EditText>(Resource.Id.setpage);
+            FloatingTextLayout = pageseletor
+                .FindViewById<Android.Support.Design.Widget.TextInputLayout>(Resource.Id.textInputLayout1);
+            PageCount = (int)Math.Ceiling((double)mscene.Count / 50);
+            FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
+            builder.SetView(pageseletor);
+        }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             // Use this to return your custom view for this Fragment
@@ -95,6 +102,8 @@ namespace HappyPandaXDroid.Custom_Views
             base.OnAttach(context);
             try
             {
+                if (builder == null)
+                    CreateDialogBuilder();
                 // Instantiate the NoticeDialogListener so we can send events to the host
                 mDialogListener = mscene.dialogeventlistener;
                 builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));

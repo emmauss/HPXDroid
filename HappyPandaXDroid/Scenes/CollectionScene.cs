@@ -23,9 +23,10 @@ using NLog;
 using Android.Content.Res;
 using Com.Hippo.Stage;
 using V7 = Android.Support.V7.Widget;
-using Com.Bumptech.Glide;
-using HappyPandaXDroid.Core;
-using Android.Content.Res;
+using Android.Util;
+using RefreshLayout = Com.Hippo.Refreshlayout;
+using FloatingSearchViews;
+using FloatingSearchViews.Utils;
 
 namespace HappyPandaXDroid.Scenes
 {
@@ -35,36 +36,32 @@ namespace HappyPandaXDroid.Scenes
         public TextView title, galleries;
         public CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
         FrameLayout errorFrame;
+        FloatingActionButton pageButton;
         Emmaus.Widget.RecyclerViewPager galleryPager;
         ProgressView.MaterialProgressBar mProgressView;
         Chip categoryChip;
         LinearLayout MainLayout;
-        AppBarLayout AppBarLayout;
         Custom_Views.CollectionPagerAdapter adapter;
         bool loaded = false;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
-        Helpers.Layouts.ExtraLayoutManager layout;
-        V7.Toolbar toolbar;
+        Helpers.Layouts.ExtraGridLayoutManager layout;
         ImageView thumb;
         Core.Gallery.Collection Collection;
-        string url;
-        string collectionTitle;
+        //string url;
         int count;
         View MainView;
-
+        int columns = 1;
         List<Core.Gallery.HPXItem> Galleries { get; set; }
 
         public CollectionScene(Core.Gallery.Collection collection,string url)
         {
             Collection = collection;
-            collectionTitle = collection.name;
-            this.url = url;
         }
 
         protected override View OnCreateView(LayoutInflater p0, ViewGroup p1)
         {
-            MainView = p0.Inflate(Resource.Layout.CollectionScene, p1, false);
+            MainView = p0.Inflate(Resource.Layout.CollectionLayout, p1, false);
             Initialize();
 
             return MainView;
@@ -75,14 +72,13 @@ namespace HappyPandaXDroid.Scenes
             InitializeViews();
             
             RequestToken = new RequestToken(SceneCancellationTokenSource.Token);
-            toolbar.Title = Collection.name;
             //initialize header
             
             title.Text = Collection.name;
             Glide.With(Context).Load(Collection.Thumb.Uri).Into(thumb);
             categoryChip.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
             categoryChip.Text = Core.Gallery.Categories[Collection.category_id].name;
-            Task.Run(() =>Refresh(0));
+            Task.Run(() =>Refresh());
         }
 
         void InitializeViews()
@@ -90,25 +86,65 @@ namespace HappyPandaXDroid.Scenes
             title = MainView.FindViewById<TextView>(Resource.Id.title);
             galleries = MainView.FindViewById<TextView>(Resource.Id.galleries);
             thumb = MainView.FindViewById<ImageView>(Resource.Id.thumb);
-            toolbar = MainView.FindViewById<V7.Toolbar>(Resource.Id.toolbar);
             categoryChip = MainView.FindViewById<Chip>(Resource.Id.category);
             mProgressView = MainView.FindViewById<ProgressView.MaterialProgressBar>(Resource.Id.progress_view);
             mProgressView.Visibility = ViewStates.Visible;
-            MainLayout = MainView.FindViewById<LinearLayout>(Resource.Id.below_header);
+            pageButton = MainView.FindViewById<FloatingActionButton>(Resource.Id.page_button);
+            pageButton.Click += PageButton_Click;
+            pageButton.Enabled = false;
+            MainLayout = MainView.FindViewById<LinearLayout>(Resource.Id.main_Layout);
             errorFrame = MainView.FindViewById<FrameLayout>(Resource.Id.error_frame);
             errorFrame.Visibility = ViewStates.Gone;
+            errorFrame.Click += ErrorFrame_Click;
             MainLayout.Visibility = ViewStates.Gone;
             galleryPager = MainView.FindViewById<Emmaus.Widget.RecyclerViewPager>(Resource.Id.gallerypager);
-            toolbar = MainView.FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             mErrorText = MainView.FindViewById<TextView>(Resource.Id.error_text);
             adapter = new Custom_Views.CollectionPagerAdapter(Context, this);
             mProgressView.Visibility = ViewStates.Visible;
             galleryPager.SetAdapter(new Emmaus.Widget.RecyclerViewPagerAdapter(galleryPager, adapter));
             categoryChip = MainView.FindViewById<Chip>(Resource.Id.category);
             categoryChip.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
-            layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
-            layout.SetExtraLayoutSpace(100);
+            SetColumns();
+            layout = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, LinearLayoutManager.Vertical, false);
+            layout.SetExtraLayoutSpace(400);
             galleryPager.SetLayoutManager(layout);
+            //galleryPager.Visibility = ViewStates.Gone;
+        }
+
+        private void PageButton_Click(object sender, EventArgs e)
+        {
+            if (count > 50)
+            {
+                CollectionGalleriesScene scene = new CollectionGalleriesScene(Collection.name, Collection);
+                Stage.PushScene(scene);
+            }
+        }
+
+        void SetColumns()
+        {
+            var windo = Context.GetSystemService(Context.WindowService);
+            var window = windo.JavaCast<IWindowManager>();
+            var display = window.DefaultDisplay;
+            var rotation = display.Rotation;
+            switch (rotation)
+            {
+                case SurfaceOrientation.Rotation0:
+                case SurfaceOrientation.Rotation270:
+                    columns = 1;
+                    break;
+                default:
+                    columns = 2;
+                    break;
+
+            }
+        }
+
+        private void ErrorFrame_Click(object sender, EventArgs e)
+        {
+            errorFrame.Visibility = ViewStates.Gone;
+            MainLayout.Visibility = ViewStates.Gone;
+            mProgressView.Visibility = ViewStates.Visible;
+            Task.Run(() => Refresh());
         }
 
         public void GetTotalCount()
@@ -120,14 +156,20 @@ namespace HappyPandaXDroid.Scenes
             try
             {
                 if (!SceneCancellationTokenSource.IsCancellationRequested)
-                    h.Post(() => galleries.Text = count.ToString());
+                    h.Post(() =>
+                    {
+                        galleries.Text = count.ToString() + $" galler{(count > 1 ? "ies" : "y")}";
+
+                        if (count > 50)
+                            pageButton.Enabled = true;
+                    });
             }catch(Exception ex)
             {
 
             }
         }
 
-        public async void Refresh(int page)
+        public async void Refresh()
         {
             Galleries = new List<Core.Gallery.HPXItem>();
 
@@ -162,7 +204,8 @@ namespace HappyPandaXDroid.Scenes
             if (SceneCancellationTokenSource.IsCancellationRequested)
                 return;
 
-            GetTotalCount();
+            if (count < 1)
+                GetTotalCount();
 
             if (Core.Net.Connect())
             {
@@ -178,14 +221,14 @@ namespace HappyPandaXDroid.Scenes
                         try
                         {
                             var list = App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
-                                Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, count, 0);
+                                Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 25, 0);
                             if (SceneCancellationTokenSource.IsCancellationRequested)
                                 return;
                             foreach (var item in list)
                             {
                                 item.Thumb = new Media.Image();
                             }
-                            Galleries.AddRange(list);
+                            Galleries?.AddRange(list);
                             if (Galleries == null || Galleries.Count < 1)
                             {
                                 h.Post(() =>
@@ -195,26 +238,29 @@ namespace HappyPandaXDroid.Scenes
                                 });
                                 return;
                             }
+                            else
+                            {
+                                h.Post(() =>
+                                {
+                                    MainLayout.Visibility = ViewStates.Visible;
+                                    galleryPager.Visibility = ViewStates.Visible;
+                                    if (Galleries.Count >= count)
+                                    {
+                                        pageButton.Enabled = false;
+                                    }
+                                });
+                            }
 
                             var pages = new List<List<Core.Gallery.HPXItem>>();
 
-                            int i = 0;
-
                             var currentList = new List<Core.Gallery.HPXItem>();
 
-                            while (i < Galleries.Count)
+                            foreach(var gallery in Galleries)
                             {
-                                if (i % 20 == 0)
-                                {
-                                    currentList = new List<Core.Gallery.HPXItem>();
-
-                                    pages.Add(currentList);
-                                }
-
-                                currentList.Add(Galleries[i]);
-
-                                i++;
+                                currentList.Add(gallery);
                             }
+
+                            pages.Add(currentList);
 
                             h.Post(() =>
                             {
@@ -243,8 +289,9 @@ namespace HappyPandaXDroid.Scenes
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
-            layout = new Helpers.Layouts.ExtraLayoutManager(this.Context, LinearLayoutManager.Horizontal, false);
-            layout.SetExtraLayoutSpace(300);
+            SetColumns();
+            layout = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns,LinearLayoutManager.Vertical, false);
+            layout.SetExtraLayoutSpace(400);
             galleryPager.SetLayoutManager(layout);
             galleryPager.GetRecycledViewPool().Clear();
         }

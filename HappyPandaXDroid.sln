@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyPandaXDroid", "HappyPandaXDroid\HappyPandaXDroid.csproj", "{6D656543-6204-47C9-B43C-B15413E34FE2}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sketch", "Sketch\Sketch.csproj", "{113FB6A7-D102-40C4-80BC-D65E7414FF67}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubsamplingScaleImageView", "SubsamplingScaleImageView\SubsamplingScaleImageView.csproj", "{1576B239-B46B-4DF3-85C0-072D55143F18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HPXTest", "HPXTest\HPXTest.csproj", "{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,6 +169,30 @@ Global
 		{1576B239-B46B-4DF3-85C0-072D55143F18}.Release|x64.Build.0 = Release|Any CPU
 		{1576B239-B46B-4DF3-85C0-072D55143F18}.Release|x86.ActiveCfg = Release|Any CPU
 		{1576B239-B46B-4DF3-85C0-072D55143F18}.Release|x86.Build.0 = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|ARM.Build.0 = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|ARM.Deploy.0 = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|x64.Build.0 = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|x86.Build.0 = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|ARM.ActiveCfg = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|ARM.Build.0 = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|ARM.Deploy.0 = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|x64.ActiveCfg = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|x64.Build.0 = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|x64.Deploy.0 = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|x86.ActiveCfg = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|x86.Build.0 = Release|Any CPU
+		{8BF1ACF0-3B72-4EBB-B02D-E06471FE4BE9}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

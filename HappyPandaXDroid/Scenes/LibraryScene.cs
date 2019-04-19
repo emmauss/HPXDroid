@@ -111,7 +111,7 @@ namespace HappyPandaXDroid.Scenes
 
                     RequestToken.FailedCallback += RefreshToken_FailedCallback;
                     logger.Info("Refreshing HPContent");
-                    Core.Gallery.GetPage(ItemType, 0, RequestToken, ViewType, Core.App.Settings.Default_Sort,
+                    Core.Gallery.GetPage(ItemType, page, RequestToken, ViewType, Core.App.Settings.Default_Sort,
                         Core.App.Settings.Sort_Decending, CurrentQuery);                    
                 });
             }
@@ -165,7 +165,7 @@ namespace HappyPandaXDroid.Scenes
                         });
                         return;
                     }
-                    CurrentPage = 0;
+
                     h.Post(() =>
                     {
                         adapter.ResetList();
@@ -201,7 +201,7 @@ namespace HappyPandaXDroid.Scenes
             isLoading = true;
             logger.Info("Loading Next Page");
             var h = new Handler(Looper.MainLooper);
-            if ((CurrentPage + 1) >= (Count / 25))
+            if ((CurrentPage + 1) >= (Count / 50))
             {
                 h.Post(() =>
                 {
@@ -355,7 +355,7 @@ namespace HappyPandaXDroid.Scenes
                         mRefreshLayout.FooterRefreshing = false;
                         isLoading = false;
                         SetBottomLoading(false);
-                        Toast.MakeText(this.Context, "Failed to retrieve the next page", ToastLength.Long).Show();
+                        Toast.MakeText(this.Context, "Failed to retrieve the previous page", ToastLength.Long).Show();
                     });
                 }
             }

@@ -27,7 +27,7 @@ namespace HappyPandaXDroid.Services
         public override void OnCreate()
         {
             if (Core.Gallery.DownloadList == null)
-                Core.Gallery.DownloadList = new ConcurrentQueue<Core.Gallery.Page>();
+                Core.Gallery.DownloadList = new ConcurrentQueue<(Core.Gallery.HPXItem, Core.Gallery.ImageSize)>();
             base.OnCreate();
         }
 

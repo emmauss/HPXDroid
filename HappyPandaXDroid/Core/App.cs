@@ -44,11 +44,11 @@ namespace HappyPandaXDroid.Core
 
                         if (state != null && state == "mounted")
                         {
-                            basePath = Android.OS.Environment.ExternalStorageDirectory.Path + "/HPX/";
+                            basePath = Application.Context.GetExternalFilesDir(string.Empty).AbsolutePath + "/";
                         }
                         else
                         {
-                            basePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                            basePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "/";
                         }
                     }
 
@@ -156,7 +156,7 @@ namespace HappyPandaXDroid.Core
             {
                 get
                 {
-                    return (Gallery.Sort)Enum.Parse(typeof(Gallery.Sort),AppSettings.GetValueOrDefault("default_sort","None"));
+                    return (Gallery.Sort)Enum.Parse(typeof(Gallery.Sort), AppSettings.GetValueOrDefault("default_sort", "None"));
                 }
                 set
                 {
@@ -278,7 +278,7 @@ namespace HappyPandaXDroid.Core
 
             public class Server
             {
-                
+
                 public static int Concurrent_Image_Tasks
                 {
                     get
@@ -563,7 +563,7 @@ namespace HappyPandaXDroid.Core
                 {
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
+                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
                     JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                     JSON.API.PushKey(ref funct, "fname", "get_config");
 
@@ -600,11 +600,11 @@ namespace HappyPandaXDroid.Core
                     return config;
                 }
 
-                public static bool SetConfig(string key, string value,CancellationToken cancellationToken)
+                public static bool SetConfig(string key, string value, CancellationToken cancellationToken)
                 {
                     List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                     List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
+                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
                     JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                     JSON.API.PushKey(ref funct, "fname", "set_config");
                     string set = "{\"" + key + "\": " + value + " }";
@@ -664,7 +664,7 @@ namespace HappyPandaXDroid.Core
                         public bool require_auth;
                         public bool disable_default_user;
                         public int session_span;
-                        
+
                     }
 
                     public class Search
@@ -681,7 +681,7 @@ namespace HappyPandaXDroid.Core
                         public string translation_locale;
                     }
 
-                    
+
 
                     public void Parse()
                     {
@@ -726,8 +726,8 @@ namespace HappyPandaXDroid.Core
                 OutOfService = 0,
                 Started = 3,
                 Stopped = 5,
-                None=7,
-                Error=8,
+                None = 7,
+                Error = 8,
             }
 
             private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -770,7 +770,7 @@ namespace HappyPandaXDroid.Core
 
             }
 
-            public static CommandState StartCommand(int command_id,CancellationToken cancellationToken)
+            public static CommandState StartCommand(int command_id, CancellationToken cancellationToken)
             {
                 logger.Info("Start Command. commandId={0}", command_id);
                 string response = CreateCommand("start_command", command_id);
@@ -780,7 +780,7 @@ namespace HappyPandaXDroid.Core
                 RequestToken request = new RequestToken(resetEvent, cancellationToken);
 
                 if (cancellationToken.IsCancellationRequested)
-                    return  CommandState.None;
+                    return CommandState.None;
 
                 request.Request = response;
 
@@ -793,14 +793,14 @@ namespace HappyPandaXDroid.Core
                 if (cancellationToken.IsCancellationRequested)
                     return CommandState.None;
 
-                 string error = GetError(response);
+                string error = GetError(response);
                 if (error == "none")
                 {
                     var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
                     var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                         .ToString();
-                    var commandState = (CommandState)Enum.Parse(typeof(CommandState),data,true);
+                    var commandState = (CommandState)Enum.Parse(typeof(CommandState), data, true);
                     logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, commandState);
                     return commandState;
                 }
@@ -811,7 +811,7 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
-            public static CommandState StopCommand(int command_id,CancellationToken cancellationToken)
+            public static CommandState StopCommand(int command_id, CancellationToken cancellationToken)
             {
                 logger.Info("Stop Command. commandId={0}", command_id);
                 string response = CreateCommand("stop_command", command_id);
@@ -899,14 +899,14 @@ namespace HappyPandaXDroid.Core
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
 
-                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", key);
                 JSON.API.PushKey(ref funct, "command_ids", "[" + command_id + "]");
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
-                
+
                 return response;
             }
 
@@ -919,7 +919,7 @@ namespace HappyPandaXDroid.Core
                 JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", key);
-                JSON.API.PushKey(ref funct, "command_ids", "[" + string.Join(",",command_id) + "]");
+                JSON.API.PushKey(ref funct, "command_ids", "[" + string.Join(",", command_id) + "]");
                 string response = JSON.API.ParseToString(funct);
                 JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
                 response = JSON.API.ParseToString(main);
@@ -935,7 +935,7 @@ namespace HappyPandaXDroid.Core
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
                     var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[item_id.ToString()]
                         .ToString();
-                    string id =data;
+                    string id = data;
                     return int.Parse(id);
                 }
                 else return -1;
@@ -957,7 +957,7 @@ namespace HappyPandaXDroid.Core
                 {
                     var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(command_response);
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
-                    foreach(Gallery.HPXItem it in items)
+                    foreach (Gallery.HPXItem it in items)
                     {
                         var value = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[it.id.ToString()]
                         .ToString();
@@ -985,7 +985,7 @@ namespace HappyPandaXDroid.Core
             }
 
             public static string GetCommandValue(int command_id, Gallery.HPXItem item, string cacheid, bool return_url
-                ,ref CancellationToken cancellationToken)
+                , ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command value. commandId={0}, type = {1}, url = {2}, itemID ={3}",
                     command_id, item.Type, return_url.ToString(), item.id.ToString());
@@ -1020,22 +1020,78 @@ namespace HappyPandaXDroid.Core
                             .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
 
                         string url = data.data;
-                        url = "http://" + App.Settings.Server_IP + ":"+ App.Settings.WebClient_Port + url;
+                        url = "http://" + App.Settings.Server_IP + ":" + App.Settings.WebClient_Port + url;
                         if (return_url)
                             return url;
                         if (cancellationToken.IsCancellationRequested)
                             return string.Empty;
 
-                        return Media.Cache.CachePage(cacheid, url, true);
+                        lock (item)
+                        {
+                            return Media.Cache.CachePage(cacheid, url, true);
+                        }
                     }
                     else return "fail";
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "\n Exception Caught In App.Server.GetCommandValue. Message : " + ex.Message 
+                    logger.Error(ex, "\n Exception Caught In App.Server.GetCommandValue. Message : " + ex.Message
                         + System.Environment.NewLine + ex.StackTrace);
                     Media.Cache.DeleteCachePage(cacheid);
                     return "fail";
+                }
+            }
+
+            public static async Task<bool> SendItemToTrash(HPXItem item, CancellationToken cancellationToken)
+            {
+                try
+                {
+                    List<Tuple<string, string>> main = new List<Tuple<string, string>>();
+                    List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
+                    JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
+                    JSON.API.PushKey(ref main, "session", App.Server.Info.session);
+                    JSON.API.PushKey(ref funct, "fname", "update_metatags");
+                    JSON.API.PushKey(ref funct, "item_id", "<int>" + item.id);
+                    JSON.API.PushKey(ref funct, "trash", "<bool>true");
+                    string response = JSON.API.ParseToString(funct);
+                    JSON.API.PushKey(ref main, "data", "[\n" + response + "\n]");
+                    response = JSON.API.ParseToString(main);
+                    if (cancellationToken.IsCancellationRequested)
+                        return false;
+                    ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                    RequestToken request = new RequestToken(resetEvent, cancellationToken);
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return false;
+
+                    request.Request = response;
+
+                    request.Queue();
+
+                    request.RequestResetEvent.WaitOne();
+
+                    string reply = (string)request.Result;
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return false;
+
+                    if (reply.Contains("true"))
+                        return true;
+                    else
+                        return false;
+
+                }
+                catch (System.Net.Sockets.SocketException sex)
+                {
+                    logger.Error(sex, "\n Exception Caught In Gallery.GetImage.Message {0}\n {1}", sex.Message, sex.StackTrace);
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "\n Exception Caught In App.DeleteItem. type = {2}, itemId = {0}, \n Message = {1}"
+                         + System.Environment.NewLine + ex.StackTrace, item.id, ex.Message, item.Type);
+                    return false;
                 }
             }
 
@@ -1072,6 +1128,10 @@ namespace HappyPandaXDroid.Core
 
                     if (cancellationToken.IsCancellationRequested)
                         return false;
+
+                    if (item is GalleryItem gallery)
+                        Task.Run(() => Media.Cache.DeleteCache(gallery));
+
                     int command_id = App.Server.GetCommandId(reply);
                     if (command_id == 0 || command_id == -1)
                         return false;
@@ -1080,13 +1140,13 @@ namespace HappyPandaXDroid.Core
                         var state = App.Server.GetCommandState(command_id, ref cancellationToken);
                         if (cancellationToken.IsCancellationRequested)
                             return false;
-                        if (state  == CommandState.Error)
+                        if (state == CommandState.Error)
                             return false;
                         if (state == CommandState.Failed)
                             return false;
                         if (state == CommandState.Stopped)
                             StartCommand(command_id, cancellationToken);
-                        else if (state!= CommandState.Finished)
+                        else if (state != CommandState.Finished)
                             Thread.Sleep(App.Settings.Loop_Delay);
                         else
                             break;
@@ -1214,11 +1274,11 @@ namespace HappyPandaXDroid.Core
                 }
             }*/
 
-            public static Dictionary<int,string> GetCommandValues(int[] command_ids, int[] item_ids, string type,
+            public static Dictionary<int, string> GetCommandValues(int[] command_ids, int[] item_ids, string type,
                 ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command values. commandId={0}, type = {1},  itemIDs =[{2}]",
-                    command_ids, type,  item_ids.ToString());
+                    command_ids, type, item_ids.ToString());
                 string response = CreateCommand("get_command_value", command_ids);
 
                 ManualResetEvent resetEvent = new ManualResetEvent(false);
@@ -1250,7 +1310,7 @@ namespace HappyPandaXDroid.Core
                     {
                         var serverobj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
                         var dataobj = JSON.API.GetData(serverobj.data, 0);
-                        for(int i =0; i< command_ids.Length;i++)
+                        for (int i = 0; i < command_ids.Length; i++)
                         {
                             int id = command_ids[i];
                             data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[id.ToString()]
@@ -1266,7 +1326,7 @@ namespace HappyPandaXDroid.Core
                         /*data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                             .ToObject(typeof(Gallery.Profile)) as Gallery.Profile;
                             */
-                        
+
                     }
                     else return new Dictionary<int, string>();
                 }
@@ -1281,7 +1341,7 @@ namespace HappyPandaXDroid.Core
                 return urls;
             }
 
-            public static CommandState GetCommandState(int command_id,ref CancellationToken cancellationToken)
+            public static CommandState GetCommandState(int command_id, ref CancellationToken cancellationToken)
             {
                 logger.Info("Get Command State. commandId={0}", command_id);
 
@@ -1311,7 +1371,7 @@ namespace HappyPandaXDroid.Core
                     var dataobj = JSON.API.GetData(serverobj.data, 0);
                     var data = ((dataobj as Newtonsoft.Json.Linq.JContainer)["data"])[command_id.ToString()]
                         .ToString();
-                    commandState = (CommandState)Enum.Parse(typeof(CommandState),data,true);
+                    commandState = (CommandState)Enum.Parse(typeof(CommandState), data, true);
                     logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, commandState);
                     return commandState;
                 }
@@ -1320,7 +1380,7 @@ namespace HappyPandaXDroid.Core
             }
 
             public static bool GetCompleted(out List<int> done, List<int> command_ids, Gallery.HPXItem[] hPXItem, ref CancellationToken cancellationToken
-                ,Gallery.ImageSize size)
+                , Gallery.ImageSize size)
             {
                 done = new List<int>();
                 List<int> failed = new List<int>();
@@ -1371,7 +1431,8 @@ namespace HappyPandaXDroid.Core
                                         image.IsReady = true;
                                         Task.Run(() =>
                                         {
-                                            image.RequestLoad();
+                                            if (!image.Requested)
+                                                image.RequestLoad();
                                         }, cancellationToken);
                                     }
                                 }
@@ -1381,22 +1442,22 @@ namespace HappyPandaXDroid.Core
                                 failed.Add(id);
                         }
                     }
-                    if((done.Count >= count) || (failed.Count+done.Count >= count))
-                    return true;
-                   /* 
-                    state = data;
-                    logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, state);*/
+                    if ((done.Count >= count) || (failed.Count + done.Count >= count))
+                        return true;
+                    /* 
+                     state = data;
+                     logger.Info("Get Command State Successful. commandId={0}, state={1}", command_id, state);*/
                     return false;
                 }
                 return true;
             }
 
-            public static T GetItem<T>(int item_id, Gallery.ItemType itemType,CancellationToken cancellationToken)
+            public static T GetItem<T>(int item_id, Gallery.ItemType itemType, CancellationToken cancellationToken)
             {
                 logger.Info("Get Item. itemId={0}, type = {1}", item_id, itemType.ToString());
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_item");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
@@ -1428,20 +1489,20 @@ namespace HappyPandaXDroid.Core
                     return default(T);
 
                 var array = obj.data as Newtonsoft.Json.Linq.JArray;
-                
-                    var data = array[0].ToObject<JSON.DataObject>();
-                    var sett = data.data as Newtonsoft.Json.Linq.JObject;
-                    return sett.ToObject<T>();
+
+                var data = array[0].ToObject<JSON.DataObject>();
+                var sett = data.data as Newtonsoft.Json.Linq.JObject;
+                return sett.ToObject<T>();
 
             }
 
-            public static List<T> GetRelatedItems<T>(int item_id,CancellationToken cancellationToken, Gallery.ItemType itemType
+            public static List<T> GetRelatedItems<T>(int item_id, CancellationToken cancellationToken, Gallery.ItemType itemType
                 , Gallery.ItemType relatedType, int limit = 100, int page = 0)
             {
                 logger.Info("Get Item. itemId={0}, related_type = {1}, limit = {2}", item_id, relatedType.ToString(), limit);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
-                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_related_items");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
@@ -1471,13 +1532,11 @@ namespace HappyPandaXDroid.Core
                 if (cancellationToken.IsCancellationRequested)
                     return new List<T>();
 
-                string countstring = response;
-
                 List<T> list = new List<T>();
 
                 try
                 {
-                    var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(countstring);
+                    var obj = JSON.Serializer.SimpleSerializer.Deserialize<JSON.ServerObject>(response);
                     var array = obj.data as Newtonsoft.Json.Linq.JArray;
                     if (array != null & array.Count > 0)
                     {
@@ -1492,20 +1551,12 @@ namespace HappyPandaXDroid.Core
 
                 }
 
-                if(typeof(T) == typeof(Gallery.Page))
+                if (typeof(T) == typeof(Gallery.Page))
                 {
                     list.Sort((x, y) => (x as Gallery.Page).number.CompareTo((y as Gallery.Page).number));
                 }
 
                 return list;
-            }
-
-            public class ComparePages : IComparer<Gallery.Page>
-            {
-                public int Compare(Gallery.Page x, Gallery.Page y)
-                {
-                    throw new NotImplementedException();
-                }
             }
 
 
@@ -1516,7 +1567,7 @@ namespace HappyPandaXDroid.Core
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();
                 List<Tuple<string, string>> funct = new List<Tuple<string, string>>();
 
-                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest? "guest" : Core.App.Settings.Username);
+                JSON.API.PushKey(ref main, "name", Core.App.Settings.IsGuest ? "guest" : Core.App.Settings.Username);
                 JSON.API.PushKey(ref main, "session", App.Server.Info.session);
                 JSON.API.PushKey(ref funct, "fname", "get_related_count");
                 JSON.API.PushKey(ref funct, "item_id", "<int>" + item_id);
@@ -1593,26 +1644,33 @@ namespace HappyPandaXDroid.Core
                 else return "none";
             }
 
-            public static string HashGenerator(string base_id, Gallery.ImageSize size,Gallery.ItemType type)
+            public static string HashGenerator(string base_id, Gallery.ImageSize size, Gallery.ItemType type)
             {
                 string feed = string.Empty;
                 feed += "-" + base_id;
                 feed += "-" + Enum.GetName(typeof(Gallery.ImageSize), size);
                 feed += "-" + Enum.GetName(typeof(Gallery.ItemType), type);
-                byte[] feedbyte = Encoding.Unicode.GetBytes(feed);/*
+                byte[] feedbyte = Encoding.Unicode.GetBytes(feed);
                 using (MD5 md5 = MD5.Create())
                 {
-                    byte[] hash = md5.ComputeHash(feedbyte);
                     StringBuilder builder = new StringBuilder();
 
-                    foreach (byte b in hash)
-                        builder.Append(b.ToString("x2").ToLower());
+                    try
+                    {
+                        byte[] hash = md5.ComputeHash(feedbyte);
+
+                        foreach (byte b in hash)
+                            builder.Append(b.ToString("x2").ToLower());
+                    }catch(Exception ex)
+                    {
+
+                    }
 
                     return builder.ToString();
-                }*/
+                }
 
-                return Convert.ToBase64String(feedbyte, Base64FormattingOptions.None);
+                //return Convert.ToBase64String(feedbyte, Base64FormattingOptions.None);
             }
         }
-    } 
+    }
 }

@@ -35,6 +35,7 @@
             android:orientation ="vertical"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:gravity ="end"
             >
 
       <TextView
@@ -47,20 +48,6 @@
           android:textSize="@dimen/text_little_large"
           android:maxLines="5"
           android:ellipsize="end"/>
-
-      <!--<TextView
-          android:id="@+id/category"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="12dp"
-          
-          android:layout_marginLeft="@dimen/keyline_margin"
-          android:layout_marginRight="@dimen/keyline_margin"
-          android:background="@android:color/white"
-          android:ellipsize="end"
-          android:singleLine="true"
-          android:textAllCaps="true"
-          android:textStyle="bold"/>-->
         
        <android.support.design.chip.Chip
           android:id="@+id/category"
@@ -71,7 +58,38 @@
           android:layout_marginRight="@dimen/keyline_margin"
           android:clickable ="false"
           />
-
+          
+            <LinearLayout
+          android:id="@+id/artists"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="12dp"
+          android:layout_marginLeft="@dimen/keyline_margin"
+          android:layout_marginRight="@dimen/keyline_margin"
+          android:clickable ="false"
+          />
+          
+        <LinearLayout
+          android:id="@+id/groups"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="12dp"
+          android:layout_marginLeft="@dimen/keyline_margin"
+          android:layout_marginRight="@dimen/keyline_margin"
+          android:clickable ="false"
+          />
+        
+            <LinearLayout
+          android:id="@+id/parodies"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="12dp"
+          android:layout_marginLeft="@dimen/keyline_margin"
+          android:layout_marginRight="@dimen/keyline_margin"
+          android:clickable ="false"
+          />
+          
+            
       <TextView
           android:id="@+id/status"
           android:layout_width="wrap_content"
@@ -110,7 +128,7 @@
           android:layout_marginRight="@dimen/keyline_margin"
           android:singleLine="true"/>
         <TextView
-          android:id="@+id/favoredTimes"
+          android:id="@+id/date"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="12dp"

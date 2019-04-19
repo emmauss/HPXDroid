@@ -183,6 +183,14 @@ namespace HappyPandaXDroid.Scenes
                 searchView.SearchAction += SearchView_SearchAction;
                 searchView.InflateOverflowMenu(Resource.Menu.gallerySearch);
                 searchView.MenuItemClick += SearchView_MenuItemClick;
+                foreach(var item in searchView.CurrentMenuItems)
+                {
+                    if(item.ItemId == Resource.Id.addsearch)
+                    {
+                        item.ActionView.LongClick += Button_LongClick;
+                        item.ActionView.Click += Button_Click;
+                    }
+                }
                 searchView.SetSearchHint(title);
             }catch(Exception ex)
             {
@@ -257,21 +265,29 @@ namespace HappyPandaXDroid.Scenes
         {
             var menuItem = e.MenuItem;
 
-            switch (menuItem.ItemId)
+            /*switch (menuItem.ItemId)
             {
-                case Resource.Id.addsearch:
-                    var button = (ImageButton)menuItem.ActionView;
-
-                    button.LongClick += Button_LongClick;
-                    button.Click += Button_Click;
-                    break;
                 case Resource.Id.sort:
-                    menuItem.SetOnMenuItemClickListener(new SortMenuClickListener(this));
+                    SortClick(menuItem);
                     break;
                 case Resource.Id.sort_direction:
-                    menuItem.SetOnMenuItemClickListener(new SortMenuClickListener(this));
+                    SortClick(menuItem);
                     break;
+            }*/
+        }
+
+        public void SortClick(IMenuItem item)
+        {
+           /*if (item.ItemId == Resource.Id.sort)
+            {
+                Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(this, "sort");
+                listDialog.Show(((HPXSceneActivity)MainView.Context).FragmentManager, "Sort By");
             }
+            else if (item.ItemId == Resource.Id.sort_direction)
+            {
+                Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(this, "order");
+                listDialog.Show(((HPXSceneActivity)MainView.Context).FragmentManager, "Sort In");
+            }*/
         }
 
         private void SearchView_SearchAction(object sender, FloatingSearchView.SearchActionEventArgs e)
@@ -292,18 +308,18 @@ namespace HappyPandaXDroid.Scenes
             {
                 switch (menuItem.ItemId)
                 {
-                    case Resource.Id.addsearch:
+                    /*case Resource.Id.addsearch:
                         var button = (ImageButton)menuItem.ActionView;
 
                         button.LongClick += parent.Button_LongClick;
                         button.Click += parent.Button_Click;
                         break;
-                    case Resource.Id.sort:
+                    /*se Resource.Id.sort:
                         menuItem.SetOnMenuItemClickListener(new SortMenuClickListener(parent));
                         break;
                     case Resource.Id.sort_direction:
                         menuItem.SetOnMenuItemClickListener(new SortMenuClickListener(parent));
-                        break;
+                        break;*/
                 }
             }
         }
@@ -362,36 +378,23 @@ namespace HappyPandaXDroid.Scenes
         private void AppBarLayout_Drag(object sender, View.DragEventArgs e)
         {
             e.Handled = true;
-        }        
+        }
 
         void SetColumns()
         {
             isGrid = Core.App.Settings.IsGrid;
             var windo = Context.GetSystemService(Context.WindowService);
             var window = windo.JavaCast<IWindowManager>();
-            var display = window.DefaultDisplay;
-            if (isGrid)
+            var display = window.DefaultDisplay; var rotation = display.Rotation;
+            switch (rotation)
             {
-                var metrics = new DisplayMetrics();
-                display.GetMetrics(metrics);
-
-                float dpwidth = metrics.WidthPixels / metrics.Density;
-                columns = (int)dpwidth / 180; ;
-            }
-            else
-            {
-                var rotation = display.Rotation;
-                switch (rotation)
-                {
-                    case SurfaceOrientation.Rotation0:
-                    case SurfaceOrientation.Rotation270:
-                        columns = 1;
-                        break;
-                    default:
-                        columns = 2;
-                        break;
-
-                }
+                case SurfaceOrientation.Rotation0:
+                case SurfaceOrientation.Rotation270:
+                    columns = 1;
+                    break;
+                default:
+                    columns = 2;
+                    break;
 
             }
         }
@@ -525,8 +528,8 @@ namespace HappyPandaXDroid.Scenes
                         await Task.Run(() =>
                         {
                             SetBottomLoading(true);
-                            if(!SceneCancellationTokenSource.IsCancellationRequested)
-                            PreviousPage();
+                            if (!SceneCancellationTokenSource.IsCancellationRequested)
+                                PreviousPage();
                             SetBottomLoading(false);
                         }, SceneCancellationTokenSource.Token);
                     }
@@ -831,12 +834,12 @@ namespace HappyPandaXDroid.Scenes
             {
                 this.parent = parent;
             }
-            public void OnDialogNegativeClick(DialogFragment dialog)
+            public void OnDialogNegativeClick(Android.Support.V4.App.DialogFragment dialog)
             {
                 //close dialog
             }
 
-            public void OnDialogPositiveClick(DialogFragment dialog)
+            public void OnDialogPositiveClick(Android.Support.V4.App.DialogFragment dialog)
             {
 
                 if (dialog is Custom_Views.PageSelector dl)
@@ -983,8 +986,8 @@ namespace HappyPandaXDroid.Scenes
                 {
                     case Resource.Id.fabJumpTo:
                         logger.Info("Page selector shown");
-                        main.mpageSelector.Show(
-                            ((HPXSceneActivity)main.MainView.Context).FragmentManager, "PageSelecter");
+                        main.mpageSelector?.Show(
+                            ((HPXSceneActivity)main.MainView.Context).SupportFragmentManager, "PageSelecter");
                         break;
                     case Resource.Id.fabRefresh:
                         main.Refresh(0);

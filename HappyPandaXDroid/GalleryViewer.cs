@@ -64,7 +64,7 @@ namespace HappyPandaXDroid
 
             gallery = Core.IO.Parcel.PopParcel() as Core.Gallery.GalleryItem;
 
-            PageList = gallery.PageList;
+            PageList = new List<Core.Gallery.Page>(gallery.PageList);
             Task.Run(() => InitPageGen());
             int pageno = Intent.GetIntExtra("no", 0);
             pageno = pageno == 0 ? 0 : pageno - 1;
@@ -110,6 +110,11 @@ namespace HappyPandaXDroid
             //op.SetOnTouchListener(new ScreenTouchListener(this));
             SupportActionBar.Title = PageList[pageno].name;
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+            galleryPager.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.Immersive |
+                SystemUiFlags.Fullscreen | 
+                SystemUiFlags.HideNavigation |
+                SystemUiFlags.LayoutHideNavigation |
+                SystemUiFlags.LayoutStable);
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
@@ -251,7 +256,6 @@ namespace HappyPandaXDroid
             adapter = null;
             galleryPager.ClearOnScrollListeners();
             galleryPager.ClearOnPageChangedListeners();
-            
             galleryPager.RemoveAllViews();
             gallery = null;
             galleryPager = null;
@@ -263,6 +267,7 @@ namespace HappyPandaXDroid
             if (PageList != null)
             {
                 page_number = null;
+                PageList.Clear();
             }
             FilterSlider = null;
             ScreenFilter = null;
@@ -587,7 +592,7 @@ namespace HappyPandaXDroid
             public ImageAdapter(List<Core.Gallery.Page> imagelist, Context context)
             {
                 this.context = context;
-                PageList = imagelist;
+                PageList = new List<Core.Gallery.Page>(imagelist);
             }
 
             public override int ItemCount

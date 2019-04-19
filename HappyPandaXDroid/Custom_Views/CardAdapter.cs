@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace HappyPandaXDroid.Custom_Views
 {
@@ -67,12 +68,9 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     item.Thumb = new Media.Image();
                 }
-                var backupData = new List<Core.Gallery.HPXItem>(mdata);
-                mdata.Clear();
                 var urls = new Dictionary<int, Media.Image>(UrlList);
                 UrlList.Clear();
-                mdata.AddRange(newItems);
-                mdata.AddRange(backupData);
+                mdata.InsertRange(0, newItems);
                 Task.Run(() =>
                 {
                     UpdateUrls(newItems);
@@ -82,13 +80,14 @@ namespace HappyPandaXDroid.Custom_Views
                     {
                         foreach (var item in mdata)
                         {
-                            if (!UrlList.ContainsKey(item.id))
-                            {
-                                if (urls.ContainsKey(item.id))
-                                    UrlList.Add(item.id, urls[item.id]);
-                            }
-                            else if (urls.ContainsKey(item.id))
-                                UrlList[item.id] = urls[item.id];
+                            if (urls.ContainsKey(item.id))
+                                if (!UrlList.ContainsKey(item.id))
+                                {
+                                    if (urls.ContainsKey(item.id))
+                                        UrlList.Add(item.id, urls[item.id]);
+                                }
+                                else if (urls.ContainsKey(item.id))
+                                    UrlList[item.id] = urls[item.id];
                         }
                     }
                 
@@ -102,31 +101,40 @@ namespace HappyPandaXDroid.Custom_Views
                 foreach (var item in newItems)
                 {
                     string cacheid = Core.App.Server.HashGenerator(item.BaseId, Core.Gallery.ImageSize.Small, item.Type);
-                    if(Core.Media.Cache.IsCached(cacheid))
-                        if(Core.Media.Cache.TryGetCachedPath
-                            (cacheid, out item.Thumb.Uri))
-                        {
-                            item.Thumb.IsReady = true;
-                            continue;
-                        }
+                    if (Core.Media.Cache.TryGetCachedPath
+                        (cacheid, out item.Thumb.Uri))
+                    {
+                        item.Thumb.IsReady = true;
+                        continue;
+                    }
                     ids.Add(item.id);
                 }
                 if (ids.Count > 0)
                 {
-                    var urls = Core.Gallery.GetImage(newItems, ItemType,
-                        AdapterCancellationTokenSource.Token, Core.Gallery.ImageSize.Small).Result;
-                    if (AdapterCancellationTokenSource.IsCancellationRequested)
-                        return;
+                    Dictionary<int, Media.Image> urls = new Dictionary<int, Media.Image>();
+                    int tries = 0;
+                    while(urls.Count == 0)
+                    {
+                        urls = Core.Gallery.GetImage(newItems, ItemType,
+                            AdapterCancellationTokenSource.Token, Core.Gallery.ImageSize.Small).Result;
+                        if (AdapterCancellationTokenSource.IsCancellationRequested)
+                            return;
+
+                        if (tries > 3)
+                            break;
+                        tries++;
+                    }
                     if (urls.Count > 0)
                     {
-                        foreach(var item in newItems)
+                        foreach (var item in newItems)
                         {
-                            if (!UrlList.ContainsKey(item.id))
-                            {
-                                UrlList.Add(item.id, urls[item.id]);
-                            }
-                            else
-                                UrlList[item.id] = urls[item.id];
+                            if (urls.ContainsKey(item.id))
+                                if (!UrlList.ContainsKey(item.id))
+                                {
+                                    UrlList.Add(item.id, urls[item.id]);
+                                }
+                                else
+                                    UrlList[item.id] = urls[item.id];
                         }
                     }
                 }
@@ -171,14 +179,22 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     if (vh.ItemView != null)
                     {
+                        var timer = Stopwatch.StartNew();
                         vh.Id = mdata[position].id;
                         if (mdata[position] is Core.Gallery.GalleryItem gallery)
                         {
                             vh.HPXItem = gallery;
-                            vh.Name.Text = gallery.titles[0].name;
+                            vh.Name.Text = gallery.preferred_title.name;
                             if (gallery.artists.Count > 0)
                                 if (gallery.artists[0].Names.Count > 0)
                                     vh.Info.Text = gallery.artists[0].Names[0].name;
+                            try
+                            {
+                                vh.Pages.Text = gallery.last_page.number + " page" + (gallery.last_page.number > 1 ? "s" : "");
+                            }catch(Exception ex)
+                            {
+
+                            }
                         }
                         else
                          if (mdata[position] is Core.Gallery.Collection collection)
@@ -192,7 +208,10 @@ namespace HappyPandaXDroid.Custom_Views
 
                         vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
 
+                        var elapsed = timer.ElapsedMilliseconds;
+                        timer.Restart();
                         vh.Bound = true;
+                        elapsed = timer.ElapsedMilliseconds;
                     }
                 }
                 catch (Exception ex)
@@ -225,6 +244,7 @@ namespace HappyPandaXDroid.Custom_Views
             public TextView Name { get; set; }
             public TextView Info { get; set; }
             public Chip Category { get; set; }
+            public TextView Pages { get; set; }
            
             CancellationTokenSource Token { get; set; }
 
@@ -237,6 +257,7 @@ namespace HappyPandaXDroid.Custom_Views
                 Info = itemView.FindViewById<TextView>(Resource.Id.info);
                 Category = itemView.FindViewById<Chip>(Resource.Id.category);
                 Category.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
+                Pages = itemView.FindViewById<TextView>(Resource.Id.pages);
                 Token = new CancellationTokenSource();
             }
 

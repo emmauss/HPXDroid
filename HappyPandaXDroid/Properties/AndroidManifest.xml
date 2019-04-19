@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="emmaus.HPXDroid" android:versionCode="15009" android:versionName="1.5.0-9" android:installLocation="preferExternal" android:configChanges="keyboardHidden|orientation">
-	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="28" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="emmaus.HPXDroid" android:versionCode="15109" android:versionName="1.5.1-9" android:installLocation="auto" android:configChanges="keyboardHidden|orientation">
+	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="27" />
 	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:label="HPXDroid" android:theme="@style/MyTheme" android:icon="@mipmap/ic_launcher_round"></application>
+	<application android:label="HPXDroid" android:theme="@style/MyTheme" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round"></application>
 </manifest>

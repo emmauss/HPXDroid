@@ -28,21 +28,24 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
+    <AndroidLinkMode>Full</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <Debugger>Xamarin</Debugger>
-    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
+    <AndroidHttpClientHandlerType>
+    </AndroidHttpClientHandlerType>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
-    <EnableProguard>False</EnableProguard>
+    <EnableProguard>false</EnableProguard>
     <LangVersion>latest</LangVersion>
     <AndroidSupportedAbis />
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <MandroidI18n />
+    <AndroidUseAapt2>false</AndroidUseAapt2>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -53,7 +56,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidLinkMode>Full</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
@@ -63,7 +66,7 @@
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <EnableProguard>false</EnableProguard>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
-    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidLinkSkip>Nlog;Newtonsoft.Json</AndroidLinkSkip>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -232,6 +235,9 @@
     <Reference Include="Xamarin.Bindings.MaterialProgressBar, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Bindings.MaterialProgressBar.1.1.7\lib\MonoAndroid\Xamarin.Bindings.MaterialProgressBar.dll</HintPath>
     </Reference>
+    <Reference Include="XamarinMaterialSearchView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\XamarinMaterialSearchView.1.4.0\lib\monoandroid81\XamarinMaterialSearchView.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\IO.cs" />
@@ -256,6 +262,7 @@
     <Compile Include="Helpers\Layouts.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="HPXSceneActivity.cs" />
+    <Compile Include="Scenes\CollectionGalleriesScene.cs" />
     <Compile Include="Scenes\CollectionScene.cs" />
     <Compile Include="Scenes\GalleryScene.cs" />
     <Compile Include="Scenes\HPXScene.cs" />
@@ -288,10 +295,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\hpx_logo.svg" />
-    <AndroidResource Include="Resources\drawable\logo.png" />
-    <AndroidResource Include="Resources\drawable\splash.xml">
-      <SubType>Designer</SubType>
+    <AndroidResource Include="Resources\drawable\logo.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+    <TransformFile Include="Resources\drawable\splash_logo.xml">
+      <SubType>Designer</SubType>
+    </TransformFile>
     <AndroidResource Include="Resources\drawable-xxhdpi\ic_hpx_logo.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_hpx_logo.png" />
     <AndroidResource Include="Resources\mipmap-hdpi\ic_contrast.png" />
@@ -317,9 +326,6 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\ic_import_contacts.xml" />
-    <AndroidResource Include="Resources\layout\CollectionSceneLayout.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
     <AndroidResource Include="Resources\layout\DeleteDialog.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
@@ -328,16 +334,19 @@
     <AndroidResource Include="Resources\layout\viewScene.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\CollectionScene.axml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\collection_header.xml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\collection_galleries.xml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    <AndroidResource Include="Resources\drawable-xhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\splash.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\splash.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\splash.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\splash.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-ldpi\splash.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\logo.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\splash.png" />
+    <AndroidResource Include="Resources\layout\CollectionLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <TransformFile Include="Resources\menu\sortDirectionMenu.xml">
