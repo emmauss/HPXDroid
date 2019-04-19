@@ -46,7 +46,9 @@ namespace HappyPandaXDroid.Scenes
                 toolbar.Title = "Library";
 
             Current_Query = Parse(query, false);*/
-            searchView.SetSearchText(title);
+            toolbar.Title = title;
+            searchView.Enabled = false;
+            
             Refresh(0);
         }
 

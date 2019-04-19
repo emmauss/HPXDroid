@@ -62,12 +62,10 @@
   </style>
 
   <style name="SearchView">
-    <item name="floatingSearch_backgroundColor">@color/background_dark</item>
-    <item name="floatingSearch_viewSearchInputTextColor">#FFFFFF</item>
-    <item name="floatingSearch_hintTextColor">#EEEEEE</item>
-    <item name="floatingSearch_clearBtnColor">#FFFFFF</item>
-    <item name="floatingSearch_leftActionColor">#FFFFFF</item>
-    <item name="floatingSearch_menuItemIconColor">#FFFFFF</item>
+    <item name="searchBackground">@color/background_dark</item>
+    <item name="searchSuggestionBackground">@color/background_dark</item>
+    <item name="android:textColor">#FFFFFF</item>
+    <item name="android:textColorHint">#EEEEEE</item>
   </style>
   
 <style name="PopupMenuStyle" parent="Theme.MaterialComponents.Bridge">

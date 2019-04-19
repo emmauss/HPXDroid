@@ -9,7 +9,7 @@
 	<FrameLayout
     android:layout_width="match_parent"
         android:layout_height="match_parent">
-		<com.arlib.floatingsearchview.FloatingSearchView
+		<!--<com.arlib.floatingsearchview.FloatingSearchView
    xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/search"
                 android:layout_width="match_parent"
@@ -21,7 +21,7 @@
                 app:floatingSearch_suggestionsListAnimDuration="250"
                 app:floatingSearch_showSearchKey="true"
                 app:floatingSearch_leftActionMode="showHamburger"
-                app:floatingSearch_close_search_on_keyboard_dismiss="true"/>
+                app:floatingSearch_close_search_on_keyboard_dismiss="true"/>-->
 		<FrameLayout
     android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,6 +48,33 @@
             android:layout_height="match_parent" />
     </com.hippo.refreshlayout.RefreshLayout>
   </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            
+    <android.support.design.widget.NavigationView
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="start"
+      android:id="@+id/searchDrawer"
+      navdrawer:headerLayout="@layout/nav_header"
+      navdrawer:menu="@menu/nav_menu" />
+            <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+                style="@style/SearchView"
+            android:background="?attr/colorPrimary"
+      android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+      fam:popupTheme="@style/PopupMenuStyle" 
+            android:layout_height="?attr/actionBarSize" />
+
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
+                style="@style/SearchView"
+            android:layout_width="match_parent"
+android:layout_height="wrap_content" />
+
+            </FrameLayout>
 		</FrameLayout>
 	<com.github.clans.fab.FloatingActionMenu
   android:layout_width="wrap_content"

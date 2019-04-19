@@ -33,6 +33,8 @@ namespace HappyPandaXDroid.Scenes
             mToggleFab.SetImageResource(Resource.Drawable.ic_list_white);
             mToggleFab.SetOnClickListener(fabclick);
             base.Initialize();
+
+            OnCreateOptionsMenu();
             /*if (query.Trim() != string.Empty)
             {
 
@@ -43,7 +45,8 @@ namespace HappyPandaXDroid.Scenes
                 toolbar.Title = "Library";
 
             Current_Query = Parse(query, false);*/
-            searchView.SetSearchText(query);
+            toolbar.Title = string.IsNullOrWhiteSpace(query) ? "Library" : query;
+            searchView.SetQuery(query, true);
             Refresh(0);
         }
 
@@ -97,6 +100,7 @@ namespace HappyPandaXDroid.Scenes
             {
                 h.Post(() =>
                 {
+                    toolbar.Title = current_query;
                     SetMainLoading(true);
                 });
                 await Task.Run(async () =>

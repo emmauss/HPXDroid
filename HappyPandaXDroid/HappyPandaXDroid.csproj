@@ -298,6 +298,8 @@
     <AndroidResource Include="Resources\drawable\logo.png">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+    <AndroidResource Include="Resources\drawable\ic_search_white.png" />
+    <AndroidResource Include="Resources\drawable\ic_add_circle_white.png" />
     <TransformFile Include="Resources\drawable\splash_logo.xml">
       <SubType>Designer</SubType>
     </TransformFile>

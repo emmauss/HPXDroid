@@ -1,10 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:happypandaxdroid="http://schemas.android.com/apk/res-auto">
+  <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_white"
+        android:title="Search"
+        happypandaxdroid:showAsAction="always" />
   <item android:id="@+id/addsearch"
-      happypandaxdroid:icon="@drawable/ic_sort_black_24dp"
+      android:icon="@drawable/ic_add_white"
       android:title="Saved Search Query"
-        happypandaxdroid:actionViewClass="android.widget.ImageButton"
         android:tag="search"
       happypandaxdroid:showAsAction="always"/>
 </menu>

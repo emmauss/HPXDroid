@@ -93,7 +93,7 @@ namespace HappyPandaXDroid
                     Core.Net.Connect();
                     
                 }
-            RequestPermissions();
+            //RequestPermissions();
             return true;
         }
 

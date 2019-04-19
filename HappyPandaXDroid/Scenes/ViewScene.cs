@@ -21,13 +21,14 @@ using FloatingSearchViews;
 using FloatingSearchViews.Utils;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using HappyPandaXDroid.Core;
+using Com.Miguelcatalan.Materialsearchview;
 
 namespace HappyPandaXDroid.Scenes
 {
-    public abstract class ViewScene : HPXScene
+    public abstract class ViewScene : HPXScene, MaterialSearchView.IOnQueryTextListener, MaterialSearchView.ISearchViewListener
     {
         public abstract Core.Gallery.ViewType ViewType { get;}
-        protected FloatingSearchView searchView;
+        //protected FloatingSearchView searchView;
         Clans.Fab.FloatingActionMenu fam;
         public string title;
         bool isGrid = false;
@@ -40,6 +41,8 @@ namespace HappyPandaXDroid.Scenes
         public Custom_Views.PageSelector mpageSelector;
         protected EasyRecyclerView.EasyRecyclerView mRecyclerView;
         public bool IsRefreshing = false;
+        public Toolbar toolbar;
+        public MaterialSearchView searchView;
         PageCheckListener listener;
         bool initialized = false;
         protected CancellationTokenSource SceneCancellationTokenSource = new CancellationTokenSource();
@@ -141,7 +144,7 @@ namespace HappyPandaXDroid.Scenes
         }
 
         protected string current_query = string.Empty;
-        public string CurrentQuery => Parse(searchView.Query, false);
+        public string CurrentQuery => Parse(current_query, false);
         /*{
             get
             {
@@ -174,9 +177,20 @@ namespace HappyPandaXDroid.Scenes
             return MainView;
         }
 
+        public void OnCreateOptionsMenu()
+        {
+            toolbar.InflateMenu(Resource.Menu.gallerySearch);
+
+            var menuItem = toolbar.Menu.FindItem(Resource.Id.action_search);
+            searchView.SetMenuItem(menuItem);
+
+            menuItem = toolbar.Menu.FindItem(Resource.Id.addsearch);
+        }
+
         protected virtual void Initialize()
         {
-            try
+            toolbar = MainView.FindViewById<Toolbar>(Resource.Id.toolbar);
+            /*try
             {
                 searchView = MainView.FindViewById<FloatingSearchView>(Resource.Id.search);
                 searchView.AttachNavigationDrawerToMenuButton(((HPXSceneActivity)Context).navDrawer);
@@ -195,7 +209,10 @@ namespace HappyPandaXDroid.Scenes
             }catch(Exception ex)
             {
 
-            }
+            }*/
+
+            searchView = MainView.FindViewById<MaterialSearchView>(Resource.Id.search_view);
+            searchView.SetOnQueryTextListener(this);
             collectionAdapter = new Custom_Views.CardAdapter.CollectionCardAdapter(this.Context, this);
             galleryAdapter = new Custom_Views.CardAdapter.GalleryCardAdapter(this.Context,this);
 
@@ -1081,6 +1098,24 @@ namespace HappyPandaXDroid.Scenes
                 alertDialog.SetNegativeButton("No", new DialogInterface(this));
                 alertDialog.Show();
             }
+        }
+
+        public bool OnQueryTextSubmit(string p0)
+        {
+            current_query = p0;
+            Refresh(0);
+
+            return false;
+        }
+
+        public void OnSearchViewClosed()
+        {
+            
+        }
+
+        public void OnSearchViewShown()
+        {
+            searchView.SetQuery(current_query, false);
         }
 
         class DialogInterface : Java.Lang.Object, IDialogInterfaceOnClickListener
