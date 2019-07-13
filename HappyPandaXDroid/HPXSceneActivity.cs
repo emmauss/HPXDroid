@@ -104,7 +104,12 @@ namespace HappyPandaXDroid
                 navDrawer.CloseDrawer(GravityCompat.Start);
                 return;
             }
-            if(!director.HandleBack())
+            if (navDrawer.IsDrawerOpen(GravityCompat.End))
+            {
+                navDrawer.CloseDrawer(GravityCompat.End);
+                return;
+            }
+            if (!director.HandleBack())
             base.OnBackPressed();
 
 

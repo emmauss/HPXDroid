@@ -188,12 +188,15 @@ namespace HappyPandaXDroid.Custom_Views
                             if (gallery.artists.Count > 0)
                                 if (gallery.artists[0].Names.Count > 0)
                                     vh.Info.Text = gallery.artists[0].Names[0].name;
-                            try
+                            if (gallery.ChildCount > 0)
                             {
-                                vh.Pages.Text = gallery.last_page.number + " page" + (gallery.last_page.number > 1 ? "s" : "");
-                            }catch(Exception ex)
+                                vh.Pages.Text = gallery.ChildCount + " page" + (gallery.ChildCount > 1 ? "s" : "");
+                                vh.UnbindCountEvent();
+                            }
+                            else
                             {
-
+                                vh.BindCountEvent();
+                                Task.Run(() => Core.Gallery.RequestPageCount(gallery, AdapterCancellationTokenSource.Token, Core.Gallery.ItemType.Page));
                             }
                         }
                         else
@@ -201,9 +204,17 @@ namespace HappyPandaXDroid.Custom_Views
                         {
                             vh.HPXItem = collection;
                             vh.Name.Text = collection.name;
-                            if (collection.galleries!=null)
-                                    vh.Info.Text = collection.galleries.Length + " galler" + 
-                                    (collection.galleries.Length>1?"ies":"y");
+                            if (collection.ChildCount > 0)
+                            {
+                                vh.Info.Text = collection.ChildCount + " galler" +
+                                (collection.ChildCount > 1 ? "ies" : "y");
+                                vh.UnbindCountEvent();
+                            }
+                            else
+                            {
+                                vh.BindCountEvent();
+                                Task.Run(() => Core.Gallery.RequestPageCount(collection, AdapterCancellationTokenSource.Token, Core.Gallery.ItemType.Gallery));
+                            }
                         }
 
                         vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
@@ -267,12 +278,56 @@ namespace HappyPandaXDroid.Custom_Views
                 public int Position;
             }
 
+            public void BindCountEvent()
+            {
+                if (HPXItem != null)
+                {
+                    HPXItem.CountRead += HPXItem_CountRead;
+                }
+            }
+
+            private void HPXItem_CountRead(object sender, EventArgs e)
+            {
+                var h = new Handler(Looper.MainLooper);
+                h.Post(() =>
+                {
+                    if (HPXItem is Core.Gallery.GalleryItem gallery)
+                    {
+                        if (gallery.ChildCount > 0)
+                            Pages.Text = gallery.ChildCount + " page" + (gallery.ChildCount > 1 ? "s" : "");
+                    }
+                    else if (HPXItem is Core.Gallery.Collection collection)
+                    {
+                        if (collection.ChildCount > 0)
+                            Info.Text = collection.ChildCount + " galler" + (collection.ChildCount > 1 ? "ies" : "y");
+                    }
+                });
+
+                UnbindCountEvent();
+            }
+
+            public void UnbindCountEvent()
+            {
+                try
+                {
+                    if (HPXItem != null)
+                    {
+                        HPXItem.CountRead -= HPXItem_CountRead;
+                    }
+                }
+                catch(Exception ex)
+                {
+
+                }
+            }
+
             public void Cancel()
             {
                 Token.Cancel();
                 Glide.With(ItemView.Context).Clear(Thumb);
                 Name.Text = string.Empty;
                 Info.Text = string.Empty;
+                UnbindCountEvent();
             }
         }
 

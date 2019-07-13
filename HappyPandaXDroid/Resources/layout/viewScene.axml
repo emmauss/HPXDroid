@@ -22,7 +22,14 @@
                 app:floatingSearch_showSearchKey="true"
                 app:floatingSearch_leftActionMode="showHamburger"
                 app:floatingSearch_close_search_on_keyboard_dismiss="true"/>-->
-		<FrameLayout
+		<android.support.v4.widget.DrawerLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" 
+                android:animateLayoutChanges="true"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:id="@+id/options_drawer_layout">
+            <FrameLayout
     android:layout_width="match_parent"
         android:layout_height="match_parent"
 			android:layout_marginTop="@dimen/mtrl_toolbar_default_height"
@@ -48,17 +55,24 @@
             android:layout_height="match_parent" />
     </com.hippo.refreshlayout.RefreshLayout>
   </FrameLayout>
+            <LinearLayout
+                android:minWidth = "@dimen/drawer_max_width"
+                android:layout_gravity = "end"
+                android:layout_marginTop ="?android:attr/actionBarSize"
+                android:layout_width="match_parent"
+                android:id ="@+id/rightDrawer"
+                android:background = "@color/semi_transparent"
+                android:layout_height="match_parent">
+                <include
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    layout = "@layout/libraryoptionslayout"
+                />
+                </LinearLayout>
+            </android.support.v4.widget.DrawerLayout>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-            
-    <android.support.design.widget.NavigationView
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_gravity="start"
-      android:id="@+id/searchDrawer"
-      navdrawer:headerLayout="@layout/nav_header"
-      navdrawer:menu="@menu/nav_menu" />
             <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"

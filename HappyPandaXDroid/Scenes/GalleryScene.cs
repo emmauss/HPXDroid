@@ -158,7 +158,7 @@ namespace HappyPandaXDroid.Scenes
 
                 h.Post(() =>
                 {
-                    pages.Text = gallery.last_page?.number + $" Page{(gallery.last_page.number > 1 ? "s" : "")}";
+                    pages.Text = gallery.ChildCount + $" Page{(gallery.ChildCount > 1 ? "s" : "")}";
 
                     if (gallery.artists?.Count > 0)
                     {

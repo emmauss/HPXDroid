@@ -190,16 +190,16 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
-            public static bool Sort_Decending
+            public static bool Sort_Descending
             {
                 get
                 {
-                    var set = AppSettings.GetValueOrDefault("sort_decending", false);
+                    var set = AppSettings.GetValueOrDefault("sort_descending", false);
                     return set;
                 }
                 set
                 {
-                    AppSettings.AddOrUpdateValue("sort_decending", value);
+                    AppSettings.AddOrUpdateValue("sort_descending", value);
                 }
             }
 
@@ -384,7 +384,7 @@ namespace HappyPandaXDroid.Core
                     }
                 }
 
-                public static bool Match_Whole_Words
+                public static bool Match_Exact
                 {
                     get
                     {
@@ -411,7 +411,7 @@ namespace HappyPandaXDroid.Core
                 }
 
 
-                public static bool Descendants
+                public static bool Children
                 {
                     get
                     {
@@ -702,8 +702,8 @@ namespace HappyPandaXDroid.Core
                         Concurrent_Image_Tasks = core.concurrent_image_tasks;
                         Case_Sensitive = search.case_sensitive;
                         Match_All_Terms = search.match_all_terms;
-                        Match_Whole_Words = search.match_whole_word;
-                        Descendants = search.descendents;
+                        Match_Exact = search.match_whole_word;
+                        Children = search.descendents;
                         Translation_Locale = client.translation_locale;
                         Database_Timeout = core.sqlite_database_timeout;
 

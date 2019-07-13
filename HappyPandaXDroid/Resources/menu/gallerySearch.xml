@@ -6,9 +6,4 @@ xmlns:happypandaxdroid="http://schemas.android.com/apk/res-auto">
         android:icon="@drawable/ic_search_white"
         android:title="Search"
         happypandaxdroid:showAsAction="always" />
-  <item android:id="@+id/addsearch"
-      android:icon="@drawable/ic_add_white"
-      android:title="Saved Search Query"
-        android:tag="search"
-      happypandaxdroid:showAsAction="always"/>
 </menu>

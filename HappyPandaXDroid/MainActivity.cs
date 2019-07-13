@@ -103,18 +103,24 @@ namespace HappyPandaXDroid
 
         public static void InitLogging()
         {
-            LogManager.Configuration = new LoggingConfiguration();
-            NLog.Targets.FileTarget target = new NLog.Targets.FileTarget("log");
-            var now = DateTime.Now;
-            string logfile = Path.Combine(Core.App.Settings.Log, $"{now.Year} - {now.Month} - {now.Day} -- {now.ToShortTimeString()} - log.txt".Replace(":","."));
-         /*   string logfile = Core.App.Settings.Log + DateTime.Now.ToShortDateString().Replace("/", "-") + " - "
-                + DateTime.Now.ToShortTimeString().Replace(":", ".") + " - log.txt";*/
-            target.FileName = logfile;
-            target.FileNameKind = NLog.Targets.FilePathKind.Absolute;
-            LogManager.Configuration.AddTarget(target);
+            try
+            {
+                LogManager.Configuration = new LoggingConfiguration();
+                NLog.Targets.FileTarget target = new NLog.Targets.FileTarget("log");
+                var now = DateTime.Now;
+                string logfile = Path.Combine(Core.App.Settings.Log, $"{now.Year} - {now.Month} - {now.Day} -- {now.ToShortTimeString()} - log.txt".Replace(":", "."));
+                /*   string logfile = Core.App.Settings.Log + DateTime.Now.ToShortDateString().Replace("/", "-") + " - "
+                       + DateTime.Now.ToShortTimeString().Replace(":", ".") + " - log.txt";*/
+                target.FileName = logfile;
+                target.FileNameKind = NLog.Targets.FilePathKind.Absolute;
+                LogManager.Configuration.AddTarget(target);
 
-            LogManager.Configuration.AddRuleForAllLevels(target);
-            LogManager.ReconfigExistingLoggers();
+                LogManager.Configuration.AddRuleForAllLevels(target);
+                LogManager.ReconfigExistingLoggers();
+            }catch(Exception ex)
+            {
+
+            }
         }
 
         public void CreateFolders()
@@ -123,34 +129,6 @@ namespace HappyPandaXDroid
             Directory.CreateDirectory(Core.App.Settings.CachePath);
             Directory.CreateDirectory(Core.App.Settings.CachePath + "pages/");
             Directory.CreateDirectory(Core.App.Settings.Log);
-        }
-
-        public void RequestPermissions()
-        {
-            if(Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-            {
-                if (!CheckPermission(Manifest.Permission.ReadExternalStorage) || !CheckPermission(Manifest.Permission.WriteExternalStorage))
-                {
-                    RequestPermissions(new string[] { Manifest.Permission.ReadExternalStorage,
-                                         Manifest.Permission.WriteExternalStorage}, 0);
-                }
-                else
-                    CreateFolders();
-            }
-
-
-            bool CheckPermission(string permission)
-            {
-                return CheckSelfPermission(permission) == Android.Content.PM.Permission.Granted;
-            }
-        }
-
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-        {
-            if(grantResults[0] == Permission.Granted)
-            {
-                CreateFolders();
-            }
         }
 
         //bg thread unhandled exception handler
@@ -176,7 +154,7 @@ namespace HappyPandaXDroid
         {
             Directory.CreateDirectory(Core.App.Settings.BasePath);
 
-            var crashPath = Path.Combine(Core.App.Settings.BasePath, "crash.txt");
+            var crashPath = Path.Combine(Core.App.Settings.BasePath, DateTime.Now +"-crash.txt");
 
             string crashLog = ex.Message;
             crashLog += "\n" + ex.StackTrace;

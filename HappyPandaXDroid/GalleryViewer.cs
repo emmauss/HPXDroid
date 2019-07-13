@@ -79,7 +79,7 @@ namespace HappyPandaXDroid
             FilterSlider.ProgressChanged += FilterSlider_ProgressChanged;
             FilterSlider.Click += FilterSlider_Click;
             SetSupportActionBar(toolbar);
-            SetScreenBrightness(255);
+            //SetScreenBrightness(Core.App.Settings.FilterLevel);
 
             lay = FindViewById<FrameLayout>(Resource.Id.frame);
             galleryPager = FindViewById<RecyclerViewPager>(Resource.Id.galleryViewPager);
@@ -218,6 +218,7 @@ namespace HappyPandaXDroid
             if (alpha > 255)
                 alpha = 255;
             SetAlpha(ScreenFilter, alpha);
+            Core.App.Settings.FilterLevel = level;
         }
 
         void SetAlpha(View view, int alpha)

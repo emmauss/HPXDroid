@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sketch", "Sketch\Sketch.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubsamplingScaleImageView", "SubsamplingScaleImageView\SubsamplingScaleImageView.csproj", "{1576B239-B46B-4DF3-85C0-072D55143F18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawerLayoutBinding", "DrawerLayoutBinding\DrawerLayoutBinding.csproj", "{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,22 +167,6 @@ Global
 		{1576B239-B46B-4DF3-85C0-072D55143F18}.Release|x64.Build.0 = Release|Any CPU
 		{1576B239-B46B-4DF3-85C0-072D55143F18}.Release|x86.ActiveCfg = Release|Any CPU
 		{1576B239-B46B-4DF3-85C0-072D55143F18}.Release|x86.Build.0 = Release|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Debug|ARM.Build.0 = Debug|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Debug|x64.Build.0 = Debug|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Debug|x86.Build.0 = Debug|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Release|ARM.ActiveCfg = Release|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Release|ARM.Build.0 = Release|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Release|x64.ActiveCfg = Release|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Release|x64.Build.0 = Release|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Release|x86.ActiveCfg = Release|Any CPU
-		{3543ED3B-FA99-4BDB-A626-C3BB18FC1842}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,8 +4,10 @@ using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.Design.Button;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
+using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
@@ -57,6 +59,11 @@ namespace HappyPandaXDroid.Scenes
         Custom_Views.CardAdapter.GalleryCardAdapter galleryAdapter;
         Custom_Views.CardAdapter.CollectionCardAdapter collectionAdapter;
         CountDown countDown;
+        DrawerLayout optionsDrawer;
+        ListView searchList;
+        Spinner sortOrderSpinner;
+        Spinner sortBySpinner;
+        MaterialButton addSearch;
         protected FABClickListener fabclick;
         protected bool isLoading = false;
         protected bool IsLoading
@@ -183,8 +190,6 @@ namespace HappyPandaXDroid.Scenes
 
             var menuItem = toolbar.Menu.FindItem(Resource.Id.action_search);
             searchView.SetMenuItem(menuItem);
-
-            menuItem = toolbar.Menu.FindItem(Resource.Id.addsearch);
         }
 
         protected virtual void Initialize()
@@ -218,12 +223,14 @@ namespace HappyPandaXDroid.Scenes
 
             mRefreshFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabRefresh);
             mJumpFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabJumpTo);
-            
+            sortBySpinner = MainView.FindViewById<Spinner>(Resource.Id.sortBySpinner);
+            sortOrderSpinner = MainView.FindViewById<Spinner>(Resource.Id.sortInSpinner);
+            searchList = MainView.FindViewById<ListView>(Resource.Id.searchList);
             mJumpFab.SetImageResource(Resource.Drawable.v_go_to_dark_x24);
-            
+            addSearch = MainView.FindViewById<MaterialButton>(Resource.Id.addSearchButton);
             mRefreshFab.SetImageResource(Resource.Drawable.v_refresh_dark_x24);
             fam = MainView.FindViewById<Clans.Fab.FloatingActionMenu>(Resource.Id.fam);
-            
+            optionsDrawer = MainView.FindViewById<DrawerLayout>(Resource.Id.options_drawer_layout);
             mJumpFab.SetOnClickListener(fabclick);
             mRefreshFab.SetOnClickListener(fabclick);
             countDown = new CountDown(500, 10, this);
@@ -253,6 +260,8 @@ namespace HappyPandaXDroid.Scenes
             mRefreshLayout.HeaderRefresh += MRefreshLayout_HeaderRefresh;
             mRefreshLayout.FooterRefresh += MRefreshLayout_FooterRefresh;
 
+            addSearch.Click += AddSearch_Click;
+
             mRecyclerView.SetLayoutManager(mLayoutManager);
             mRefreshLayout.SetHeaderColorSchemeResources(new int[] {
                 Resource.Color.loading_indicator_red,
@@ -278,38 +287,100 @@ namespace HappyPandaXDroid.Scenes
             logger.Info("HPContent Initialized");
         }
 
-        private void SearchView_MenuItemClick(object sender, FloatingSearchView.MenuItemClickEventArgs e)
+        private void AddSearch_Click(object sender, EventArgs e)
         {
-            var menuItem = e.MenuItem;
-
-            /*switch (menuItem.ItemId)
+            if (!string.IsNullOrEmpty(current_query))
             {
-                case Resource.Id.sort:
-                    SortClick(menuItem);
-                    break;
-                case Resource.Id.sort_direction:
-                    SortClick(menuItem);
-                    break;
-            }*/
-        }
-
-        public void SortClick(IMenuItem item)
-        {
-           /*if (item.ItemId == Resource.Id.sort)
-            {
-                Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(this, "sort");
-                listDialog.Show(((HPXSceneActivity)MainView.Context).FragmentManager, "Sort By");
+                Android.Support.V7.App.AlertDialog.Builder alertDialog = new Android.Support.V7.App.AlertDialog.Builder(Context);
+                alertDialog.SetTitle("Add quickserch query");
+                alertDialog.SetMessage("Do you want to add `" + Parse(CurrentQuery, true) + "` to quick search?");
+                alertDialog.SetPositiveButton("Yes", new DialogInterface(this));
+                alertDialog.SetNegativeButton("No", new DialogInterface(this));
+                alertDialog.Show();
             }
-            else if (item.ItemId == Resource.Id.sort_direction)
-            {
-                Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(this, "order");
-                listDialog.Show(((HPXSceneActivity)MainView.Context).FragmentManager, "Sort In");
-            }*/
         }
 
-        private void SearchView_SearchAction(object sender, FloatingSearchView.SearchActionEventArgs e)
+        public List<Core.Gallery.Sort> sorts;
+        public void LoadOptions()
         {
+            /* var strings = Enum.GetNames(typeof(Core.Gallery.Sort));
+             for (int i = 0; i < strings.Length; i++)
+                 strings[i] = Helpers.StringHelpers.PascalSplit(strings[i]);
+             var list = new List<string>(strings);*/
+
+            if (sortOrderSpinner.Adapter != null)
+            {
+                sortOrderSpinner.Adapter.Dispose();
+            }
+            if (sortBySpinner.Adapter != null)
+                sortBySpinner.Adapter.Dispose();
+            if (searchList.Adapter != null)
+                searchList.Adapter.Dispose();
+
+            var list = new List<string>() { "Ascending", "Descending" };
+            ArrayAdapter<string> sortOrderAdapter = new ArrayAdapter<string>(Context, 
+                Android.Resource.Layout.SimpleListItem1, list);
+
+            sortOrderSpinner.Adapter = sortOrderAdapter;
+            var selectedPos = App.Settings.Sort_Descending ? 1 : 0;
+            sortOrderSpinner.SetSelection(selectedPos);
+            sortOrderSpinner.ItemSelected += SortOrderSpinner_ItemSelected;
+
+            var strings = new List<string>();
+            var enums = Enum.GetValues(typeof(Core.Gallery.Sort));
+            sorts = new List<Core.Gallery.Sort>();
+            foreach (var e in enums)
+                sorts.Add((Core.Gallery.Sort)e);
+
+            sorts.Sort();
+
+            foreach (var sort in sorts)
+                strings.Add(Helpers.StringHelpers.GetSortName(sort));
+            list = new List<string>(strings);
+
+            ArrayAdapter<string> sortByAdapter = new ArrayAdapter<string>(Context,
+                Android.Resource.Layout.SimpleListItem1, list);
+
+            sortBySpinner.Adapter = sortByAdapter;
+            sortBySpinner.SetSelection(sorts.FindIndex(x => (x == App.Settings.Default_Sort)));
+            sortBySpinner.ItemSelected += SortBySpinner_ItemSelected;
+
+            list = Media.QuickSearch.Searches;
+
+            ArrayAdapter<string> searchAdapter = new ArrayAdapter<string>(Context,
+                Android.Resource.Layout.SimpleListItem1, list);
+            searchList.Adapter = searchAdapter;
+            searchList.ItemClick += SearchList_ItemClick;
+        }
+
+        private void SearchList_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            string search  = (e.View as TextView).Text;
+
+            current_query = search;
             Refresh(0);
+
+            optionsDrawer.CloseDrawers();
+        }
+
+        private void SortBySpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            var pos = e.Position;
+            if (pos < 0)
+                sortBySpinner.SetSelection(0);
+            else
+                App.Settings.Default_Sort = sorts[pos];
+        }
+
+        private void SortOrderSpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            int pos = e.Position;
+            if (pos < 0)
+                sortOrderSpinner.SetSelection(0);
+            else
+            {
+                App.Settings.Sort_Descending = pos == 1;
+            }
         }
 
         class MenuClickListener : Java.Lang.Object,FloatingSearchView.IOnMenuItemClickListener
@@ -1126,6 +1197,8 @@ namespace HappyPandaXDroid.Scenes
                 if((DialogButtonType)which == DialogButtonType.Positive)
                 {
                     Core.Media.QuickSearch.AddToQuickSearch(Parse(LibraryScene.CurrentQuery,true));
+
+                    LibraryScene.LoadOptions();
                     Toast.MakeText(LibraryScene.Context, "Added to Quick Search", ToastLength.Short).Show();
                 }
             }

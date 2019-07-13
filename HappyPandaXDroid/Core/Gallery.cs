@@ -50,7 +50,7 @@ namespace HappyPandaXDroid.Core
             Circle = 11,
             Collection = 2,
             Gallery = 1,
-            GalleryFilter = 3,
+            Filter = 3,
             Grouping = 5,
             Language = 9,
             Page = 4,
@@ -155,6 +155,10 @@ namespace HappyPandaXDroid.Core
 
         public abstract class HPXItem
         {
+            public event EventHandler CountRead;
+
+            [JsonIgnore]
+            public virtual int ChildCount { get; set; } = -1;
             public GalleryItem[] galleries;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int id;
@@ -183,6 +187,11 @@ namespace HappyPandaXDroid.Core
             public abstract ItemType Type { get; }
 
             public HPXItem Parent;
+
+            public void InvokeCountEvent()
+            {
+                CountRead.Invoke(this, null);
+            }
 
             public string BaseId
             {
@@ -234,6 +243,15 @@ namespace HappyPandaXDroid.Core
             }
         }
 
+        public class PageReadData
+        {
+            public Page page;
+            public bool end;
+            public float percent;
+            public int count;
+            public int timestamp;
+        }
+
         public class GalleryItem : HPXItem
         {
             public List<Collection> collections;
@@ -253,9 +271,9 @@ namespace HappyPandaXDroid.Core
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int grouping_id;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public int number;
+            public float number;
             public bool fav;
-            public int rating;
+            public float rating;
             public List<Profile> profiles;
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int times_read;
@@ -271,10 +289,15 @@ namespace HappyPandaXDroid.Core
             public Title preferred_title;
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public PageReadData pageReadData;
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public List<Parody> parodies;
 
             [JsonIgnore()]
             AutoResetEvent AutoResetEvent { get; set; }// = new AutoResetEvent(true);
+
+            
 
             int lastPageRead =-1;
 
@@ -291,13 +314,25 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
-            public Page last_page;
-
             public override ItemType Type => ItemType.Gallery;
 
             public TagList tags;
 
             public List<Page> PageList;
+
+            public override int ChildCount {
+
+                get
+                {
+                    if (base.ChildCount > 0)
+                        return base.ChildCount;
+                    else if (PageList != null && PageList.Count > 0)
+                        return PageList.Count;
+
+                    return 0;
+                }
+                set => base.ChildCount = value;
+            }
 
             public string Download(CancellationToken cancellationToken,ImageSize size = ImageSize.Original)
             {
@@ -977,6 +1012,26 @@ namespace HappyPandaXDroid.Core
                 logger.Error(ex, "\n Exception Caught In GalleryCard.IsCached.");
 
                 return false;
+            }
+        }
+
+        public static void RequestPageCount(HPXItem item, CancellationToken cancellationToken, ItemType relatedType)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return;
+            else
+            {
+                int count = App.Server.GetRelatedCount(item.id, cancellationToken, item.Type, relatedType);
+                if(count>-1)
+                    try
+                    {
+                        item.ChildCount = count;
+                        item.InvokeCountEvent();
+                    }
+                    catch
+                    {
+
+                    }
             }
         }
 

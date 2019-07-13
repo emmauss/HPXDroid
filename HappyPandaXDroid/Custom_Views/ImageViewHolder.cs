@@ -58,7 +58,7 @@ namespace HappyPandaXDroid.Custom_Views
             img.ZoomEnabled = true;
             img.Visibility = ViewStates.Visible;
             img.ImageLoadError += Img_ImageLoadError;
-            img.SetMinimumDpi(240);
+            img.SetMinimumDpi(120);
         }
 
         private void Img_ImageLoadError(object sender, SubsamplingScaleImageView.ImageLoadErrorEventArgs e)

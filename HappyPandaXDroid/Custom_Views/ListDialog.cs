@@ -38,7 +38,7 @@ namespace HappyPandaXDroid.Custom_Views
                 case "sort":
                     var strings = Enum.GetNames(typeof(Core.Gallery.Sort));
                     for (int i = 0; i < strings.Length; i++)
-                        strings[i] = Helpers.StringHelpers.PascalSplit(strings[i]);
+                        strings[i] = Helpers.StringHelpers.NormalizeSortName(strings[i]);
                     list = new List<string>(strings);
                     break;
                 case "order":
@@ -110,9 +110,9 @@ namespace HappyPandaXDroid.Custom_Views
                     break;
                 case "order":
                     if (item == "Ascending")
-                        Core.App.Settings.Sort_Decending = false;
+                        Core.App.Settings.Sort_Descending = false;
                     else if (item == "Descending")
-                        Core.App.Settings.Sort_Decending = true;
+                        Core.App.Settings.Sort_Descending = true;
                     Dismiss();
                     mscene.Refresh(0);
                     break;
