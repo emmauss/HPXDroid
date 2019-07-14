@@ -78,13 +78,22 @@
     <Reference Include="FloatingSearchView, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.FloatingSearchView.2.1.1\lib\MonoAndroid\FloatingSearchView.dll</HintPath>
     </Reference>
-    <Reference Include="Glide, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Glide.Xamarin.4.1.1\lib\MonoAndroid10\Glide.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.1.0.145, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.1.1.0\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Java.Interop" />
+    <Reference Include="libGlide">
+      <HintPath>..\..\Users\Emmanuel Hansen\Downloads\Compressed\Glide4.9.0\Glide4.9.0\libGlide.dll</HintPath>
+    </Reference>
+    <Reference Include="libGlideAnnotations">
+      <HintPath>..\..\Users\Emmanuel Hansen\Downloads\Compressed\Glide4.9.0\Glide4.9.0\libGlideAnnotations.dll</HintPath>
+    </Reference>
+    <Reference Include="libGlideDiskLruCache">
+      <HintPath>..\..\Users\Emmanuel Hansen\Downloads\Compressed\Glide4.9.0\Glide4.9.0\libGlideDiskLruCache.dll</HintPath>
+    </Reference>
+    <Reference Include="libGlideGifDecoder">
+      <HintPath>..\..\Users\Emmanuel Hansen\Downloads\Compressed\Glide4.9.0\Glide4.9.0\libGlideGifDecoder.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Android" />
     <Reference Include="Mono.Android.Export" />
@@ -242,22 +251,22 @@
   <ItemGroup>
     <Compile Include="Core\IO.cs" />
     <Compile Include="Core\Net\RequestToken.cs" />
-    <Compile Include="Custom_Views\CardAdapter.cs" />
-    <Compile Include="Custom_Views\CollectionCard.cs" />
-    <Compile Include="Custom_Views\ItemCard.cs" />
-    <Compile Include="Custom_Views\ListDialog.cs" />
-    <Compile Include="Custom_Views\AutoWrapLayout.cs" />
-    <Compile Include="Custom_Views\ImageViewHolder.cs" />
-    <Compile Include="Custom_Views\OptionDialogPreference.cs" />
-    <Compile Include="Custom_Views\DeleteDialog.cs" />
-    <Compile Include="Custom_Views\PageSelector.cs" />
-    <Compile Include="Custom_Views\PreviewAdapter.cs" />
-    <Compile Include="Custom_Views\CollectionAdapter.cs" />
-    <Compile Include="Custom_Views\PreviewHolder.cs" />
-    <Compile Include="Custom_Views\RoundSideRectDrawable.cs" />
-    <Compile Include="Custom_Views\SafeCoordinatorLayout.cs" />
-    <Compile Include="Custom_Views\TagsAdapter.cs" />
-    <Compile Include="Custom_Views\ThumbViewHolder.cs" />
+    <Compile Include="CustomViews\CardAdapter.cs" />
+    <Compile Include="CustomViews\CollectionCard.cs" />
+    <Compile Include="CustomViews\ItemCard.cs" />
+    <Compile Include="CustomViews\ListDialog.cs" />
+    <Compile Include="CustomViews\AutoWrapLayout.cs" />
+    <Compile Include="CustomViews\ImageViewHolder.cs" />
+    <Compile Include="CustomViews\OptionDialogPreference.cs" />
+    <Compile Include="CustomViews\DeleteDialog.cs" />
+    <Compile Include="CustomViews\PageSelector.cs" />
+    <Compile Include="CustomViews\PreviewAdapter.cs" />
+    <Compile Include="CustomViews\CollectionAdapter.cs" />
+    <Compile Include="CustomViews\PreviewHolder.cs" />
+    <Compile Include="CustomViews\RoundSideRectDrawable.cs" />
+    <Compile Include="CustomViews\SafeCoordinatorLayout.cs" />
+    <Compile Include="CustomViews\TagsAdapter.cs" />
+    <Compile Include="CustomViews\ThumbViewHolder.cs" />
     <Compile Include="GalleryViewer.cs" />
     <Compile Include="Helpers\Layouts.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
@@ -277,7 +286,7 @@
     <Compile Include="Core\JSON.cs" />
     <Compile Include="Core\Media\Media.cs" />
     <Compile Include="Core\Net\Net.cs" />
-    <Compile Include="Custom_Views\SettingsText.cs" />
+    <Compile Include="CustomViews\SettingsText.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

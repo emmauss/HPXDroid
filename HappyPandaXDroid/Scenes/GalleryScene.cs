@@ -37,12 +37,12 @@ namespace HappyPandaXDroid.Scenes
         FrameLayout errorFrame;
         public bool isDownloading = false;
         public DialogEventListener dialogeventlistener;
-        Custom_Views.TagsAdapter tagsAdapter;
+        CustomViews.TagsAdapter tagsAdapter;
         public Core.Gallery.GalleryItem gallery;
         Emmaus.Widget.RecyclerViewPager previewpager;
         ProgressView.MaterialProgressBar mProgressView;
         Chip categoryChip;
-        Custom_Views.DeleteDialog mDeleteDialog;
+        CustomViews.DeleteDialog mDeleteDialog;
         LinearLayout MainLayout;
         LinearLayout ArtistLayout;
         LinearLayout GroupLayout;
@@ -51,7 +51,7 @@ namespace HappyPandaXDroid.Scenes
         Android.Support.V7.Widget.Toolbar toolbar;
         TextView GalleryStatus;
         RecyclerView tagRecyclerView;
-        Custom_Views.PreviewPagerAdapter adapter;
+        CustomViews.PreviewPagerAdapter adapter;
         bool loaded = false;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
@@ -96,7 +96,7 @@ namespace HappyPandaXDroid.Scenes
             Thread thread = new Thread(start);
             thread.Start();
             dialogeventlistener = new DialogEventListener(this);
-            mDeleteDialog = new Custom_Views.DeleteDialog(this);
+            mDeleteDialog = new CustomViews.DeleteDialog(this);
             return MainView;
         }
 
@@ -425,7 +425,7 @@ namespace HappyPandaXDroid.Scenes
             tagRecyclerView = MainView.FindViewById<RecyclerView>(Resource.Id.tagLayout);
             var tlayout = new LinearLayoutManager(Context);
             tagRecyclerView.SetLayoutManager(tlayout);
-            tagsAdapter = new Custom_Views.TagsAdapter(this);
+            tagsAdapter = new CustomViews.TagsAdapter(this);
             tagRecyclerView.SetAdapter(tagsAdapter);
             title = MainView.FindViewById<TextView>(Resource.Id.title);
            // category = MainView.FindViewById<TextView>(Resource.Id.category);
@@ -445,7 +445,7 @@ namespace HappyPandaXDroid.Scenes
             ContinueCard.Click += ContinueCard_Click;
             ActionCard.Clickable = true;
             ActionCard.Click += ActionCard_Click;
-            adapter = new Custom_Views.PreviewPagerAdapter(Context,this);
+            adapter = new CustomViews.PreviewPagerAdapter(Context,this);
             mProgressView.Visibility = ViewStates.Visible;
             previewpager.SetAdapter(new Emmaus.Widget.RecyclerViewPagerAdapter(previewpager,adapter));
             categoryChip = MainView.FindViewById<Chip>(Resource.Id.category);
@@ -523,7 +523,7 @@ namespace HappyPandaXDroid.Scenes
             }
         }
 
-        public class DialogEventListener : Custom_Views.INoticeDialogListener
+        public class DialogEventListener : CustomViews.INoticeDialogListener
         {
             GalleryScene parent;
             public DialogEventListener(GalleryScene parent)
@@ -538,7 +538,7 @@ namespace HappyPandaXDroid.Scenes
             public async void OnDialogPositiveClick(Android.Support.V4.App.DialogFragment dialog)
             {
                 bool succeed = false;
-                if (dialog is Custom_Views.DeleteDialog dd)
+                if (dialog is CustomViews.DeleteDialog dd)
                 {
                     if (dd.ShouldTrashed)
                     {
@@ -765,7 +765,7 @@ namespace HappyPandaXDroid.Scenes
             no_tags.Visibility = ViewStates.Gone;
             bool tagsAvailable = IsTagAvailable();
 
-            ((Custom_Views.TagsAdapter)tagRecyclerView.GetAdapter()).SetList(new List<Core.Gallery.TagNamespace>());
+            ((CustomViews.TagsAdapter)tagRecyclerView.GetAdapter()).SetList(new List<Core.Gallery.TagNamespace>());
 
             {
                 List<Core.Gallery.TagNamespace> taglists = new List<Core.Gallery.TagNamespace>();

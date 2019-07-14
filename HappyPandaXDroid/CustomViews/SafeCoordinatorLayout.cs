@@ -14,7 +14,7 @@ using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.Design.Widget;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     public class SafeCoordinatorLayout : CoordinatorLayout
     {

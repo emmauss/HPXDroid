@@ -54,7 +54,7 @@ namespace HappyPandaXDroid
             ISharedPreferences sharedPreferences;
             Stopwatch watch = new Stopwatch();
             Activity Activity;
-            Custom_Views.OptionDialogPreference LogoutPreference;
+            CustomViews.OptionDialogPreference LogoutPreference;
             public override void OnCreate(Bundle savedInstanceState)
             {
                 base.OnCreate(savedInstanceState);
@@ -72,7 +72,7 @@ namespace HappyPandaXDroid
                     SetSummary(PreferenceScreen.GetPreference(i));
                 }                
                 sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
-                LogoutPreference = (Custom_Views.OptionDialogPreference)FindPreference("logout");
+                LogoutPreference = (CustomViews.OptionDialogPreference)FindPreference("logout");
                 LogoutPreference.Title = "Logout";
                 LogoutPreference.OnPositiveClick += LogoutPreference_OnPositiveClick;
 

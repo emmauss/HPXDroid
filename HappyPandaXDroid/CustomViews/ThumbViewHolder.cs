@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using HappyPandaXDroid;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
 
     public abstract class ThumbViewHolder : RecyclerView.ViewHolder
@@ -37,7 +37,7 @@ namespace HappyPandaXDroid.Custom_Views
                         image.Ready += Image_Ready;
                         CancellationTokenSource = new CancellationTokenSource();
                         if (image.IsReady)
-                            LoadImage();
+                            Task.Run(()=> LoadImage());
                     }
                     else
                     {
@@ -53,7 +53,7 @@ namespace HappyPandaXDroid.Custom_Views
 
         private void Image_Ready(object sender, Media.Image.ImageLoadEvent e)
         {
-            LoadImage();
+            Task.Run(LoadImage);
         }
 
         public string Url = string.Empty;
@@ -65,9 +65,8 @@ namespace HappyPandaXDroid.Custom_Views
             Size = size;
         }
 
-        async void LoadImage()
+        void LoadImage()
         {
-            await Task.Delay(1000);
             var token = CancellationTokenSource.Token;
             string url = string.Empty;
             Media.Image image = Size == Core.Gallery.ImageSize.Small ? HPXItem.Thumb : HPXItem.Image;
@@ -83,10 +82,6 @@ namespace HappyPandaXDroid.Custom_Views
                 var h = new Handler(Looper.MainLooper);
                 h.Post(() => Glide.With(Thumb.Context).Load(url).Into(Thumb));
                 image.Uri = url;
-            }
-            else
-            {
-
             }
         }        
     }

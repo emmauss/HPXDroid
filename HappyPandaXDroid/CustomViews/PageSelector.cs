@@ -10,17 +10,19 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Android.Support;
 using NLog;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
-    public class DeleteDialog : Android.Support.V4.App.DialogFragment
+    public class PageSelector : Android.Support.V4.App.DialogFragment
     {
-        public bool ShouldTrashed => TrashCheckBox.Checked;
+        public int PageCount = 0;
+        public int PageSelected = 0;
+        public EditText PageInput;
         AlertDialog.Builder builder;
-        public CheckBox TrashCheckBox;
-        public TextView Summary;
-        Scenes.GalleryScene mscene;
+        public Android.Support.Design.Widget.TextInputLayout FloatingTextLayout;
+        Scenes.ViewScene mscene;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public override Dialog OnCreateDialog(Bundle savedInstanceState)
         {
@@ -30,7 +32,7 @@ namespace HappyPandaXDroid.Custom_Views
             return dialog;
         }
 
-        public DeleteDialog(Scenes.GalleryScene scene)
+        public PageSelector(Scenes.ViewScene scene)
         {
             mscene = scene;
         }
@@ -39,26 +41,46 @@ namespace HappyPandaXDroid.Custom_Views
         {
             INoticeDialogListener listener;
             private static Logger logger = LogManager.GetCurrentClassLogger();
-            DeleteDialog dd;
-            public ClickListener(INoticeDialogListener listener,DeleteDialog dd)
+            PageSelector pg;
+            public ClickListener(INoticeDialogListener listener,PageSelector pg)
             {
-                this.dd = dd;
+                this.pg = pg;
                 this.listener = listener;
             }
             public void OnClick(IDialogInterface dialog, int which)
             {
                 switch ((DialogButtonType)which)
                 {
-                    case DialogButtonType.Positive: 
-                            listener.OnDialogPositiveClick(dd);
+                    case DialogButtonType.Positive:
+                        if (int.TryParse(pg.PageInput.Text, out pg.PageSelected))
+                            if (pg.PageSelected > 0 && pg.PageSelected !=pg.mscene.CurrentPage+1 && pg.PageSelected<pg.PageCount) 
+                            listener.OnDialogPositiveClick(pg);
                         break;
                     case DialogButtonType.Negative:
-                        listener.OnDialogNegativeClick(dd);
+                        listener.OnDialogNegativeClick(pg);
                         break;
                 }
             }
         }
+
         public INoticeDialogListener mDialogListener;
+
+        void CreateDialogBuilder()
+        {
+            builder = new AlertDialog.Builder(Activity);
+            mDialogListener = mscene.dialogeventlistener;
+            builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));
+            builder.SetNegativeButton("Cancel", new ClickListener(mDialogListener, this));
+
+            LayoutInflater inflater = mscene.Activity.LayoutInflater;
+            View pageseletor = inflater.Inflate(Resource.Layout.PageSelector, null);
+            PageInput = pageseletor.FindViewById<EditText>(Resource.Id.setpage);
+            FloatingTextLayout = pageseletor
+                .FindViewById<Android.Support.Design.Widget.TextInputLayout>(Resource.Id.textInputLayout1);
+            PageCount = (int)Math.Ceiling((double)mscene.Count / 50);
+            FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
+            builder.SetView(pageseletor);
+        }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -71,20 +93,8 @@ namespace HappyPandaXDroid.Custom_Views
         public override void OnResume()
         {
             base.OnResume();
-        }
-
-        void CreateDialogBuilder()
-        {
-            builder = new AlertDialog.Builder(Activity);
-            mDialogListener = mscene.dialogeventlistener;
-            builder.SetPositiveButton("OK", new ClickListener(mDialogListener, this));
-            builder.SetNegativeButton("Cancel", new ClickListener(mDialogListener, this));
-
-            LayoutInflater inflater = mscene.Activity.LayoutInflater;
-            View deleteDialog = inflater.Inflate(Resource.Layout.DeleteDialog,null);
-            TrashCheckBox = deleteDialog.FindViewById<CheckBox>(Resource.Id.trashCheckBox);
-            Summary = deleteDialog.FindViewById<TextView>(Resource.Id.dialogSummary);
-            builder.SetView(deleteDialog);
+            PageCount = (int)Math.Ceiling((double)mscene.Count / 50);
+            FloatingTextLayout.Hint = mscene.CurrentPage + 1 + " of " + PageCount;
         }
 
         public override void OnAttach(Context context)
@@ -106,12 +116,8 @@ namespace HappyPandaXDroid.Custom_Views
                         + " must implement NoticeDialogListener");
             }
         }
-    }
+        
 
-    public interface INoticeDialogListener
-    {
-        void OnDialogPositiveClick(Android.Support.V4.App.DialogFragment dialog);
-        void OnDialogNegativeClick(Android.Support.V4.App.DialogFragment dialog);
 
     }
 }

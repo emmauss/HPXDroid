@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using Com.Bumptech.Glide;
 
-using HPXHolder = HappyPandaXDroid.Custom_Views.CardAdapter.HPXItemHolder;
+using HPXHolder = HappyPandaXDroid.CustomViews.CardAdapter.HPXItemHolder;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     class CollectionAdapter : RecyclerView.Adapter
     {

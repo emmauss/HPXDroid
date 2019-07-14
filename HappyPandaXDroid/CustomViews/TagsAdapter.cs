@@ -5,7 +5,7 @@ using Android.Widget;
 using Android.Support.V7.Widget;
 using Com.Hippo.Stage;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     class TagsAdapter : RecyclerView.Adapter
     {
@@ -88,16 +88,16 @@ namespace HappyPandaXDroid.Custom_Views
                 var inflater = LayoutInflater.From(rtg.Context);
                 TextView tag_header = (TextView)inflater.Inflate(Resource.Layout.tag_template, rtg, false);
                 tag_header.Text = tagNamespace.name.ToLower();
-                tag_header.SetBackgroundDrawable(new Custom_Views.RoundSideRectDrawable(color_header));
+                tag_header.SetBackgroundDrawable(new CustomViews.RoundSideRectDrawable(color_header));
                 rtg.AddView(tag_header);
-                Custom_Views.AutoWrapLayout awl = new Custom_Views.AutoWrapLayout(ItemView.Context);
+                CustomViews.AutoWrapLayout awl = new CustomViews.AutoWrapLayout(ItemView.Context);
                 rtg.AddView(awl, ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
                 tagNamespace.tags.Sort((a, b) => a.name.CompareTo(b.name));
                 foreach (var tag in tagNamespace.tags)
                 {
                     TextView tag_item = (TextView)inflater.Inflate(Resource.Layout.tag_template, awl, false);
                     tag_item.Text = tag.name;
-                    tag_item.SetBackgroundDrawable(new Custom_Views.RoundSideRectDrawable(color_tag));
+                    tag_item.SetBackgroundDrawable(new CustomViews.RoundSideRectDrawable(color_tag));
                     tag_item.Click += Tag_item_Click;
                     string fullTagName = tagNamespace.name + ":" + "\"" + tag.name + "\"";
                     tag_item.Tag = fullTagName;

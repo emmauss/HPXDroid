@@ -26,7 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     public abstract class ItemCard : LinearLayout
     {

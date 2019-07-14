@@ -29,7 +29,7 @@ using Android.Widget;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     public class RoundSideRectDrawable : Drawable
     {

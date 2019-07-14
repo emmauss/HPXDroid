@@ -228,7 +228,7 @@ namespace HappyPandaXDroid.Scenes
         {
             public void OnItemClick(EasyRecyclerView.EasyRecyclerView parent, RecyclerView.ViewHolder holder)
             {
-                if (holder is Custom_Views.CardAdapter.HPXItemHolder vh)
+                if (holder is CustomViews.CardAdapter.HPXItemHolder vh)
                 {
                     GalleryScene galleryScene = new GalleryScene
                         (vh.HPXItem as Core.Gallery.GalleryItem);
@@ -314,7 +314,7 @@ namespace HappyPandaXDroid.Scenes
             public override void OnViewRecycled(Java.Lang.Object holder)
             {
                 base.OnViewRecycled(holder);
-                var hold = holder as Custom_Views.CardAdapter.HPXItemHolder;
+                var hold = holder as CustomViews.CardAdapter.HPXItemHolder;
                 if (hold != null)
                 {
                     hold.Bound = false;
@@ -326,7 +326,7 @@ namespace HappyPandaXDroid.Scenes
 
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
-                Custom_Views.CardAdapter.HPXItemHolder vh = holder as Custom_Views.CardAdapter.HPXItemHolder;
+                CustomViews.CardAdapter.HPXItemHolder vh = holder as CustomViews.CardAdapter.HPXItemHolder;
                 try
                 {
                     if (vh.ItemView != null)
@@ -352,7 +352,7 @@ namespace HappyPandaXDroid.Scenes
             public override RecyclerView.ViewHolder OnCreateViewHolder2(ViewGroup parent, int viewType)
             {
                 View itemview = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.galleryCardList, null);
-                Custom_Views.CardAdapter.HPXItemHolder vh = new Custom_Views.CardAdapter.HPXItemHolder(itemview);
+                CustomViews.CardAdapter.HPXItemHolder vh = new CustomViews.CardAdapter.HPXItemHolder(itemview);
                 return vh;
             }
         }

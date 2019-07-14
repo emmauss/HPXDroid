@@ -34,7 +34,7 @@
         android:title="@string/grid_layout"
       android:defaultValue="false"
         android:id="@+id/gridlayout"/>
-    <HappyPandaXDroid.Custom_Views.OptionDialogPreference
+    <HappyPandaXDroid.CustomViews.OptionDialogPreference
     android:key="cachedialog"
     android:dialogMessage="Do you want to clear local cache?"
     android:dialogTitle="Clear Local Cache?"

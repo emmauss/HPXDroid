@@ -295,7 +295,7 @@ namespace HappyPandaXDroid.Scenes
                                     mRecyclerView.ScrollToPosition(0);
                             });
                             GetTotalCount();
-                            mpageSelector = new Custom_Views.PageSelector(this);
+                            mpageSelector = new CustomViews.PageSelector(this);
                             logger.Info("HPContent Refresh Successful");
 
                             return;

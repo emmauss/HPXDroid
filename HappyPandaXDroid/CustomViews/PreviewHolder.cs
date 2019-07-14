@@ -20,12 +20,11 @@ using Android.Support.V7.App;
 using Com.Hippo.Stage;
 using HappyPandaXDroid.Core;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     public class PreviewHolder : ThumbViewHolder
     {
         public View preview;
-        public ImageView img;
         public TextView txt;
         public Core.Gallery.Page page;
         Scene scene;
@@ -42,9 +41,8 @@ namespace HappyPandaXDroid.Custom_Views
         {
             this.scene = scene;
             preview = itemView;
-            img = preview.FindViewById<ImageView>(Resource.Id.preview);
+            Thumb = preview.FindViewById<ImageView>(Resource.Id.preview);
             txt = preview.FindViewById<TextView>(Resource.Id.title);
-            Thumb = img;
         }
 
         public void SetClickEvents(Action<PreviewAdapterClickEventArgs> clickListener,
@@ -63,7 +61,7 @@ namespace HappyPandaXDroid.Custom_Views
 
         public void Recycle()
         {
-            Glide.With(preview.Context).Clear(img);
+            Glide.With(preview.Context).Clear(Thumb);
         }
     }
 }

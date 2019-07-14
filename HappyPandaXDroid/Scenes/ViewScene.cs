@@ -40,7 +40,7 @@ namespace HappyPandaXDroid.Scenes
         protected View MainView { get; set; }
         public GalleryLists CurrentLists = new GalleryLists();
         public Core.Gallery.ItemType ItemType = Core.Gallery.ItemType.Gallery;
-        public Custom_Views.PageSelector mpageSelector;
+        public CustomViews.PageSelector mpageSelector;
         protected EasyRecyclerView.EasyRecyclerView mRecyclerView;
         public bool IsRefreshing = false;
         public Toolbar toolbar;
@@ -55,9 +55,9 @@ namespace HappyPandaXDroid.Scenes
         FrameLayout mErrorFrame;
         ImageView mErrorImage;
         TextView mErrorText;
-        protected Custom_Views.CardAdapter.HPXCardAdapter adapter;
-        Custom_Views.CardAdapter.GalleryCardAdapter galleryAdapter;
-        Custom_Views.CardAdapter.CollectionCardAdapter collectionAdapter;
+        protected CustomViews.CardAdapter.HPXCardAdapter adapter;
+        CustomViews.CardAdapter.GalleryCardAdapter galleryAdapter;
+        CustomViews.CardAdapter.CollectionCardAdapter collectionAdapter;
         CountDown countDown;
         DrawerLayout optionsDrawer;
         ListView searchList;
@@ -218,8 +218,8 @@ namespace HappyPandaXDroid.Scenes
 
             searchView = MainView.FindViewById<MaterialSearchView>(Resource.Id.search_view);
             searchView.SetOnQueryTextListener(this);
-            collectionAdapter = new Custom_Views.CardAdapter.CollectionCardAdapter(this.Context, this);
-            galleryAdapter = new Custom_Views.CardAdapter.GalleryCardAdapter(this.Context,this);
+            collectionAdapter = new CustomViews.CardAdapter.CollectionCardAdapter(this.Context, this);
+            galleryAdapter = new CustomViews.CardAdapter.GalleryCardAdapter(this.Context,this);
 
             mRefreshFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabRefresh);
             mJumpFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabJumpTo);
@@ -421,7 +421,7 @@ namespace HappyPandaXDroid.Scenes
             thread.Start();
         }
 
-        public Custom_Views.CardAdapter.HPXCardAdapter GetAdapter()
+        public CustomViews.CardAdapter.HPXCardAdapter GetAdapter()
         {
             switch (ItemType)
             {
@@ -829,20 +829,20 @@ namespace HappyPandaXDroid.Scenes
         {
             public void OnItemClick(EasyRecyclerView.EasyRecyclerView parent, RecyclerView.ViewHolder holder)
             {
-                if (holder is Custom_Views.CardAdapter.HPXItemHolder vh)
+                if (holder is CustomViews.CardAdapter.HPXItemHolder vh)
                 {
                     if (vh.HPXItem != null && vh.HPXItem.id > 0)
                     {
                         if (vh.HPXItem is Core.Gallery.GalleryItem gallery)
                         {
                             var galleryscene = new Scenes.GalleryScene(gallery);
-                            var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
+                            var pscene = (((CustomViews.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
                             pscene.Stage.PushScene(galleryscene);
                         }
                         else if (vh.HPXItem is Core.Gallery.Collection collection)
                         {
                             var collectionscene = new Scenes.CollectionScene(collection, vh.Url);
-                            var pscene = (((Custom_Views.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
+                            var pscene = (((CustomViews.CardAdapter.HPXCardAdapter)parent.GetAdapter()).content);
                             pscene.Stage.PushScene(collectionscene);
                         }
                     }
@@ -915,7 +915,7 @@ namespace HappyPandaXDroid.Scenes
             base.OnPause();
             // SceneCancellationTokenSource = new CancellationTokenSource();
         }
-        public class DialogEventListener : Custom_Views.INoticeDialogListener
+        public class DialogEventListener : CustomViews.INoticeDialogListener
         {
             ViewScene parent;
             public DialogEventListener(ViewScene parent)
@@ -930,7 +930,7 @@ namespace HappyPandaXDroid.Scenes
             public void OnDialogPositiveClick(Android.Support.V4.App.DialogFragment dialog)
             {
 
-                if (dialog is Custom_Views.PageSelector dl)
+                if (dialog is CustomViews.PageSelector dl)
                 {
                     ThreadStart thrds = new ThreadStart(() => { parent.JumpTo(dl.PageSelected); });
                     Thread thread = new Thread(thrds);
@@ -1045,12 +1045,12 @@ namespace HappyPandaXDroid.Scenes
             {
                 if (item.TitleFormatted.ToString() == "Sort by")
                 {
-                    Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(mparent, "sort");
+                    CustomViews.ListDialog listDialog = new CustomViews.ListDialog(mparent, "sort");
                     listDialog.Show(((HPXSceneActivity)mparent.MainView.Context).FragmentManager, "Sort By");
                 }
                 else if (item.TitleFormatted.ToString() == "Sort In")
                 {
-                    Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(mparent, "order");
+                    CustomViews.ListDialog listDialog = new CustomViews.ListDialog(mparent, "order");
                     listDialog.Show(((HPXSceneActivity)mparent.MainView.Context).FragmentManager, "Sort In");
                 }
 
@@ -1153,7 +1153,7 @@ namespace HappyPandaXDroid.Scenes
 
     public void Button_Click(object sender, EventArgs e)
         {
-            Custom_Views.ListDialog listDialog = new Custom_Views.ListDialog(this, "search");
+            CustomViews.ListDialog listDialog = new CustomViews.ListDialog(this, "search");
             listDialog.Show(((HPXSceneActivity)MainView.Context).FragmentManager, "Quick Search");
 
         }

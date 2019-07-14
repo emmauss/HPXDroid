@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Com.Bumptech.Glide;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     class PreviewAdapter : RecyclerView.Adapter
     {
@@ -78,7 +78,7 @@ namespace HappyPandaXDroid.Custom_Views
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            Custom_Views.PreviewHolder vh = holder as Custom_Views.PreviewHolder;
+            CustomViews.PreviewHolder vh = holder as CustomViews.PreviewHolder;
             var page = mdata[position];
             if (vh != null)
             {
@@ -120,7 +120,7 @@ namespace HappyPandaXDroid.Custom_Views
         {
             View itemview = LayoutInflater.From(parent.Context)
                 .Inflate(Resource.Layout.preview_template, parent, false);
-            Custom_Views.PreviewHolder vh = new Custom_Views.PreviewHolder(itemview, previewScene);
+            CustomViews.PreviewHolder vh = new CustomViews.PreviewHolder(itemview, previewScene);
             return vh;
         }
 

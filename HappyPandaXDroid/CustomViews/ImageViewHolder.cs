@@ -22,7 +22,7 @@ using Com.Bumptech.Glide;
 using Android.Graphics;
 using Com.Bumptech.Glide.Request.Target;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     public class ImageViewHolder : LinearLayout
     {

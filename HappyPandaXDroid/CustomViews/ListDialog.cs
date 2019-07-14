@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using NLog;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     class ListDialog : DialogFragment, AdapterView.IOnItemClickListener
     {

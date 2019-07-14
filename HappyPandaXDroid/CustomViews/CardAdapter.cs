@@ -18,7 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace HappyPandaXDroid.Custom_Views
+namespace HappyPandaXDroid.CustomViews
 {
     public class CardAdapter
     {
@@ -179,7 +179,6 @@ namespace HappyPandaXDroid.Custom_Views
                 {
                     if (vh.ItemView != null)
                     {
-                        var timer = Stopwatch.StartNew();
                         vh.Id = mdata[position].id;
                         if (mdata[position] is Core.Gallery.GalleryItem gallery)
                         {
@@ -218,11 +217,7 @@ namespace HappyPandaXDroid.Custom_Views
                         }
 
                         vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
-
-                        var elapsed = timer.ElapsedMilliseconds;
-                        timer.Restart();
                         vh.Bound = true;
-                        elapsed = timer.ElapsedMilliseconds;
                     }
                 }
                 catch (Exception ex)
@@ -289,20 +284,22 @@ namespace HappyPandaXDroid.Custom_Views
             private void HPXItem_CountRead(object sender, EventArgs e)
             {
                 var h = new Handler(Looper.MainLooper);
-                h.Post(() =>
+                if (HPXItem is Core.Gallery.GalleryItem gallery)
                 {
-                    if (HPXItem is Core.Gallery.GalleryItem gallery)
-                    {
-                        if (gallery.ChildCount > 0)
+                    if (gallery.ChildCount > 0)
+                        h.Post(() =>
+                        {
                             Pages.Text = gallery.ChildCount + " page" + (gallery.ChildCount > 1 ? "s" : "");
-                    }
-                    else if (HPXItem is Core.Gallery.Collection collection)
-                    {
-                        if (collection.ChildCount > 0)
+                        });
+                }
+                else if (HPXItem is Core.Gallery.Collection collection)
+                {
+                    if (collection.ChildCount > 0)
+                        h.Post(() =>
+                        {
                             Info.Text = collection.ChildCount + " galler" + (collection.ChildCount > 1 ? "ies" : "y");
-                    }
-                });
-
+                        });
+                }
                 UnbindCountEvent();
             }
 

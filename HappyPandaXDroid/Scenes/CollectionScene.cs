@@ -41,7 +41,7 @@ namespace HappyPandaXDroid.Scenes
         ProgressView.MaterialProgressBar mProgressView;
         Chip categoryChip;
         LinearLayout MainLayout;
-        Custom_Views.CollectionPagerAdapter adapter;
+        CustomViews.CollectionPagerAdapter adapter;
         bool loaded = false;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         public bool IsRunning = true;
@@ -99,7 +99,7 @@ namespace HappyPandaXDroid.Scenes
             MainLayout.Visibility = ViewStates.Gone;
             galleryPager = MainView.FindViewById<Emmaus.Widget.RecyclerViewPager>(Resource.Id.gallerypager);
             mErrorText = MainView.FindViewById<TextView>(Resource.Id.error_text);
-            adapter = new Custom_Views.CollectionPagerAdapter(Context, this);
+            adapter = new CustomViews.CollectionPagerAdapter(Context, this);
             mProgressView.Visibility = ViewStates.Visible;
             galleryPager.SetAdapter(new Emmaus.Widget.RecyclerViewPagerAdapter(galleryPager, adapter));
             categoryChip = MainView.FindViewById<Chip>(Resource.Id.category);

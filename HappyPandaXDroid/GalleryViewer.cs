@@ -68,7 +68,7 @@ namespace HappyPandaXDroid
             Task.Run(() => InitPageGen());
             int pageno = Intent.GetIntExtra("no", 0);
             pageno = pageno == 0 ? 0 : pageno - 1;
-            options = new RequestOptions()
+            options = (RequestOptions)new RequestOptions()
                 .Override(Target.SizeOriginal, Target.SizeOriginal);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             ScreenFilter = FindViewById<LinearLayout>(Resource.Id.screenFilter);
@@ -729,7 +729,7 @@ namespace HappyPandaXDroid
             {
                 /*var imageview = Android.Views.LayoutInflater.From(parent.Context).
                     Inflate(Resource.Layout.ImageViewTemplate, parent,false);*/
-                Custom_Views.ImageViewHolder img = new Custom_Views.ImageViewHolder(context);
+                CustomViews.ImageViewHolder img = new CustomViews.ImageViewHolder(context);
                 return new ImageViewHolder(img);
             }
 
@@ -782,10 +782,10 @@ namespace HappyPandaXDroid
         public class ImageViewHolder : RecyclerView.ViewHolder
         {
             
-            public Custom_Views.ImageViewHolder imageView;
+            public CustomViews.ImageViewHolder imageView;
             public bool loaded = false;
             public string page_path = string.Empty;
-            public ImageViewHolder(Custom_Views.ImageViewHolder itemView) : base(itemView)
+            public ImageViewHolder(CustomViews.ImageViewHolder itemView) : base(itemView)
             {
                 imageView = itemView;
                //this.IsRecyclable = false;

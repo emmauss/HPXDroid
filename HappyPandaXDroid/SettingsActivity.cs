@@ -51,7 +51,7 @@ namespace HappyPandaXDroid
             ISharedPreferencesOnSharedPreferenceChangeListener
         {
 
-            Custom_Views.OptionDialogPreference cachedialog;
+            CustomViews.OptionDialogPreference cachedialog;
             private static Logger logger = LogManager.GetCurrentClassLogger();
             //Core.App.Settings set = new Core.App.Settings();
             ISharedPreferences sharedPreferences;
@@ -78,7 +78,7 @@ namespace HappyPandaXDroid
                 
 
                 sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
-                cachedialog = (Custom_Views.OptionDialogPreference)FindPreference("cachedialog");
+                cachedialog = (CustomViews.OptionDialogPreference)FindPreference("cachedialog");
                 Task.Run(async () =>
                 {
                     var h = new Handler(Looper.MainLooper);
