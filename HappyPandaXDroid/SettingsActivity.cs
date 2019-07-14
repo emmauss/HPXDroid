@@ -73,8 +73,10 @@ namespace HappyPandaXDroid
                 {
                     SetSummary(PreferenceScreen.GetPreference(i));
                 }
+
+                PreferenceManager.SetDefaultValues(this.Context, Resource.Xml.preferences, false);
+
                 server = FindPreference("server_section");
-                
                 
 
                 sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);

@@ -107,7 +107,7 @@ namespace HappyPandaXDroid.Scenes
                 SceneCancellationTokenSource.Token,
                 ItemType.Category,
                 ItemType.Gallery,
-                50, nextPage);
+                Core.App.Settings.Limit, nextPage);
 
             if (list?.Count > 0)
             {
@@ -192,7 +192,7 @@ namespace HappyPandaXDroid.Scenes
                 SceneCancellationTokenSource.Token,
                 ItemType.Category,
                 ItemType.Gallery,
-                50, previous);
+                Core.App.Settings.Limit, previous);
 
             if (list?.Count > 0)
             {
@@ -257,7 +257,7 @@ namespace HappyPandaXDroid.Scenes
                                     SceneCancellationTokenSource.Token,
                                     ItemType.Category,
                                     ItemType.Gallery,
-                                    50, page);
+                                    Core.App.Settings.Limit, page);
 
                     if (list?.Count > 0)
                     {

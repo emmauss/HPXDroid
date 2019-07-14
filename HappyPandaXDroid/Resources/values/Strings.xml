@@ -8,11 +8,13 @@
   <string name="read">START READING</string>
   <string name="continue_read">CONTINUE READING</string>
   <string name="server_ip">HappyPandaX Server IP Address</string>
+  <string name="item_limit_summary">Max number of items to reqest per page for a list</string>
   <string name="loop_delay_summary">Lower values may put more load on server</string>
   <string name="server_port">HappyPandaX Server Port</string>
   <string name="webclient_port">HappyPandaX WebClient Port</string>
   <string name="enable_debug">Enable Logging</string>
   <string name="back_thread_title">Background Thread Limit</string>
+  <string name="item_limit_title">Number of items per page</string>
   <string name="loop_delay_title">Delay(in ms) between looping requests</string>
   <string name="server_config_title">Server Configuration</string>
   <string name="server_settings">Server Settings...</string>

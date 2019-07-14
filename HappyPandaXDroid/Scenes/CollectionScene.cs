@@ -221,7 +221,7 @@ namespace HappyPandaXDroid.Scenes
                         try
                         {
                             var list = App.Server.GetRelatedItems<Core.Gallery.GalleryItem>(Collection.id, SceneCancellationTokenSource.Token,
-                                Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, 25, 0);
+                                Core.Gallery.ItemType.Collection, Core.Gallery.ItemType.Gallery, Core.App.Settings.Limit, 0);
                             if (SceneCancellationTokenSource.IsCancellationRequested)
                                 return;
                             foreach (var item in list)

@@ -94,6 +94,18 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
+            public static int Limit
+            {
+                get
+                {
+                    return int.Parse(AppSettings.GetValueOrDefault("item_limit", "20"));
+                }
+                set
+                {
+                    AppSettings.AddOrUpdateValue("item_limit", value.ToString());
+                }
+            }
+
 
             public static string Server_IP
             {
@@ -1497,7 +1509,7 @@ namespace HappyPandaXDroid.Core
             }
 
             public static List<T> GetRelatedItems<T>(int item_id, CancellationToken cancellationToken, Gallery.ItemType itemType
-                , Gallery.ItemType relatedType, int limit = 100, int page = 0)
+                , Gallery.ItemType relatedType, int limit = 100,int page = 0)
             {
                 logger.Info("Get Item. itemId={0}, related_type = {1}, limit = {2}", item_id, relatedType.ToString(), limit);
                 List<Tuple<string, string>> main = new List<Tuple<string, string>>();

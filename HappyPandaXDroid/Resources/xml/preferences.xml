@@ -22,18 +22,23 @@
       android:defaultValue="false"
         android:id="@+id/debugpref"/>
     <EditTextPreference
+        android:key="item_limit"
+        android:title="@string/item_limit_title"
+        android:summary="@string/item_limit_summary"
+        android:id="@+id/itemLimit"        
+        android:hint ="20"
+        android:inputType="number"
+        android:digits="0123456789"
+      />
+    <EditTextPreference
         android:key="loop_delay"
         android:title="@string/loop_delay_title"
         android:summary="@string/loop_delay_summary"
         android:id="@+id/loopdelay"
+        android:hint ="1000"
         android:inputType="number"
         android:digits="0123456789"
       />
-    <CheckBoxPreference
-      android:key="grid_layout"
-        android:title="@string/grid_layout"
-      android:defaultValue="false"
-        android:id="@+id/gridlayout"/>
     <HappyPandaXDroid.CustomViews.OptionDialogPreference
     android:key="cachedialog"
     android:dialogMessage="Do you want to clear local cache?"

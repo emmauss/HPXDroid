@@ -1038,7 +1038,7 @@ namespace HappyPandaXDroid.Core
 
         public async static void GetPage(ItemType itemType, int page, RequestToken request,
             ViewType viewType = ViewType.Library, Sort sortCriteria = (Sort)1, bool sortDec = false,
-            string searchQuery = "", int limit = 50)
+            string searchQuery = "")
         {
             string sort = sortCriteria.ToString().ToLower();
             if (sortCriteria == Sort.None)
@@ -1052,7 +1052,7 @@ namespace HappyPandaXDroid.Core
             JSON.API.PushKey(ref funct, "fname", "library_view");
             JSON.API.PushKey(ref funct, "item_type", itemType.ToString());
             JSON.API.PushKey(ref funct, "view_filter", viewType.ToString());
-            JSON.API.PushKey(ref funct, "limit", "<int>" + limit.ToString());
+            JSON.API.PushKey(ref funct, "limit", "<int>" + App.Settings.Limit);
             JSON.API.PushKey(ref funct, "search_query", searchQuery);
             JSON.API.PushKey(ref funct, "page", "<int>" + page);
             JSON.API.PushKey(ref funct, "sort_by", (sort == "null" ? "<int>" : "") + sort);
