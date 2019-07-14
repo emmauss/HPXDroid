@@ -14,6 +14,7 @@
   <string name="webclient_port">HappyPandaX WebClient Port</string>
   <string name="enable_debug">Enable Logging</string>
   <string name="back_thread_title">Background Thread Limit</string>
+  <string name="image_size_title">Image Size</string>
   <string name="item_limit_title">Number of items per page</string>
   <string name="loop_delay_title">Delay(in ms) between looping requests</string>
   <string name="server_config_title">Server Configuration</string>

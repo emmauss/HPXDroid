@@ -21,6 +21,11 @@
         android:title="@string/enable_debug"
       android:defaultValue="false"
         android:id="@+id/debugpref"/>
+    <ListPreference
+      android:key="image_size"
+      android:id="@+id/imageSize"
+      android:title="@string/image_size_title"
+        />
     <EditTextPreference
         android:key="item_limit"
         android:title="@string/item_limit_title"

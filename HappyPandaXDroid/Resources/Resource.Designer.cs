@@ -7202,8 +7202,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e012b
 			public const int action_empty_btn = 2131624235;
 			
-			// aapt resource value: 0x7f0e0157
-			public const int action_home = 2131624279;
+			// aapt resource value: 0x7f0e0158
+			public const int action_home = 2131624280;
 			
 			// aapt resource value: 0x7f0e00f9
 			public const int action_image = 2131624185;
@@ -7223,14 +7223,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e0076
 			public const int action_mode_close_button = 2131624054;
 			
-			// aapt resource value: 0x7f0e0158
-			public const int action_recent = 2131624280;
-			
-			// aapt resource value: 0x7f0e0154
-			public const int action_search = 2131624276;
-			
 			// aapt resource value: 0x7f0e0159
-			public const int action_setting = 2131624281;
+			public const int action_recent = 2131624281;
+			
+			// aapt resource value: 0x7f0e0155
+			public const int action_search = 2131624277;
+			
+			// aapt resource value: 0x7f0e015a
+			public const int action_setting = 2131624282;
 			
 			// aapt resource value: 0x7f0e00fa
 			public const int action_text = 2131624186;
@@ -7367,8 +7367,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e007a
 			public const int default_activity_button = 2131624058;
 			
-			// aapt resource value: 0x7f0e0155
-			public const int delete = 2131624277;
+			// aapt resource value: 0x7f0e0156
+			public const int delete = 2131624278;
 			
 			// aapt resource value: 0x7f0e00c1
 			public const int deletebutton = 2131624129;
@@ -7403,8 +7403,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e0071
 			public const int down = 2131624049;
 			
-			// aapt resource value: 0x7f0e0156
-			public const int download = 2131624278;
+			// aapt resource value: 0x7f0e0157
+			public const int download = 2131624279;
 			
 			// aapt resource value: 0x7f0e00e7
 			public const int drawer_layout = 2131624167;
@@ -7478,8 +7478,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e0063
 			public const int filled = 2131624035;
 			
-			// aapt resource value: 0x7f0e015b
-			public const int filter = 2131624283;
+			// aapt resource value: 0x7f0e015c
+			public const int filter = 2131624284;
 			
 			// aapt resource value: 0x7f0e00e6
 			public const int filterSlider = 2131624166;
@@ -7553,6 +7553,9 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e0079
 			public const int image = 2131624057;
 			
+			// aapt resource value: 0x7f0e014d
+			public const int imageSize = 2131624269;
+			
 			// aapt resource value: 0x7f0e00dc
 			public const int imageView = 2131624156;
 			
@@ -7562,14 +7565,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e0140
 			public const int ipBox = 2131624256;
 			
-			// aapt resource value: 0x7f0e014f
-			public const int ippref = 2131624271;
+			// aapt resource value: 0x7f0e0150
+			public const int ippref = 2131624272;
 			
 			// aapt resource value: 0x7f0e006c
 			public const int italic = 2131624044;
 			
-			// aapt resource value: 0x7f0e014d
-			public const int itemLimit = 2131624269;
+			// aapt resource value: 0x7f0e014e
+			public const int itemLimit = 2131624270;
 			
 			// aapt resource value: 0x7f0e0000
 			public const int item_touch_helper_previous_elevation = 2131623936;
@@ -7628,8 +7631,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e0073
 			public const int longClick = 2131624051;
 			
-			// aapt resource value: 0x7f0e014e
-			public const int loopdelay = 2131624270;
+			// aapt resource value: 0x7f0e014f
+			public const int loopdelay = 2131624271;
 			
 			// aapt resource value: 0x7f0e00ad
 			public const int main_Layout = 2131624109;
@@ -7637,14 +7640,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e0070
 			public const int marquee = 2131624048;
 			
-			// aapt resource value: 0x7f0e0153
-			public const int masked = 2131624275;
+			// aapt resource value: 0x7f0e0154
+			public const int masked = 2131624276;
 			
 			// aapt resource value: 0x7f0e00fe
 			public const int media_actions = 2131624190;
 			
-			// aapt resource value: 0x7f0e015a
-			public const int menu_preferences = 2131624282;
+			// aapt resource value: 0x7f0e015b
+			public const int menu_preferences = 2131624283;
 			
 			// aapt resource value: 0x7f0e011f
 			public const int menu_view = 2131624223;
@@ -7742,8 +7745,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e0142
 			public const int portBox = 2131624258;
 			
-			// aapt resource value: 0x7f0e0150
-			public const int portpref = 2131624272;
+			// aapt resource value: 0x7f0e0151
+			public const int portpref = 2131624273;
 			
 			// aapt resource value: 0x7f0e00ce
 			public const int posted = 2131624142;
@@ -7781,8 +7784,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e010e
 			public const int recycler_view = 2131624206;
 			
-			// aapt resource value: 0x7f0e015c
-			public const int refresh = 2131624284;
+			// aapt resource value: 0x7f0e015d
+			public const int refresh = 2131624285;
 			
 			// aapt resource value: 0x7f0e0135
 			public const int refresh_layout = 2131624245;
@@ -8174,14 +8177,14 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0e001b
 			public const int view_offset_helper = 2131623963;
 			
-			// aapt resource value: 0x7f0e0152
-			public const int visible = 2131624274;
+			// aapt resource value: 0x7f0e0153
+			public const int visible = 2131624275;
 			
 			// aapt resource value: 0x7f0e0144
 			public const int webPortBox = 2131624260;
 			
-			// aapt resource value: 0x7f0e0151
-			public const int webclientportpref = 2131624273;
+			// aapt resource value: 0x7f0e0152
+			public const int webclientportpref = 2131624274;
 			
 			// aapt resource value: 0x7f0e0047
 			public const int withText = 2131624007;
@@ -8855,11 +8858,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0d002e
 			public const int appbar_scrolling_view_behavior = 2131558446;
 			
-			// aapt resource value: 0x7f0d008e
-			public const int artist_cg = 2131558542;
+			// aapt resource value: 0x7f0d008f
+			public const int artist_cg = 2131558543;
 			
-			// aapt resource value: 0x7f0d0094
-			public const int asian_porn = 2131558548;
+			// aapt resource value: 0x7f0d0095
+			public const int asian_porn = 2131558549;
 			
 			// aapt resource value: 0x7f0d0083
 			public const int back_thread_title = 2131558531;
@@ -8873,11 +8876,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0d0031
 			public const int character_counter_pattern = 2131558449;
 			
-			// aapt resource value: 0x7f0d0089
-			public const int client_config_summary = 2131558537;
-			
 			// aapt resource value: 0x7f0d008a
-			public const int client_config_title = 2131558538;
+			public const int client_config_summary = 2131558538;
+			
+			// aapt resource value: 0x7f0d008b
+			public const int client_config_title = 2131558539;
 			
 			// aapt resource value: 0x7f0d0079
 			public const int close_drawer = 2131558521;
@@ -8885,11 +8888,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0d007c
 			public const int continue_read = 2131558524;
 			
-			// aapt resource value: 0x7f0d0093
-			public const int cosplay = 2131558547;
+			// aapt resource value: 0x7f0d0094
+			public const int cosplay = 2131558548;
 			
-			// aapt resource value: 0x7f0d008c
-			public const int doujinshi = 2131558540;
+			// aapt resource value: 0x7f0d008d
+			public const int doujinshi = 2131558541;
 			
 			// aapt resource value: 0x7f0d0082
 			public const int enable_debug = 2131558530;
@@ -8903,35 +8906,38 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0d0033
 			public const int fab_transformation_sheet_behavior = 2131558451;
 			
-			// aapt resource value: 0x7f0d008f
-			public const int game_cg = 2131558543;
+			// aapt resource value: 0x7f0d0090
+			public const int game_cg = 2131558544;
 			
-			// aapt resource value: 0x7f0d0088
-			public const int grid_layout = 2131558536;
+			// aapt resource value: 0x7f0d0089
+			public const int grid_layout = 2131558537;
 			
 			// aapt resource value: 0x7f0d0034
 			public const int hide_bottom_view_on_scroll_behavior = 2131558452;
 			
-			// aapt resource value: 0x7f0d0092
-			public const int image_set = 2131558546;
+			// aapt resource value: 0x7f0d0093
+			public const int image_set = 2131558547;
+			
+			// aapt resource value: 0x7f0d0084
+			public const int image_size_title = 2131558532;
 			
 			// aapt resource value: 0x7f0d007e
 			public const int item_limit_summary = 2131558526;
 			
-			// aapt resource value: 0x7f0d0084
-			public const int item_limit_title = 2131558532;
+			// aapt resource value: 0x7f0d0085
+			public const int item_limit_title = 2131558533;
 			
 			// aapt resource value: 0x7f0d007f
 			public const int loop_delay_summary = 2131558527;
 			
-			// aapt resource value: 0x7f0d0085
-			public const int loop_delay_title = 2131558533;
+			// aapt resource value: 0x7f0d0086
+			public const int loop_delay_title = 2131558534;
 			
-			// aapt resource value: 0x7f0d008d
-			public const int manga = 2131558541;
+			// aapt resource value: 0x7f0d008e
+			public const int manga = 2131558542;
 			
-			// aapt resource value: 0x7f0d0095
-			public const int misc = 2131558549;
+			// aapt resource value: 0x7f0d0096
+			public const int misc = 2131558550;
 			
 			// aapt resource value: 0x7f0d0035
 			public const int mtrl_chip_close_icon_content_description = 2131558453;
@@ -8939,8 +8945,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0d007a
 			public const int no_tags = 2131558522;
 			
-			// aapt resource value: 0x7f0d0091
-			public const int non_h = 2131558545;
+			// aapt resource value: 0x7f0d0092
+			public const int non_h = 2131558546;
 			
 			// aapt resource value: 0x7f0d0078
 			public const int open_drawer = 2131558520;
@@ -9143,11 +9149,11 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0d0021
 			public const int search_menu_title = 2131558433;
 			
-			// aapt resource value: 0x7f0d008b
-			public const int server_config_summary = 2131558539;
+			// aapt resource value: 0x7f0d008c
+			public const int server_config_summary = 2131558540;
 			
-			// aapt resource value: 0x7f0d0086
-			public const int server_config_title = 2131558534;
+			// aapt resource value: 0x7f0d0087
+			public const int server_config_title = 2131558535;
 			
 			// aapt resource value: 0x7f0d007d
 			public const int server_ip = 2131558525;
@@ -9155,8 +9161,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0d0080
 			public const int server_port = 2131558528;
 			
-			// aapt resource value: 0x7f0d0087
-			public const int server_settings = 2131558535;
+			// aapt resource value: 0x7f0d0088
+			public const int server_settings = 2131558536;
 			
 			// aapt resource value: 0x7f0d003b
 			public const int status_bar_notification_info_overflow = 2131558459;
@@ -9173,8 +9179,8 @@ namespace HappyPandaXDroid
 			// aapt resource value: 0x7f0d0081
 			public const int webclient_port = 2131558529;
 			
-			// aapt resource value: 0x7f0d0090
-			public const int western = 2131558544;
+			// aapt resource value: 0x7f0d0091
+			public const int western = 2131558545;
 			
 			static String()
 			{

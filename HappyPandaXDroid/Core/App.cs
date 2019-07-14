@@ -106,7 +106,17 @@ namespace HappyPandaXDroid.Core
                 }
             }
 
-
+            public static ImageSize ImageSize
+            {
+                get
+                {
+                    return (ImageSize)Enum.Parse(typeof(ImageSize),AppSettings.GetValueOrDefault("image_size", "Original"));
+                }
+                set
+                {
+                    AppSettings.AddOrUpdateValue("image_size", Enum.GetName(typeof(ImageSize),value));
+                }
+            }
             public static string Server_IP
             {
                 get

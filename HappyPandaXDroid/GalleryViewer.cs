@@ -428,7 +428,7 @@ namespace HappyPandaXDroid
             {
                 ids[i] = pages[i].id;
             }
-            Core.Gallery.InitiateImageGeneration(ids, Core.Gallery.ItemType.Page,Core.Gallery.ImageSize.Original
+            Core.Gallery.InitiateImageGeneration(ids, Core.Gallery.ItemType.Page, Core.App.Settings.ImageSize
                 ,ViewerCancellationTokenSource.Token);
             
         }

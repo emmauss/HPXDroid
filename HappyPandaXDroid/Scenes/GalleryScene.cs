@@ -496,7 +496,7 @@ namespace HappyPandaXDroid.Scenes
                     var list = new List<Core.Gallery.HPXItem>();
                     foreach (var item in parent.gallery.PageList)
                         list.Add((Core.Gallery.HPXItem)item);
-                    Core.Gallery.QueueDownloads(list);
+                    Core.Gallery.QueueDownloads(list, Core.App.Settings.ImageSize);
                 }
                 h.Post(() =>
                 {

@@ -37,10 +37,15 @@ namespace HappyPandaXDroid.Core
         public static Dictionary<int, Language> Languages { get; set; }
         public enum ImageSize
         {
-            Big = 400,
-            Medium = 250,
-            Original = 0,
-            Small = 100
+            Big = 2,
+            Medium = 3,
+            Original = 1,
+            Small = 4,
+            x1280 = 12,
+            x1600 = 11,
+            x2400 = 10,
+            x768 = 14,
+            x960 = 13
         }
 
         public enum ItemType
@@ -334,7 +339,7 @@ namespace HappyPandaXDroid.Core
                 set => base.ChildCount = value;
             }
 
-            public string Download(CancellationToken cancellationToken,ImageSize size = ImageSize.Original)
+            public string Download(CancellationToken cancellationToken, ImageSize size)
             {
                 lock (this)
                 {
@@ -378,7 +383,7 @@ namespace HappyPandaXDroid.Core
 
             public override ItemType Type => ItemType.Page;
 
-            public string Download(ImageSize size = ImageSize.Original)
+            public string Download(ImageSize size)
             {
                 lock (this)
                 {
@@ -532,7 +537,7 @@ namespace HappyPandaXDroid.Core
                 return false;
         }
 
-        public static void QueueDownloads(List<HPXItem> downloadList, ItemType type = ItemType.Page, ImageSize size = ImageSize.Original)
+        public static void QueueDownloads(List<HPXItem> downloadList, ImageSize size, ItemType type = ItemType.Page)
         {
             lock (DownloadList)
             {
@@ -800,7 +805,7 @@ namespace HappyPandaXDroid.Core
                     return new Dictionary<int, Media.Image>();
                 Dictionary<int, Media.Image> images = new Dictionary<int, Media.Image>();
 
-                Task.Run(() => QueueDownloads(items, itemType, size));
+                Task.Run(() => QueueDownloads(items, size,itemType));
 
                 foreach (var it in items)
                 {
@@ -844,7 +849,7 @@ namespace HappyPandaXDroid.Core
             }
         }
 
-        public static bool IsItemCached(HPXItem item, ImageSize size = ImageSize.Original)
+        public static bool IsItemCached(HPXItem item, ImageSize size)
         {
             try
             {
@@ -994,7 +999,7 @@ namespace HappyPandaXDroid.Core
             return list;
         }
 
-        public static bool GetCachedPagePath(HPXItem item, out string pagePath, ImageSize size = ImageSize.Original)
+        public static bool GetCachedPagePath(HPXItem item, out string pagePath, ImageSize size)
         {
             pagePath = string.Empty;
             try

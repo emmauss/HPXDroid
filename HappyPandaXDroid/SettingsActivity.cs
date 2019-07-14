@@ -4,9 +4,11 @@ using Android.OS;
 using Android.Preferences;
 using Android.Support.V7.App;
 using Android.Views;
+using Java;
 using NLog;
 using NLog.Config;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -50,6 +52,7 @@ namespace HappyPandaXDroid
         public  class SettingsFragments : PreferenceFragment, 
             ISharedPreferencesOnSharedPreferenceChangeListener
         {
+            string[] sizeCollection;
 
             CustomViews.OptionDialogPreference cachedialog;
             private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -67,7 +70,7 @@ namespace HappyPandaXDroid
                 base.OnCreate(savedInstanceState);
                 // Create your application here
                 AddPreferencesFromResource(Resource.Xml.preferences);
-
+                sizeCollection = Enum.GetNames(typeof(Core.Gallery.ImageSize));
                 sharedPreferences = PreferenceScreen.SharedPreferences;
                 for (int i = 0; i < PreferenceScreen.PreferenceCount; i++)
                 {
@@ -77,10 +80,15 @@ namespace HappyPandaXDroid
                 PreferenceManager.SetDefaultValues(this.Context, Resource.Xml.preferences, false);
 
                 server = FindPreference("server_section");
-                
 
                 sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
                 cachedialog = (CustomViews.OptionDialogPreference)FindPreference("cachedialog");
+                var sizePreference = (ListPreference)FindPreference("image_size");
+
+                sizePreference.SetEntries(sizeCollection);
+                sizePreference.SetEntryValues(sizeCollection);
+                sizePreference.Summary = Core.App.Settings.ImageSize.ToString();
+                sizePreference.SetValueIndex(sizePreference.FindIndexOfValue(Core.App.Settings.ImageSize.ToString()));
                 Task.Run(async () =>
                 {
                     var h = new Handler(Looper.MainLooper);
