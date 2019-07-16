@@ -461,54 +461,13 @@ namespace HappyPandaXDroid.Scenes
         {
             toolbar.InflateMenu(Resource.Menu.galleryTopMenu);
 
-            var menuItem = toolbar.Menu.FindItem(Resource.Id.download);
-            menuItem.SetOnMenuItemClickListener(new DownloadMenuItemClickListener(this));
-
-            menuItem = toolbar.Menu.FindItem(Resource.Id.delete);
+            var menuItem = toolbar.Menu.FindItem(Resource.Id.delete);
             menuItem.SetOnMenuItemClickListener(new DeleteMenuItemClickListener(this));
-        }
-
-        class DownloadMenuItemClickListener : Java.Lang.Object,IMenuItemOnMenuItemClickListener
-        {
-            GalleryScene parent;
-            List<Core.Gallery.Page> downloadList = new List<Core.Gallery.Page>();
-            
-            public DownloadMenuItemClickListener(GalleryScene scene)
-            {
-                parent = scene;
-            }
-
-            public bool OnMenuItemClick(IMenuItem item)
-            {              
-                ThreadStart threadStart = new ThreadStart(StartDownload);
-                Thread thread = new Thread(threadStart);
-                thread.Start();
-                return true;
-            }
-
-            void StartDownload()
-            {
-                Thread.Sleep(100);
-                parent.isDownloading = !parent.isDownloading;
-                var h = new Handler(Looper.MainLooper);
-                if (parent.gallery.PageList != null)
-                {
-                    var list = new List<Core.Gallery.HPXItem>();
-                    foreach (var item in parent.gallery.PageList)
-                        list.Add((Core.Gallery.HPXItem)item);
-                    Core.Gallery.QueueDownloads(list, Core.App.Settings.ImageSize);
-                }
-                h.Post(() =>
-                {
-                        Toast.MakeText(Android.App.Application.Context, "Precaching gallery Completed or was Cancelled", ToastLength.Short).Show();
-                });
-            }
         }
 
         class DeleteMenuItemClickListener : Java.Lang.Object, IMenuItemOnMenuItemClickListener
         {
             GalleryScene parent;
-            List<Core.Gallery.Page> downloadList = new List<Core.Gallery.Page>();
 
             public DeleteMenuItemClickListener(GalleryScene scene)
             {

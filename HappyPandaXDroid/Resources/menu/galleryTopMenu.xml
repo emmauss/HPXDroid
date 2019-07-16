@@ -6,10 +6,4 @@
        happypandaxdroid:showAsAction="always"
        android:icon="@drawable/v_delete_dark_x24"
        android:title="Delete" />
-  <item
-       android:id="@+id/download"
-       happypandaxdroid:showAsAction="always"
-       android:icon="@drawable/v_download_box_dark_x24"
-       android:title="Precache" />
-
 </menu>
