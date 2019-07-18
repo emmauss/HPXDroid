@@ -19,6 +19,7 @@
         <ImageView
             android:layout_width="72dp"
             android:layout_height="100dp"
+            android:layout_marginRight= "10dp"
             android:id="@+id/imageView"
             android:scaleType="centerCrop" />
         <LinearLayout

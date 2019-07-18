@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +40,6 @@ namespace HappyPandaXDroid
         public  ImageAdapter adapter;
         public RequestOptions options;
         CancellationTokenSource ViewerCancellationTokenSource = new CancellationTokenSource();
-        LinearLayout ScreenFilter;
         FrameLayout lay;
         private static Logger logger = LogManager.GetCurrentClassLogger();
         /*List<string> ImageList =
@@ -71,11 +69,13 @@ namespace HappyPandaXDroid
             options = (RequestOptions)new RequestOptions()
                 .Override(Target.SizeOriginal, Target.SizeOriginal);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            ScreenFilter = FindViewById<LinearLayout>(Resource.Id.screenFilter);
-
             FilterSlider = FindViewById<SeekBar>(Resource.Id.filterSlider);
-            FilterSlider.Max = 255;
-            FilterSlider.Progress = 255;
+            FilterSlider.Max = 120;
+            FilterSlider.Min = 10;
+            FilterSlider.Progress = 70;
+            if (Core.App.Settings.FilterLevel > 100)
+                Core.App.Settings.FilterLevel = 70;
+            FilterSlider.Progress = Core.App.Settings.FilterLevel;
             FilterSlider.ProgressChanged += FilterSlider_ProgressChanged;
             FilterSlider.Click += FilterSlider_Click;
             SetSupportActionBar(toolbar);
@@ -94,7 +94,8 @@ namespace HappyPandaXDroid
             galleryPager.ScrollToPosition(pageno);
             seekbar = FindViewById<SeekBar>(Resource.Id.progress_seekbar);
             seekbar.Max = PageList.Count;
-            FilterSlider.Progress = Core.App.Settings.FilterLevel;
+
+            
             galleryPager.GetAdapter().NotifyDataSetChanged();
             page_number = FindViewById<TextView>(Resource.Id.page_number);
             seekbar.Progress = pageno + 1;
@@ -210,30 +211,21 @@ namespace HappyPandaXDroid
             SetScreenBrightness(val);
         }
 
-        void SetScreenBrightness(int level)
+        void SetScreenBrightness(float level)
         {
-            int alpha = 255 - level;
-            if (alpha < 0)
-                alpha = 0;
-            if (alpha > 255)
-                alpha = 255;
-            SetAlpha(ScreenFilter, alpha);
-            Core.App.Settings.FilterLevel = level;
-        }
-
-        void SetAlpha(View view, int alpha)
-        {
-            var bg = view.Background;
-            bg.SetAlpha(alpha);
+            float brightness = MathF.Max((level - 20) / 100, 0);
+            float dimAmount = level <= 20 ? 1 - (level / 20) : 0;
+            WindowManagerLayoutParams layoutParams = Window.Attributes;
+            layoutParams.ScreenBrightness = brightness;
+            layoutParams.DimAmount = dimAmount;
+            Window.Attributes = layoutParams;
             Core.App.Settings.FilterLevel = FilterSlider.Progress;
-
         }
-
         protected override void OnResume()
         {
-            
             base.OnResume();
             seekbar.Progress = galleryPager.CurrentPosition + 1;
+            SetScreenBrightness(FilterSlider.Progress);
         }
 
         protected override void OnStart()
@@ -271,7 +263,6 @@ namespace HappyPandaXDroid
                 PageList.Clear();
             }
             FilterSlider = null;
-            ScreenFilter = null;
             System.GC.Collect();
             Java.Lang.JavaSystem.Gc();
             logger.Info("Closing Gallery Viewer");
@@ -282,6 +273,7 @@ namespace HappyPandaXDroid
         {
             gallery.LastPageRead = galleryPager.CurrentPosition;
             Core.Media.Recents.SaveRecents();
+            //SetScreenBrightness(previousBrightnessValue);
             base.OnPause();
         }
 
@@ -446,7 +438,9 @@ namespace HappyPandaXDroid
                         seekbar.Visibility = ViewStates.Gone;
                         page_number.Visibility = ViewStates.Gone;
                         FilterSlider.Visibility = ViewStates.Gone;
+                        Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
                         countDown.Cancel();
+                        Window.DecorView.SystemUiVisibility = StatusBarVisibility.Hidden | (StatusBarVisibility)SystemUiFlags.HideNavigation;
                     }
                     else
                     {
