@@ -65,7 +65,7 @@
     <item name="searchBackground">@color/background_dark</item>
     <item name="searchSuggestionBackground">@color/background_dark</item>
     <item name="android:textColor">#FFFFFF</item>
-    <item name="android:textColorHint">#EEEEEE</item>
+    <item name="android:textColorHint">#FDFDFD</item>
   </style>
   
 <style name="PopupMenuStyle" parent="Theme.MaterialComponents.Bridge">

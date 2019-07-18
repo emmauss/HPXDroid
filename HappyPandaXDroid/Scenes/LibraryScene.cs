@@ -46,16 +46,12 @@ namespace HappyPandaXDroid.Scenes
             Current_Query = Parse(query, false);*/
             toolbar.Title = string.IsNullOrWhiteSpace(current_query) ? "Library" : current_query;
             searchView.SetQuery(current_query, true);
-            searchView.SearchViewShown += SearchView_SearchViewShown;
+            
             LoadOptions();
             Refresh(0);
         }
 
-        private void SearchView_SearchViewShown(object sender, EventArgs e)
-        {
-            searchView.SetQuery(current_query, false);
-        }
-
+        
         protected override void OnSaveViewState(View p0, Bundle p1)
         {
             var bundle = p1;

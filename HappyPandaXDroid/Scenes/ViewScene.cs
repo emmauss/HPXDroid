@@ -27,7 +27,7 @@ using Com.Miguelcatalan.Materialsearchview;
 
 namespace HappyPandaXDroid.Scenes
 {
-    public abstract class ViewScene : HPXScene, MaterialSearchView.IOnQueryTextListener, MaterialSearchView.ISearchViewListener
+    public abstract class ViewScene : HPXScene, MaterialSearchView.IOnQueryTextListener
     {
         public abstract Core.Gallery.ViewType ViewType { get;}
         //protected FloatingSearchView searchView;
@@ -220,7 +220,10 @@ namespace HappyPandaXDroid.Scenes
             searchView.SetOnQueryTextListener(this);
             collectionAdapter = new CustomViews.CardAdapter.CollectionCardAdapter(this.Context, this);
             galleryAdapter = new CustomViews.CardAdapter.GalleryCardAdapter(this.Context,this);
-
+            var searchEditText = searchView.FindViewById<EditText>(Resource.Id.searchTextView);
+            searchEditText.EditorAction += SearchEditText_EditorAction;
+            searchView.SetSuggestions(Core.Media.SearchHistory.Searches.ToArray());
+            searchView.SearchViewShown += SearchView_SearchViewShown;
             mRefreshFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabRefresh);
             mJumpFab = MainView.FindViewById<Clans.Fab.FloatingActionButton>(Resource.Id.fabJumpTo);
             sortBySpinner = MainView.FindViewById<Spinner>(Resource.Id.sortBySpinner);
@@ -285,6 +288,26 @@ namespace HappyPandaXDroid.Scenes
             dialogeventlistener = new DialogEventListener(this);
             initialized = true;
             logger.Info("HPContent Initialized");
+        }
+
+        private void SearchView_SearchViewShown(object sender, EventArgs e)
+        {
+            searchView.SetQuery(current_query, false);
+            searchView.SetSuggestions(Core.Media.SearchHistory.Searches.ToArray());
+        }
+
+        private void SearchEditText_EditorAction(object sender, TextView.EditorActionEventArgs e)
+        {
+            if (e.ActionId == Android.Views.InputMethods.ImeAction.Search)
+            {
+                string text = ((EditText)sender).Text;
+
+                searchView.SetQuery(text, false);
+
+                OnQueryTextSubmit(text);
+
+                searchView.CloseSearch();
+            }
         }
 
         private void AddSearch_Click(object sender, EventArgs e)
@@ -1171,9 +1194,21 @@ namespace HappyPandaXDroid.Scenes
             }
         }
 
+        public override bool HandleBack()
+        {
+            if(searchView.IsSearchOpen)
+            {
+                searchView.CloseSearch();
+
+                return true;
+            }
+            return base.HandleBack();
+        }
+
         public bool OnQueryTextSubmit(string p0)
         {
             current_query = p0;
+            Core.Media.SearchHistory.AddToSearchHistory(p0);
             Refresh(0);
 
             return false;
@@ -1182,11 +1217,6 @@ namespace HappyPandaXDroid.Scenes
         public void OnSearchViewClosed()
         {
             
-        }
-
-        public void OnSearchViewShown()
-        {
-            searchView.SetQuery(current_query, false);
         }
 
         class DialogInterface : Java.Lang.Object, IDialogInterfaceOnClickListener

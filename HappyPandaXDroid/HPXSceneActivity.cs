@@ -109,7 +109,7 @@ namespace HappyPandaXDroid
                 navDrawer.CloseDrawer(GravityCompat.End);
                 return;
             }
-            if (!director.HandleBack())
+            if (!director.HandleBack() && !director.FocusedStage.TopScene.HandleBack())
             base.OnBackPressed();
 
 

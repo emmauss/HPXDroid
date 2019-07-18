@@ -82,7 +82,7 @@ namespace HappyPandaXDroid.CustomViews
             {
                 if (selecteditems.Get(i))
                 {
-                    Core.Media.QuickSearch.RemoveFromQuicSearch(items[i]);
+                    Core.Media.QuickSearch.RemoveFromQuickSearch(items[i]);
                 }
             }
         }

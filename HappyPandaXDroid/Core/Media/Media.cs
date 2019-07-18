@@ -286,15 +286,15 @@ namespace HappyPandaXDroid.Core
         public class QuickSearch
         {
             public static List<string> Searches = new List<string>();
-            static string recentsPath = App.Settings.BasePath + "searches";
+            static string searchPath = App.Settings.BasePath + "searches";
 
             public static void LoadSearches()
             {
-                if (File.Exists(recentsPath))
+                if (File.Exists(searchPath))
                 {
                     try
                     {
-                        string rec = File.ReadAllText(recentsPath);
+                        string rec = File.ReadAllText(searchPath);
                         var list = JSON.Serializer.SimpleSerializer.Deserialize<List<string>>(rec);
                         if (list != null)
                         {
@@ -304,12 +304,12 @@ namespace HappyPandaXDroid.Core
                     }
                     catch (Exception ex)
                     {
-                        File.Delete(recentsPath);
-                        File.Create(recentsPath).Close();
+                        File.Delete(searchPath);
+                        File.Create(searchPath).Close();
                     }
                 }
                 else
-                    File.Create(recentsPath).Close();
+                    File.Create(searchPath).Close();
             }
 
             public static void AddToQuickSearch(string searchquery)
@@ -323,7 +323,7 @@ namespace HappyPandaXDroid.Core
                 SaveQuickSearch();
             }
 
-            public static void RemoveFromQuicSearch(string searchquery)
+            public static void RemoveFromQuickSearch(string searchquery)
             {
                 var item = Searches.Find((x) => x == searchquery);
                 if (item != null)
@@ -344,7 +344,73 @@ namespace HappyPandaXDroid.Core
                 lock (Searches)
                 {
                     string rec = JSON.Serializer.SimpleSerializer.Serialize(Searches);
-                    File.WriteAllText(recentsPath, rec);
+                    File.WriteAllText(searchPath, rec);
+                }
+            }
+        }
+
+        public class SearchHistory
+        {
+            public static List<string> Searches = new List<string>();
+            static string searchPath = App.Settings.BasePath + "history";
+
+            public static void LoadSearches()
+            {
+                if (File.Exists(searchPath))
+                {
+                    try
+                    {
+                        string rec = File.ReadAllText(searchPath);
+                        var list = JSON.Serializer.SimpleSerializer.Deserialize<List<string>>(rec);
+                        if (list != null)
+                        {
+                            Searches.Clear();
+                            Searches.AddRange(list);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        File.Delete(searchPath);
+                        File.Create(searchPath).Close();
+                    }
+                }
+                else
+                    File.Create(searchPath).Close();
+            }
+
+            public static void AddToSearchHistory(string searchquery)
+            {
+                var item = Searches.Find((x) => x == searchquery);
+                if (item != null)
+                {
+                    Searches.Remove(item);
+                }
+                Searches.Insert(0, searchquery);
+                SaveQuickSearch();
+            }
+
+            public static void RemoveFromSearchHistory(string searchquery)
+            {
+                var item = Searches.Find((x) => x == searchquery);
+                if (item != null)
+                {
+                    Searches.Remove(item);
+                }
+                SaveQuickSearch();
+            }
+
+            public static void ClearQuickSearch()
+            {
+                Searches.Clear();
+                SaveQuickSearch();
+            }
+
+            public static void SaveQuickSearch()
+            {
+                lock (Searches)
+                {
+                    string rec = JSON.Serializer.SimpleSerializer.Serialize(Searches);
+                    File.WriteAllText(searchPath, rec);
                 }
             }
         }

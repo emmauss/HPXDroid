@@ -86,6 +86,7 @@ namespace HappyPandaXDroid
                     File.Create(Core.App.Settings.BasePath + ".nomedia");
                 Task.Run(() => Core.Media.Recents.LoadRecents());
                 Task.Run(() => Core.Media.QuickSearch.LoadSearches());
+                Task.Run(() => Core.Media.SearchHistory.LoadSearches());
             });
             if(!Core.App.Settings.IsFirstRun)
                 if (Core.Net.IsServerReachable())
