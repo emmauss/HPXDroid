@@ -216,7 +216,8 @@ namespace HappyPandaXDroid.CustomViews
                             }
                         }
 
-                        vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
+                        if (!Core.App.Settings.IsGrid)
+                            vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
                         vh.Bound = true;
                     }
                 }
@@ -229,7 +230,8 @@ namespace HappyPandaXDroid.CustomViews
             
             public override RecyclerView.ViewHolder OnCreateViewHolder2(ViewGroup parent, int viewType)
             {
-                View itemview = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.galleryCardList,null);
+                View itemview = LayoutInflater.From(parent.Context)
+                    .Inflate(Core.App.Settings.IsGrid? Resource.Layout.galleryCardGrid :Resource.Layout.galleryCardList,null);
                 /*switch (ItemType)
                 {
                     case Core.Gallery.ItemType.Gallery:
@@ -261,9 +263,12 @@ namespace HappyPandaXDroid.CustomViews
                 Thumb = itemView.FindViewById<ImageView>(Resource.Id.imageView);
                 Name = itemView.FindViewById<TextView>(Resource.Id.name);
                 Info = itemView.FindViewById<TextView>(Resource.Id.info);
-                Category = itemView.FindViewById<Chip>(Resource.Id.category);
-                Category.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
                 Pages = itemView.FindViewById<TextView>(Resource.Id.pages);
+                if (!Core.App.Settings.IsGrid)
+                {
+                    Category = itemView.FindViewById<Chip>(Resource.Id.category);
+                    Category.SetChipBackgroundColorResource(Resource.Color.colorPrimaryDark);
+                }
                 Token = new CancellationTokenSource();
             }
 

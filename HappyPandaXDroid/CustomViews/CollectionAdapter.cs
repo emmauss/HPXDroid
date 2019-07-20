@@ -103,7 +103,8 @@ namespace HappyPandaXDroid.CustomViews
                             vh.Info.Text = gallery.artists[0].Names[0].name;
                 }
 
-                vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
+                if (!Core.App.Settings.IsGrid)
+                    vh.Category.Text = Core.Gallery.Categories[mdata[position].category_id].name;
 
                 vh.Bound = true;
 

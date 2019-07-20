@@ -15,7 +15,11 @@
   <PreferenceCategory
         android:key="client_config"
         android:title="@string/client_config_title" >
-    
+     <CheckBoxPreference
+      android:key="grid_layout"
+        android:title="@string/grid_layout"
+      android:defaultValue="false"
+        android:id="@+id/gridlayout"/>    
     <CheckBoxPreference
       android:key="enable_debugging"
         android:title="@string/enable_debug"

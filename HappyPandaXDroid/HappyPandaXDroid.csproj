@@ -252,8 +252,6 @@
     <Compile Include="Core\IO.cs" />
     <Compile Include="Core\Net\RequestToken.cs" />
     <Compile Include="CustomViews\CardAdapter.cs" />
-    <Compile Include="CustomViews\CollectionCard.cs" />
-    <Compile Include="CustomViews\ItemCard.cs" />
     <Compile Include="CustomViews\ListDialog.cs" />
     <Compile Include="CustomViews\AutoWrapLayout.cs" />
     <Compile Include="CustomViews\ImageViewHolder.cs" />

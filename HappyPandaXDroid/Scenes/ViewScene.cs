@@ -496,18 +496,28 @@ namespace HappyPandaXDroid.Scenes
             isGrid = Core.App.Settings.IsGrid;
             var windo = Context.GetSystemService(Context.WindowService);
             var window = windo.JavaCast<IWindowManager>();
-            var display = window.DefaultDisplay; var rotation = display.Rotation;
-            switch (rotation)
+            var display = window.DefaultDisplay;
+            var rotation = display.Rotation;
+            if (isGrid)
             {
-                case SurfaceOrientation.Rotation0:
-                case SurfaceOrientation.Rotation270:
-                    columns = 1;
-                    break;
-                default:
-                    columns = 2;
-                    break;
+                var metrics = new DisplayMetrics();
+                display.GetMetrics(metrics);
 
+                float dpwidth = metrics.WidthPixels / metrics.Density;
+                columns = (int)dpwidth / 180; ;
             }
+            else
+                switch (rotation)
+                {
+                    case SurfaceOrientation.Rotation0:
+                    case SurfaceOrientation.Rotation270:
+                        columns = 1;
+                        break;
+                    default:
+                        columns = 2;
+                        break;
+
+                }
         }
 
         public List<Core.Gallery.HPXItem> CurrentList 
@@ -1150,7 +1160,6 @@ namespace HappyPandaXDroid.Scenes
         }
         public override void OnConfigurationChanged(Configuration newConfig)
         {
-            isGrid = Core.App.Settings.IsGrid;
             SetColumns();
             mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
             mRecyclerView.SetLayoutManager(mLayoutManager);

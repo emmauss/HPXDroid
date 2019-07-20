@@ -83,8 +83,6 @@ namespace HappyPandaXDroid.Scenes
             var display = window.DefaultDisplay;
             if (isGrid)
             {
-
-
                 var metrics = new DisplayMetrics();
                 display.GetMetrics(metrics);
 
@@ -130,7 +128,6 @@ namespace HappyPandaXDroid.Scenes
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
-            isGrid = Core.App.Settings.IsGrid;
             SetColumns();
             mLayoutManager = new Helpers.Layouts.ExtraGridLayoutManager(this.Context, columns, GridLayoutManager.Vertical, false);
             mRecyclerView.SetLayoutManager(mLayoutManager);
@@ -338,7 +335,8 @@ namespace HappyPandaXDroid.Scenes
                         if (gallery.artists.Count > 0)
                             if (gallery.artists[0].Names.Count > 0)
                                 vh.Info.Text = gallery.artists[0].Names[0].name;
-                        vh.Category.Text = Core.Gallery.Categories[gallery.category_id].name;
+                        if (!Core.App.Settings.IsGrid)
+                            vh.Category.Text = Core.Gallery.Categories[gallery.category_id].name;
                     }
                 }
                 catch (Exception ex)
