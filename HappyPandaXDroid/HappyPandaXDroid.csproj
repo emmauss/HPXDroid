@@ -261,6 +261,7 @@
     <Compile Include="CustomViews\PreviewAdapter.cs" />
     <Compile Include="CustomViews\CollectionAdapter.cs" />
     <Compile Include="CustomViews\PreviewHolder.cs" />
+    <Compile Include="CustomViews\ProgressDialog.cs" />
     <Compile Include="CustomViews\RoundSideRectDrawable.cs" />
     <Compile Include="CustomViews\SafeCoordinatorLayout.cs" />
     <Compile Include="CustomViews\TagsAdapter.cs" />
@@ -308,6 +309,9 @@
     <AndroidResource Include="Resources\drawable\ic_search_white.png" />
     <AndroidResource Include="Resources\drawable\ic_add_circle_white.png" />
     <AndroidResource Include="Resources\layout\LibraryOptionsLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ProgressDialogLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <TransformFile Include="Resources\drawable\splash_logo.xml">

@@ -1151,8 +1151,9 @@ namespace HappyPandaXDroid.Core
                     if (cancellationToken.IsCancellationRequested)
                         return false;
 
+                    Task deletionTask = null;
                     if (item is GalleryItem gallery)
-                        Task.Run(() => Media.Cache.DeleteCache(gallery));
+                        deletionTask =  Task.Run(() => Media.Cache.DeleteCache(gallery));
 
                     int command_id = App.Server.GetCommandId(reply);
                     if (command_id == 0 || command_id == -1)
@@ -1173,6 +1174,9 @@ namespace HappyPandaXDroid.Core
                         else
                             break;
                     }
+
+                    if (deletionTask != null)
+                        deletionTask.Wait();
                     return true;
 
                 }

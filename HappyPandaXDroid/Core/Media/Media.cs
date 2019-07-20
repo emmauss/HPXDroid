@@ -150,7 +150,7 @@ namespace HappyPandaXDroid.Core
                 {
                     foreach(var page in gallery.PageList)
                     {
-                        foreach (var size in Enum.GetValues(typeof(Gallery.ItemType)))
+                        foreach (var size in Enum.GetValues(typeof(Gallery.ImageSize)))
                         {
                             var cacheID = App.Server.HashGenerator(page.BaseId, (Gallery.ImageSize)size, Gallery.ItemType.Page);
 

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="emmaus.HPXDroid" android:versionCode="16000" android:versionName="1.6.0" android:installLocation="auto" android:configChanges="keyboardHidden|orientation">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="emmaus.HPXDroid" android:versionCode="16100" android:versionName="1.6.1" android:installLocation="auto" android:configChanges="keyboardHidden|orientation">
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="28" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<application android:label="HPXDroid" android:theme="@style/MyTheme" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round"></application>

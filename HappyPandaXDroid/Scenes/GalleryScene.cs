@@ -497,49 +497,60 @@ namespace HappyPandaXDroid.Scenes
             public async void OnDialogPositiveClick(Android.Support.V4.App.DialogFragment dialog)
             {
                 bool succeed = false;
+                CustomViews.ProgressDialog progressDialog = new CustomViews.ProgressDialog();
+
+                var h = new Handler(Looper.MainLooper);
                 if (dialog is CustomViews.DeleteDialog dd)
                 {
-                    if (dd.ShouldTrashed)
+                    progressDialog.Show(((HPXSceneActivity)parent.MainView.Context).SupportFragmentManager, "Progress Dialog");
+                    await Task.Run(async () =>
                     {
-                        succeed = await App.Server.SendItemToTrash(parent.gallery, parent.SceneCancellationTokenSource.Token);
-
-                        var h = new Handler(Looper.MainLooper);
-                        h.Post(() =>
+                        if (dd.ShouldTrashed)
                         {
-                            if (succeed)
-                            {
-                                Toast.MakeText(parent.Context, "Gallery sent to trash", ToastLength.Short).Show();
-                            }
-                            else
-                            {
-                                Toast.MakeText(parent.Context, "Gallery Deletion Failed", ToastLength.Short).Show();
-                            }
-                        });
-                    }
-                    else
-                    {
-                        succeed = await App.Server.DeleteItem(parent.gallery, parent.SceneCancellationTokenSource.Token);
 
-                        var h = new Handler(Looper.MainLooper);
-                        h.Post(() =>
-                        {
-                            if (succeed)
-                            {
-                                Toast.MakeText(parent.Context, "Gallery Deletion Succeeded", ToastLength.Short).Show();
+                            succeed = await App.Server.SendItemToTrash(parent.gallery, parent.SceneCancellationTokenSource.Token);
 
-                                if (parent.Stage.TopScene is GalleryScene scene)
+                            h.Post(() =>
+                            {
+                                if (succeed)
                                 {
-                                    parent.Stage.PopTopScene();
+                                    Toast.MakeText(parent.Context, "Gallery sent to trash", ToastLength.Short).Show();
                                 }
+                                else
+                                {
+                                    Toast.MakeText(parent.Context, "Gallery Deletion Failed", ToastLength.Short).Show();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            succeed = await App.Server.DeleteItem(parent.gallery, parent.SceneCancellationTokenSource.Token);
 
-                                Media.Cache.RemoveGallery(parent.gallery);
-                            }
-                            else
+                            h.Post(() =>
                             {
-                                Toast.MakeText(parent.Context, "Gallery Deletion Failed", ToastLength.Short).Show();
-                            }
-                        });
+                                if (succeed)
+                                {
+                                    Toast.MakeText(parent.Context, "Gallery Deletion Succeeded", ToastLength.Short).Show();
+
+                                    if (parent.Stage.TopScene is GalleryScene scene)
+                                    {
+                                        parent.Stage.PopTopScene();
+                                    }
+
+                                    Media.Cache.RemoveGallery(parent.gallery);
+                                }
+                                else
+                                {
+                                    Toast.MakeText(parent.Context, "Gallery Deletion Failed", ToastLength.Short).Show();
+                                }
+                            });
+                        }
                     }
+                    );
+                    h.Post(() =>
+                    {
+                        progressDialog.Dismiss();
+                    });
                 }
             }
         }
